@@ -1,0 +1,348 @@
+// JAIGURU ASTROREMEDY - Prisma Schema
+// Premium Astrology, Spiritual Remedy, Vastu, Numerology, Gemstone, Yoga & Product CMS Website
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum ServiceMode {
+  ONLINE
+  OFFLINE
+  HOME_SERVICE
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  PRE_ORDER
+}
+
+enum RequestStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// ---------------------------------------------------------------------------
+// Users & Authentication
+// ---------------------------------------------------------------------------
+
+model User {
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  passwordHash        String
+  role                Role      @default(ADMIN)
+  phone               String?
+  avatarUrl           String?
+  isActive            Boolean   @default(true)
+  lastLoginAt         DateTime?
+  passwordResetToken  String?   @unique
+  passwordResetExpires DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Products
+// ---------------------------------------------------------------------------
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  name             String
+  slug             String         @unique
+  categoryId       String
+  category         ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subcategory      String?
+  sku              String?
+  mainImage        String?
+  gallery          ProductImage[]
+  price            Decimal        @db.Decimal(12, 2)
+  discountPrice    Decimal?       @db.Decimal(12, 2)
+  stockStatus      StockStatus    @default(IN_STOCK)
+  quantity         Int            @default(0)
+  shortDescription String?
+  longDescription  String?
+  benefits         String[]       @default([])
+  usageMethod      String?
+  material         String?
+  size             String?
+  weight           String?
+  color            String?
+  tags             String[]       @default([])
+  isFeatured       Boolean        @default(false)
+  isPopular        Boolean        @default(false)
+  isNewArrival     Boolean        @default(false)
+  rating           Decimal        @default(4.5) @db.Decimal(3, 2)
+  ratingCount      Int            @default(0)
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  whatsappMessage  String?
+  isActive         Boolean        @default(true)
+  sortOrder        Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+  @@index([isActive, isPopular])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+}
+
+// ---------------------------------------------------------------------------
+// Services
+// ---------------------------------------------------------------------------
+
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  imageUrl    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  services    Service[]
+}
+
+model Service {
+  id               String        @id @default(cuid())
+  name             String
+  slug             String        @unique
+  categoryId       String
+  category         ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  mode             ServiceMode   @default(ONLINE)
+  duration         String?
+  price            Decimal?      @db.Decimal(12, 2)
+  priceLabel       String?
+  imageUrl         String?
+  shortDescription String?
+  longDescription  String?
+  benefits         String[]      @default([])
+  syllabus         String[]      @default([])
+  serviceArea      String?
+  faqs             Json?
+  whatsappMessage  String?
+  isFeatured       Boolean       @default(false)
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  isActive         Boolean       @default(true)
+  sortOrder        Int           @default(0)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+}
+
+// ---------------------------------------------------------------------------
+// Galleries
+// ---------------------------------------------------------------------------
+
+model GalleryImage {
+  id          String   @id @default(cuid())
+  title       String?
+  description String?
+  imageUrl    String
+  altText     String?
+  category    String?
+  isFeatured  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Video {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  videoUrl     String
+  thumbnailUrl String?
+  category     String?
+  isFeatured   Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model YoutubeVideo {
+  id           String   @id @default(cuid())
+  title        String
+  description  String?
+  youtubeId    String
+  youtubeUrl   String
+  thumbnailUrl String?
+  category     String?
+  isFeatured   Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Testimonials
+// ---------------------------------------------------------------------------
+
+model Testimonial {
+  id           String   @id @default(cuid())
+  customerName String
+  photoUrl     String?
+  rating       Int      @default(5)
+  text         String
+  serviceRef   String?
+  location     String?
+  isApproved   Boolean  @default(false)
+  isFeatured   Boolean  @default(false)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Announcements (two scrolling bars)
+// ---------------------------------------------------------------------------
+
+model Announcement {
+  id              String   @id @default(cuid())
+  title           String?
+  text            String
+  textColor       String   @default("#FFFFFF")
+  gradientColor   String?
+  backgroundColor String   @default("#4C1D95")
+  fontSize        Int      @default(16)
+  fontStyle       String?
+  speed           Int      @default(30)
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Homepage sections & CMS
+// ---------------------------------------------------------------------------
+
+model HomepageSection {
+  id         String   @id @default(cuid())
+  sectionKey String   @unique
+  title      String?
+  subtitle   String?
+  content    Json?
+  settings   Json?
+  isVisible  Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ThemeSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SeoSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String   @unique
+  url       String
+  icon      String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LegalPage {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  content       String
+  seoTitle      String?
+  seoDescription String?
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Contact / Enquiries
+// ---------------------------------------------------------------------------
+
+model ContactMessage {
+  id              String        @id @default(cuid())
+  name            String
+  phone           String
+  whatsappNumber  String?
+  serviceInterest String?
+  message         String?
+  preferredDate   String?
+  preferredTime   String?
+  status          RequestStatus @default(NEW)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
