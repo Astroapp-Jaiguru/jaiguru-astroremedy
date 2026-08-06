@@ -88,7 +88,7 @@ export async function Hero() {
       />
       <Mandala />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-16 sm:px-6 lg:min-h-[720px] lg:grid-cols-[55fr_45fr] lg:gap-10 lg:px-8 lg:pb-24 lg:pt-20">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-8 sm:px-6 lg:min-h-[720px] lg:grid-cols-[55fr_45fr] lg:gap-10 lg:px-8 lg:pb-24 lg:pt-12">
         {/* Left: content */}
         <div className="text-center lg:text-left">
           <span className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-golden">
