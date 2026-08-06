@@ -64,11 +64,11 @@ h1, h2, h3, h4, h5, h6,
 .font-display {
   font-family: var(--jaiguru-heading-font, var(--font-playfair)) !important;
 }
-main section {
+main section:not(.bg-hero-gradient) {
   padding-top: var(--jaiguru-section-spacing) !important;
   padding-bottom: var(--jaiguru-section-spacing) !important;
 }
-main section:first-child {
+main section:not(.bg-hero-gradient):first-child {
   padding-top: calc(var(--jaiguru-section-spacing) * 1.25) !important;
 }
 `;
