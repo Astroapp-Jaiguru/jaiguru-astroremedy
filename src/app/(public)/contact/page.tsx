@@ -183,6 +183,10 @@ export default async function ContactPage() {
                       </span>
                     </span>
                   </p>
+                  <p className="text-xs text-slate-400">
+                    ASTRO GEMS is a registered MSME enterprise under the
+                    Government of India.
+                  </p>
                   <p className="flex items-start gap-3">
                     <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
                     <span>{contact.businessHours}</span>

@@ -183,6 +183,55 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Corporate / legal information */}
+      <section className="py-10 sm:py-14">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Transparency"
+            title="Corporate / Legal"
+            highlight="Information"
+            subtitle="Official registration details of ASTRO GEMS as a registered enterprise."
+          />
+          <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur">
+            <dl className="divide-y divide-white/10">
+              <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <dt className="text-sm text-slate-400">Registered Trade Name</dt>
+                <dd className="font-semibold text-white">ASTRO GEMS</dd>
+              </div>
+              <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <dt className="text-sm text-slate-400">Legal Proprietor</dt>
+                <dd className="font-semibold text-white">
+                  Arup Kar (Astrologer Arup Shastri)
+                </dd>
+              </div>
+              <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <dt className="text-sm text-slate-400">Registered Office</dt>
+                <dd className="font-semibold text-white">
+                  11/1 B, Amar Bose Sarani, Kolkata - 700007
+                </dd>
+              </div>
+              <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <dt className="text-sm text-slate-400">MSME / Udyam Registration No.</dt>
+                <dd className="font-semibold text-[#FACC15]">
+                  UDYAM-WB-10-0215773
+                </dd>
+              </div>
+              <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                <dt className="text-sm text-slate-400">KMC Trade License</dt>
+                <dd className="inline-flex items-center gap-1.5 font-semibold text-[#25D366]">
+                  <ShieldCheck className="h-4 w-4" /> Active
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-5 border-t border-[#D4AF37]/30 pt-4 text-xs leading-relaxed text-slate-400">
+              ASTRO GEMS is a registered MSME enterprise under the Government of
+              India. All products and services are provided under the legal
+              ownership of Arup Kar.
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

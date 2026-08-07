@@ -50,7 +50,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       name: service.name,
       mode: SERVICE_MODE_LABELS[service.mode],
       price: priceLabel,
-      url: `https://jaiguruastroremedy.in/services/${service.slug}`,
+      url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
     },
     contact.upiId
   );
