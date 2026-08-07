@@ -15,6 +15,7 @@ import { WhatsappIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { siteConfig } from "@/config/site";
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import type { ReactElement } from "react";
 
 /**
@@ -114,19 +115,21 @@ export function ConsultationCards(): ReactElement {
       className="scroll-mt-24 py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Expert Consultations"
-          title="Begin Your Spiritual"
-          highlight="Journey"
-          subtitle="Personalised astrological guidance by Vedic Astrologer Arup Shastri (Jai Guru) — online or at our chamber in Kolkata."
-        />
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Expert Consultations"
+            title="Begin Your Spiritual"
+            highlight="Journey"
+            subtitle="Personalised astrological guidance by Vedic Astrologer Arup Shastri (Jai Guru) — online or at our chamber in Kolkata."
+          />
+        </Reveal>
+        <RevealGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {CARDS.map((card) => {
             const Icon = card.icon;
             const waMessage = whatsappLink(consultationMessage(card.title), number);
             return (
+              <RevealItem key={card.title}>
               <div
-                key={card.title}
                 className="group relative flex flex-col overflow-hidden rounded-3xl border-2 border-[#D4AF37]/40 bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#4C1D95] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/80 hover:shadow-[0_16px_50px_rgba(212,175,55,0.18)]"
               >
                 <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#FACC15]/10 blur-2xl" />
@@ -157,9 +160,10 @@ export function ConsultationCards(): ReactElement {
                   </a>
                 </div>
               </div>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

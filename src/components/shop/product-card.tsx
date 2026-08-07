@@ -85,7 +85,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
   );
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--jaiguru-product-card-radius)] bg-white shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(76,29,149,0.45)]">
+    <article className="group flex flex-col overflow-hidden rounded-[28px] border border-white/60 bg-white/90 shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/60 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]">
       <div className="relative">
         {product.mainImage ? (
           <Image

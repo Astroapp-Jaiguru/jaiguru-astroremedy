@@ -11,6 +11,7 @@ import {
 import { whatsappLink, serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import type { ReactElement } from "react";
 
 /**
@@ -53,7 +54,7 @@ function ServiceCard({
   );
   const GroupIcon = group.slug.includes("yoga") ? GraduationCap : BookOpen;
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[var(--jaiguru-service-card-radius)] bg-gradient-to-b from-white to-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(76,29,149,0.45)]">
+    <article className="group flex flex-col overflow-hidden rounded-[28px] border border-white/10 bg-white/90 shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/60 hover:shadow-[0_18px_50px_rgba(250,204,21,0.22)]">
       <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-gradient-to-br from-[#0F172A] via-[#312E81] to-[#4C1D95]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(250,204,21,0.2),transparent_55%)]" />
         <GroupIcon className="h-14 w-14 text-[#FACC15]/70 drop-shadow-[0_0_18px_rgba(250,204,21,0.4)]" />
@@ -112,13 +113,15 @@ export async function FeaturedServices(): Promise<ReactElement> {
       className="scroll-mt-24 py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Courses & Services"
-          title="Featured"
-          highlight="Services"
-          subtitle="Learn Vedic Astrology and Yoga directly from Jai Guru — online, offline and personal home guidance."
-        />
-        <div className="flex flex-col gap-16">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Courses & Services"
+            title="Featured"
+            highlight="Services"
+            subtitle="Learn Vedic Astrology and Yoga directly from Jai Guru — online, offline and personal home guidance."
+          />
+        </Reveal>
+        <RevealGroup className="flex flex-col gap-16">
           {groups.map((group) => (
             <div key={group.slug}>
               <div className="mb-8 flex items-center gap-4">
@@ -132,19 +135,20 @@ export async function FeaturedServices(): Promise<ReactElement> {
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {group.services.map((service) => (
-                  <ServiceCard
-                    key={service.id}
-                    service={service}
-                    group={group}
-                    number={number}
-                    upiId={upiId}
-                  />
+                  <RevealItem key={service.id}>
+                    <ServiceCard
+                      service={service}
+                      group={group}
+                      number={number}
+                      upiId={upiId}
+                    />
+                  </RevealItem>
                 ))}
               </div>
             </div>
           ))}
-        </div>
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-4">
+        </RevealGroup>
+        <Reveal className="mt-14 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/services"
             className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#4C1D95] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(76,29,149,0.45)] transition hover:bg-[#3B0F82]"
@@ -157,7 +161,7 @@ export async function FeaturedServices(): Promise<ReactElement> {
           >
             Join Astrology Course
           </Link>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

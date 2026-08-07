@@ -7,6 +7,8 @@ import {
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { siteConfig, whatsappLink } from "@/config/site";
+import { Starfield } from "@/components/motion/starfield";
+import { Reveal } from "@/components/motion/reveal";
 
 const FLOATING_ICONS: Record<string, LucideIcon> = {
   receipt: Receipt,
@@ -87,16 +89,19 @@ export async function Hero() {
         aria-hidden="true"
       />
       <Mandala />
+      <div className="glow-aurora-emerald absolute inset-0" aria-hidden="true" />
+      <div className="glow-aurora-violet absolute inset-0" aria-hidden="true" />
+      <Starfield count={18} />
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-4 sm:px-6 lg:min-h-[720px] lg:grid-cols-[55fr_45fr] lg:items-start lg:gap-10 lg:px-8 lg:pb-24 lg:pt-4">
         {/* Left: content */}
-        <div className="text-center lg:text-left">
-          <span className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-golden">
+        <Reveal className="text-center lg:text-left">
+          <span className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-golden backdrop-blur-sm">
             <Star className="h-3.5 w-3.5" />
             {hero.badge}
           </span>
 
-          <h1 className="mt-6 font-heading text-[clamp(2.125rem,1rem+3.2vw,4.25rem)] font-bold leading-[1.08] text-white">
+          <h1 className="mt-6 font-heading text-[clamp(2.125rem,1rem+3.2vw,4.25rem)] font-bold leading-[1.08] text-white [text-shadow:0_2px_30px_rgba(250,204,21,0.25)]">
             {hero.headlineBefore}
             <span className="text-gold-gradient">{hero.headlineHighlight}</span>
             {hero.headlineAfter}
@@ -156,18 +161,18 @@ export async function Hero() {
               </span>
             ))}
           </div>
-        </div>
+        </Reveal>
 
         {/* Right: astrologer image + master image + floating cards */}
-        <div className="relative mx-auto w-full max-w-[420px] lg:max-w-[460px]">
+        <Reveal delay={0.15} className="relative mx-auto w-full max-w-[420px] lg:max-w-[460px]">
           {/* Floating cards (desktop) */}
-          <div className="absolute -left-6 top-16 z-20 hidden lg:block">
+          <div className="absolute -left-6 top-16 z-20 hidden animate-float lg:block">
             <FloatingCard icon="receipt" label="Consultation" value="₹700" />
           </div>
-          <div className="absolute -left-8 bottom-44 z-20 hidden lg:block">
+          <div className="absolute -left-8 bottom-44 z-20 hidden animate-float-slow lg:block">
             <FloatingCard icon="store" label="Kolkata Chamber" value="Sovabazar" />
           </div>
-          <div className="absolute -right-4 bottom-14 z-20 hidden lg:block">
+          <div className="absolute -right-4 bottom-14 z-20 hidden animate-float lg:block">
             <FloatingCard icon="whatsapp" label="WhatsApp Booking" value="Fast Response" />
           </div>
 
@@ -228,20 +233,20 @@ export async function Hero() {
                 card && (
                   <div
                     key={card.label}
-                    className="rounded-[18px] border border-golden/20 bg-white/95 px-2 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.18)]"
+                    className="glass-frost rounded-[18px] px-2 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
                   >
                     <FloatingIcon name={card.icon} />
-                    <p className="mt-1.5 text-[10px] font-medium text-deep-navy">
+                    <p className="mt-1.5 text-[10px] font-semibold text-white">
                       {card.label}
                     </p>
-                    <p className="text-[12px] font-bold text-royal-purple">
+                    <p className="text-[12px] font-bold text-golden">
                       {card.value}
                     </p>
                   </div>
                 )
             )}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -275,15 +280,15 @@ function FloatingCard({
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-[18px] border border-golden/25 bg-white/95 px-4 py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-golden/15">
+    <div className="glass-frost flex items-center gap-2.5 rounded-[18px] px-4 py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-golden/20">
         <FloatingIcon name={icon} />
       </span>
       <span>
-        <span className="block text-[11px] font-medium text-deep-navy">
+        <span className="block text-[11px] font-semibold text-white/90">
           {label}
         </span>
-        <span className="block text-[13px] font-bold text-royal-purple">
+        <span className="block text-[13px] font-bold text-golden">
           {value}
         </span>
       </span>

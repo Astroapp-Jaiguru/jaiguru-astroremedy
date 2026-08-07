@@ -131,3 +131,22 @@ export async function deleteYoutubeVideoAction(
     return { ok: false };
   }
 }
+
+export async function toggleYoutubeFeaturedAction(
+  id: string,
+  isFeatured: boolean
+): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  try {
+    await prisma.youtubeVideo.update({
+      where: { id },
+      data: { isFeatured },
+    });
+    revalidatePath("/");
+    revalidatePath("/youtube-gallery");
+    return { ok: true };
+  } catch (e) {
+    console.error("[admin] toggleYoutubeFeatured failed:", e);
+    return { ok: false };
+  }
+}

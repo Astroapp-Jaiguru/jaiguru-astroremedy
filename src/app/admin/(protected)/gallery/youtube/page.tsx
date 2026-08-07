@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/prisma";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { YoutubeFeaturedToggle } from "@/components/admin/youtube-featured-toggle";
 import { deleteYoutubeVideoAction } from "@/lib/admin/youtube/actions";
 
 export const dynamic = "force-dynamic";
@@ -64,10 +65,18 @@ export default async function AdminYoutubePage() {
                     {v.isActive ? "Live" : "Hidden"}
                   </Badge>
                 </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {v.isFeatured ? (
+                    <Badge variant="outline" className="gap-1 border-amber-500/50 text-amber-500">
+                      <Star className="h-3 w-3 fill-current" /> Featured
+                    </Badge>
+                  ) : null}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   youtube.com/watch?v={v.youtubeId}
                 </p>
-                <div className="flex justify-end gap-2 pt-1">
+                <div className="flex flex-wrap justify-end gap-2 pt-1">
+                  <YoutubeFeaturedToggle id={v.id} isFeatured={v.isFeatured} />
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/admin/gallery/youtube/${v.id}/edit`}>Edit</Link>
                   </Button>

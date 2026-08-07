@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { MediaModal } from "@/components/gallery/media-modal";
+import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import type { YoutubeData } from "@/lib/gallery-data";
 
 /**
@@ -23,11 +24,11 @@ export function YoutubeGalleryClient({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {videos.map((v) => (
+          <RevealItem key={v.id}>
           <article
-            key={v.id}
-            className="group relative flex flex-col overflow-hidden rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] glass-frost-dark transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/80 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]"
           >
             <button
               type="button"
@@ -44,7 +45,7 @@ export function YoutubeGalleryClient({
                 className="object-cover transition duration-500 group-hover:scale-105"
               />
               <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/10">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FF0000] shadow-lg shadow-[#FF0000]/40 transition group-hover:scale-110">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FF0000] shadow-lg shadow-[#FF0000]/50 transition group-hover:scale-110 group-hover:shadow-[#FF0000]/70">
                   <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white">
                     <path d="M8 5v14l11-7z" />
                   </svg>
@@ -56,19 +57,20 @@ export function YoutubeGalleryClient({
                 {v.title}
               </h3>
               {v.description ? (
-                <p className="line-clamp-2 text-sm leading-relaxed text-slate-400">
+                <p className="line-clamp-2 text-sm leading-relaxed text-slate-300">
                   {v.description}
                 </p>
               ) : null}
               {v.category ? (
-                <p className="mt-auto pt-2 text-xs font-semibold uppercase tracking-wider text-[#D4AF37]">
+                <p className="mt-auto pt-2 text-xs font-semibold uppercase tracking-wider text-golden">
                   {v.category}
                 </p>
               ) : null}
             </div>
           </article>
+          </RevealItem>
         ))}
-      </div>
+      </RevealGroup>
 
       <MediaModal open={active !== null} onClose={() => setActiveId(null)}>
         {active ? (

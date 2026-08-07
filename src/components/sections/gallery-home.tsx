@@ -5,6 +5,7 @@ import { YoutubeIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { getGalleryCounts } from "@/lib/shop-data";
 import { getHomeGalleryPreviews } from "@/lib/gallery-data";
+import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import type { ReactElement } from "react";
 
 /**
@@ -65,17 +66,20 @@ export async function GalleryHome(): Promise<ReactElement> {
       className="scroll-mt-24 py-20"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          eyebrow="Media & Moments"
-          title="Explore Our"
-          highlight="Gallery"
-          subtitle="Live streams, photos and videos from poojas, courses, sessions and remedies performed at the chamber."
-        />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Media & Moments"
+            title="Explore Our"
+            highlight="Gallery"
+            subtitle="Live streams, photos and videos from poojas, courses, sessions and remedies performed at the chamber."
+          />
+        </Reveal>
+        <RevealGroup className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {tiles.map((tile) => {
             const Icon = tile.icon;
             const filled = tile.count > 0;
             return (
+              <RevealItem key={tile.title}>
               <Link
                 key={tile.title}
                 href={tile.href}
@@ -144,9 +148,10 @@ export async function GalleryHome(): Promise<ReactElement> {
                   {filled ? "View Gallery" : "Coming Soon"}
                 </span>
               </Link>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

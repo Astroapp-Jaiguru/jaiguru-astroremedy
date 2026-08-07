@@ -108,7 +108,7 @@ export const getHomeGalleryPreviews = cache(async () => {
         take: 4,
       }),
       prisma.youtubeVideo.findMany({
-        where: { isActive: true },
+        where: { isActive: true, isFeatured: true },
         orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
         take: 4,
       }),

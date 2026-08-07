@@ -10,7 +10,7 @@ import { WhatsappIcon } from "@/components/layout/social-icons";
 
 function ctaBase(className?: string) {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-[var(--jaiguru-btn-radius)] font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-golden",
+    "inline-flex items-center justify-center gap-2 rounded-[var(--jaiguru-btn-radius)] font-semibold transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-golden",
     className
   );
 }
@@ -44,7 +44,7 @@ export function WhatsAppButton({
       aria-label={label ?? "WhatsApp"}
       className={ctaBase(
         cn(
-          "bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[#1eb957] hover:shadow-[0_12px_36px_rgba(37,211,102,0.45)]",
+          "btn-glow-whatsapp bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[#1eb957] hover:shadow-[0_12px_36px_rgba(37,211,102,0.5)]",
           sizes[size],
           iconOnly && "px-0",
           className
@@ -83,8 +83,8 @@ export function CallButton({
       className={ctaBase(
         cn(
           variant === "purple"
-            ? "bg-royal-purple text-white hover:bg-indigo-deep"
-            : "bg-golden text-dark-text hover:bg-premium-gold",
+            ? "btn-glow-purple bg-royal-purple text-white hover:bg-indigo-deep"
+            : "btn-glow-gold bg-golden text-dark-text hover:bg-premium-gold",
           sizes[size],
           iconOnly && "px-0",
           className
