@@ -231,7 +231,7 @@ export async function Hero() {
                     className="rounded-[18px] border border-golden/20 bg-white/95 px-2 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.18)]"
                   >
                     <FloatingIcon name={card.icon} />
-                    <p className="mt-1.5 text-[10px] font-medium text-muted-text">
+                    <p className="mt-1.5 text-[10px] font-medium text-deep-navy">
                       {card.label}
                     </p>
                     <p className="text-[12px] font-bold text-royal-purple">
@@ -280,7 +280,7 @@ function FloatingCard({
         <FloatingIcon name={icon} />
       </span>
       <span>
-        <span className="block text-[11px] font-medium text-muted-text">
+        <span className="block text-[11px] font-medium text-deep-navy">
           {label}
         </span>
         <span className="block text-[13px] font-bold text-royal-purple">

@@ -155,7 +155,7 @@ export async function SiteFooter() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-center text-[13px] text-white/60 sm:flex-row sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 pb-24 pt-5 text-center text-[13px] text-white/60 sm:flex-row sm:px-6 lg:px-8 lg:pb-5">
           <div className="flex flex-col items-center gap-1 sm:items-start">
             {[data.footer.copyright, data.footer.ownedBy, data.footer.registered]
               .filter((line) => line && line.trim())
