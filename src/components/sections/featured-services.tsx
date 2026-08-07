@@ -9,7 +9,8 @@ import {
   type FeaturedService,
 } from "@/lib/shop-data";
 import { whatsappLink, serviceBookingMessage } from "@/config/site";
-import { siteConfig } from "@/config/site";
+import { getSiteData } from "@/lib/site-data";
+import { PaymentButton } from "@/components/shop/payment-button";
 import type { ReactElement } from "react";
 
 /**
@@ -29,20 +30,25 @@ function ServiceCard({
   service,
   group,
   number,
+  upiId,
 }: {
   service: FeaturedService;
   group: ServiceGroup;
   number: string;
+  upiId: string;
 }) {
   const { label, Icon } = modeBadge(service.mode);
   const price = service.priceLabel ?? formatPrice(service.price);
   const waMessage = whatsappLink(
-    serviceBookingMessage({
-      name: service.name,
-      mode: label,
-      price,
-      url: `/services/${service.slug}`,
-    }),
+    serviceBookingMessage(
+      {
+        name: service.name,
+        mode: label,
+        price,
+        url: `/services/${service.slug}`,
+      },
+      upiId
+    ),
     number
   );
   const GroupIcon = group.slug.includes("yoga") ? GraduationCap : BookOpen;
@@ -72,15 +78,17 @@ function ServiceCard({
           <div className="whitespace-nowrap">
             <span className="text-xl font-bold text-[#4C1D95]">{price}</span>
           </div>
-          <a
-            href={waMessage}
-            target="_blank"
-            rel="noopener noreferrer"
+          <PaymentButton
+            label="Book"
+            icon={<WhatsappIcon className="h-3.5 w-3.5" />}
             className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-[#1EBE5B]"
-          >
-            <WhatsappIcon className="h-3.5 w-3.5" />
-            Book
-          </a>
+            itemName={service.name}
+            priceLabel={price}
+            price={service.price}
+            upiId={upiId}
+            whatsappNumber={number}
+            whatsappMessage={waMessage}
+          />
         </div>
       </div>
     </article>
@@ -88,10 +96,14 @@ function ServiceCard({
 }
 
 export async function FeaturedServices(): Promise<ReactElement> {
-  const groups = await getFeaturedServices();
+  const [groups, { contact }] = await Promise.all([
+    getFeaturedServices(),
+    getSiteData(),
+  ]);
   if (groups.length === 0) return <></>;
 
-  const number = siteConfig.contact.whatsappNumber;
+  const number = contact.whatsappNumber;
+  const upiId = contact.upiId;
 
   return (
     <section
@@ -125,6 +137,7 @@ export async function FeaturedServices(): Promise<ReactElement> {
                     service={service}
                     group={group}
                     number={number}
+                    upiId={upiId}
                   />
                 ))}
               </div>

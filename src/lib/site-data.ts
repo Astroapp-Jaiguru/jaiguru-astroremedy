@@ -112,6 +112,7 @@ export const defaultSiteData = {
     landmark: siteConfig.chamber.landmark,
     businessHours: "Mon - Sat: 10:00 AM - 8:00 PM | Sun: By Appointment",
     consultationFee: siteConfig.consultation.astrologyFee,
+    upiId: siteConfig.contact.upiId,
   },
   footer: {
     about:

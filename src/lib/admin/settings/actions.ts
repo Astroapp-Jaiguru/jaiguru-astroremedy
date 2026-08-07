@@ -270,6 +270,7 @@ export async function saveContactAction(
     landmark: str(fd, "landmark"),
     businessHours: str(fd, "businessHours"),
     consultationFee: int(fd, "consultationFee", 700),
+    upiId: str(fd, "upiId"),
   };
   try {
     await prisma.siteSetting.upsert({

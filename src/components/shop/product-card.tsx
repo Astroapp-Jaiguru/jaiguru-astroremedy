@@ -4,8 +4,9 @@ import { BadgeCheck, Flame, TrendingUp } from "lucide-react";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { formatPrice } from "@/lib/shop-data";
-import { whatsappLink, productOrderMessage } from "@/config/site";
-import { siteConfig } from "@/config/site";
+import { productOrderMessage } from "@/config/site";
+import { getSiteData } from "@/lib/site-data";
+import { PaymentButton } from "@/components/shop/payment-button";
 
 /**
  * Shared premium product card used on the homepage (featured) and the
@@ -67,18 +68,20 @@ function ProductImagePlaceholder({ product }: { product: ProductCardData }) {
   );
 }
 
-export function ProductCard({ product }: { product: ProductCardData }) {
+export async function ProductCard({ product }: { product: ProductCardData }) {
   const hasDiscount =
     product.discountPrice &&
     Number.parseFloat(product.discountPrice) < Number.parseFloat(product.price);
-  const waMessage = whatsappLink(
-    productOrderMessage({
+  const { contact } = await getSiteData();
+  const orderPrice = product.discountPrice ?? product.price;
+  const message = productOrderMessage(
+    {
       name: product.name,
       category: product.category?.name ?? null,
-      price: product.discountPrice ?? product.price,
+      price: orderPrice,
       url: `/products/${product.slug}`,
-    }),
-    siteConfig.contact.whatsappNumber
+    },
+    contact.upiId
   );
 
   return (
@@ -137,15 +140,17 @@ export function ProductCard({ product }: { product: ProductCardData }) {
           ) : null}
         </div>
         <div className="mt-auto flex gap-2 pt-2">
-          <a
-            href={waMessage}
-            target="_blank"
-            rel="noopener noreferrer"
+          <PaymentButton
+            label="Order"
+            icon={<WhatsappIcon className="h-3.5 w-3.5" />}
             className="inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-3 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-[#1EBE5B]"
-          >
-            <WhatsappIcon className="h-3.5 w-3.5" />
-            Order
-          </a>
+            itemName={product.name}
+            priceLabel={formatPrice(orderPrice)}
+            price={orderPrice}
+            upiId={contact.upiId}
+            whatsappNumber={contact.whatsappNumber}
+            whatsappMessage={message}
+          />
           <Link
             href={`/products/${product.slug}`}
             className="inline-flex flex-1 items-center justify-center whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] border-2 border-[#4C1D95] px-3 py-2.5 text-xs font-semibold text-[#4C1D95] transition hover:bg-[#4C1D95] hover:text-white"

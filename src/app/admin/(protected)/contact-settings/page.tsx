@@ -17,6 +17,7 @@ export default async function ContactSettingsPage() {
     landmark: siteConfig.chamber.landmark,
     businessHours: "Mon - Sat: 10:00 AM - 8:00 PM | Sun: By Appointment",
     consultationFee: siteConfig.consultation.astrologyFee,
+    upiId: siteConfig.contact.upiId,
   };
   try {
     const row = await prisma.siteSetting.findUnique({
@@ -41,6 +42,7 @@ export default async function ContactSettingsPage() {
       landmark: s(v.landmark, values.landmark),
       businessHours: s(v.businessHours, values.businessHours),
       consultationFee: n(v.consultationFee, values.consultationFee),
+      upiId: s(v.upiId, values.upiId),
     };
   } catch {
     // DB unreachable - use design defaults.

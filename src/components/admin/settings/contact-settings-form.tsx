@@ -28,6 +28,7 @@ export interface ContactFormValues {
   landmark: string;
   businessHours: string;
   consultationFee: number;
+  upiId: string;
 }
 
 export function ContactSettingsForm({ initial }: { initial: ContactFormValues }) {
@@ -107,6 +108,20 @@ export function ContactSettingsForm({ initial }: { initial: ContactFormValues })
                 defaultValue={initial.bookingLabel}
                 placeholder="Booking / Query"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="upiId">UPI ID</Label>
+              <Input
+                id="upiId"
+                name="upiId"
+                defaultValue={initial.upiId}
+                placeholder="9836125780@ibl"
+              />
+              <p className="text-xs text-muted-foreground">
+                Shown inside the payment popup (PhonePe / Google Pay link, text
+                and QR) on all product &quot;Order&quot; and service
+                &quot;Book&quot; buttons.
+              </p>
             </div>
           </CardContent>
         </Card>

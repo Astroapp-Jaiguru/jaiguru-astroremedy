@@ -14,7 +14,9 @@ import Image from "next/image";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getServiceBySlug, SERVICE_MODE_LABELS } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
-import { serviceBookingMessage, whatsappLink } from "@/config/site";
+import { serviceBookingMessage } from "@/config/site";
+import { getSiteData } from "@/lib/site-data";
+import { PaymentButton } from "@/components/shop/payment-button";
 
 export const dynamic = "force-dynamic";
 
@@ -39,13 +41,18 @@ export default async function ServiceDetailPage({ params }: Props) {
   const service = await getServiceBySlug(slug);
   if (!service) notFound();
 
-  const waHref = whatsappLink(
-    serviceBookingMessage({
+  const { contact } = await getSiteData();
+  const priceLabel =
+    service.priceLabel ??
+    (service.price ? formatPrice(service.price) : "On Request");
+  const bookingMessage = serviceBookingMessage(
+    {
       name: service.name,
       mode: SERVICE_MODE_LABELS[service.mode],
-      price: service.priceLabel ?? service.price,
+      price: priceLabel,
       url: `https://jaiguruastroremedy.in/services/${service.slug}`,
-    })
+    },
+    contact.upiId
   );
 
   return (
@@ -158,8 +165,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 Service Price
               </p>
               <p className="mt-2 font-display text-3xl font-bold text-[#FACC15]">
-                {service.priceLabel ??
-                  (service.price ? formatPrice(service.price) : "On Request")}
+                {priceLabel}
               </p>
               <dl className="mt-5 space-y-3 text-sm">
                 <div className="flex items-center gap-3 text-slate-300">
@@ -180,15 +186,17 @@ export default async function ServiceDetailPage({ params }: Props) {
                   </div>
                 ) : null}
               </dl>
-              <a
-                href={waHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#25D366]/25 transition hover:bg-[#1EBE5B]"
-              >
-                <WhatsappIcon className="h-4 w-4" />
-                Book on WhatsApp
-              </a>
+              <PaymentButton
+                label="Book on WhatsApp"
+                icon={<WhatsappIcon className="h-4 w-4" />}
+                className="mt-6 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#25D366]/25 transition hover:bg-[#1EBE5B]"
+                itemName={service.name}
+                priceLabel={priceLabel}
+                price={service.price ?? priceLabel}
+                upiId={contact.upiId}
+                whatsappNumber={contact.whatsappNumber}
+                whatsappMessage={bookingMessage}
+              />
             </div>
 
             {service.related.length > 0 ? (

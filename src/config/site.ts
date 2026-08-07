@@ -42,6 +42,7 @@ export const siteConfig = {
     callDisplay: "+91 98361 25780",
     bookingLabel: "Booking / Query",
     email: "",
+    upiId: "9836125780@ibl",
   },
   chamber: {
     address: "51/A, Jatindra Mohan Avenue, Kolkata - 700005",
@@ -91,12 +92,15 @@ export function whatsappLink(message: string, number?: string): string {
 export const telLink = (number: string) => `tel:${number.replace(/\s/g, "")}`;
 
 /** Default product order message (scope section 17). */
-export function productOrderMessage(product: {
-  name: string;
-  category?: string | null;
-  price?: string | number;
-  url: string;
-}): string {
+export function productOrderMessage(
+  product: {
+    name: string;
+    category?: string | null;
+    price?: string | number;
+    url: string;
+  },
+  upiId: string = siteConfig.contact.upiId
+): string {
   return [
     "Hello JAIGURU ASTROREMEDY,",
     "",
@@ -110,8 +114,9 @@ export function productOrderMessage(product: {
     "Please confirm availability.",
     "",
     "Payment Option:",
-    "I can pay through PhonePe/UPI.",
-    "UPI ID: [To be updated later]",
+    "I can pay through PhonePe/Google Pay/UPI.",
+    `UPI ID: ${upiId}`,
+    "I will share the payment screenshot after paying.",
     "",
     "My Name:",
     "My Address:",
@@ -119,12 +124,15 @@ export function productOrderMessage(product: {
 }
 
 /** Default service booking message (scope section 17). */
-export function serviceBookingMessage(service: {
-  name: string;
-  mode: string;
-  price?: string | number;
-  url: string;
-}): string {
+export function serviceBookingMessage(
+  service: {
+    name: string;
+    mode: string;
+    price?: string | number;
+    url: string;
+  },
+  upiId: string = siteConfig.contact.upiId
+): string {
   return [
     "Hello JAIGURU ASTROREMEDY,",
     "",
@@ -138,8 +146,9 @@ export function serviceBookingMessage(service: {
     "Please confirm available timing.",
     "",
     "Payment Option:",
-    "I can pay through PhonePe/UPI.",
-    "UPI ID: [To be updated later]",
+    "I can pay through PhonePe/Google Pay/UPI.",
+    `UPI ID: ${upiId}`,
+    "I will share the payment screenshot after paying.",
     "",
     "My Name:",
     "Preferred Date:",

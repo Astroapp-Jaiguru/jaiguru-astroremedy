@@ -7,7 +7,9 @@ import { prisma } from "@/lib/prisma";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
 import { formatPrice } from "@/lib/shop-data";
-import { whatsappLink, productOrderMessage } from "@/config/site";
+import { productOrderMessage } from "@/config/site";
+import { getSiteData } from "@/lib/site-data";
+import { PaymentButton } from "@/components/shop/payment-button";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 
 /**
@@ -45,13 +47,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
     Number.parseFloat(product.discountPrice.toString()) <
       Number.parseFloat(product.price.toString());
   const price = product.discountPrice ?? product.price;
-  const waMessage = whatsappLink(
-    productOrderMessage({
+  const { contact } = await getSiteData();
+  const orderMessage = productOrderMessage(
+    {
       name: product.name,
       category: product.category?.name ?? null,
       price: price.toString(),
       url: `/products/${product.slug}`,
-    })
+    },
+    contact.upiId
   );
 
   const related = await prisma.product.findMany({
@@ -239,15 +243,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </dl>
             ) : null}
 
-            <a
-              href={waMessage}
-              target="_blank"
-              rel="noopener noreferrer"
+            <PaymentButton
+              label="Order on WhatsApp"
+              icon={<WhatsappIcon className="h-5 w-5" />}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
-            >
-              <WhatsappIcon className="h-5 w-5" />
-              Order on WhatsApp
-            </a>
+              itemName={product.name}
+              priceLabel={formatPrice(price)}
+              price={price.toString()}
+              upiId={contact.upiId}
+              whatsappNumber={contact.whatsappNumber}
+              whatsappMessage={orderMessage}
+            />
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with
               availability, shipping and payment via UPI.
