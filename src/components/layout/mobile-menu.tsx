@@ -37,7 +37,7 @@ export function MobileMenu({
         <button
           type="button"
           aria-label="Open menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-golden/40 bg-white text-royal-purple shadow-sm transition-colors hover:bg-golden/10 xl:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-golden/40 bg-white text-royal-purple shadow-sm transition-colors hover:bg-golden/10 xl:hidden sm:h-11 sm:w-11"
         >
           <Menu className="h-5 w-5" />
         </button>

@@ -28,14 +28,14 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-40">
       <div className="glass-header">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:gap-6 sm:px-6 lg:h-[88px] lg:gap-8 lg:px-8 2xl:max-w-[1520px]">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[72px] sm:gap-4 sm:px-6 xl:h-[88px] xl:gap-8 xl:px-8 2xl:max-w-[1520px]">
           {/* Brand */}
-          <Link href="/" className="flex min-w-0 items-center gap-3 lg:gap-4">
-            <span className="relative flex h-[44px] w-[44px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-2xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20 lg:h-[52px] lg:w-[52px] lg:text-3xl">
+          <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3 xl:gap-4">
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20 sm:h-11 sm:w-11 sm:text-2xl xl:h-[52px] xl:w-[52px] xl:text-3xl">
               <span aria-hidden="true">ॐ</span>
             </span>
             <span className="min-w-0">
-              <span className="block truncate font-heading text-[20px] font-bold leading-tight tracking-tight text-royal-purple lg:text-[26px]">
+              <span className="block whitespace-nowrap font-heading text-base font-bold leading-tight tracking-tight text-royal-purple sm:text-lg xl:text-[26px]">
                 {branding.siteName}
               </span>
               <span className="hidden truncate text-[11px] font-medium text-muted-text lg:block lg:text-xs">
@@ -68,12 +68,13 @@ export function SiteHeader({
           </div>
 
           {/* Mobile menu */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2 xl:hidden">
             <WhatsAppButton
               href={whatsappHref}
               label="WhatsApp"
               size="sm"
-              className="h-10 px-3 text-sm"
+              className="h-9 gap-1 px-2 text-xs sm:h-10 sm:px-3 sm:text-sm"
+              labelClassName="hidden min-[400px]:inline"
             />
             <MobileMenu
               navItems={MAIN_NAV_ITEMS}

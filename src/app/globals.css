@@ -491,3 +491,35 @@
     will-change: opacity, transform;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Hard-coded mobile header enforcement (site-header.tsx).
+   Guarantees the brand name is never truncated and elements stay balanced on
+   narrow screens, independent of Tailwind class resolution.
+--------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  header .glass-header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  header .glass-header .max-w-7xl {
+    gap: 8px;
+  }
+  header .glass-header a[href="/"] > span:last-child {
+    min-width: 0;
+    overflow: visible;
+  }
+  header .glass-header a[href="/"] > span:last-child > span:first-child {
+    display: block;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 374px) {
+  header .glass-header a[href="/"] > span:last-child > span:first-child {
+    font-size: 13px;
+  }
+}
