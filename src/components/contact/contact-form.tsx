@@ -71,7 +71,7 @@ export function ContactForm({
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="name">Your Name *</Label>
+              <Label htmlFor="name" className="text-[var(--jaiguru-contact-label-color)]">Your Name *</Label>
               <Input
                 id="name"
                 name="name"
@@ -81,7 +81,7 @@ export function ContactForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number *</Label>
+              <Label htmlFor="phone" className="text-[var(--jaiguru-contact-label-color)]">Phone Number *</Label>
               <Input
                 id="phone"
                 name="phone"
@@ -95,7 +95,7 @@ export function ContactForm({
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="whatsappNumber">WhatsApp Number (optional)</Label>
+              <Label htmlFor="whatsappNumber" className="text-[var(--jaiguru-contact-label-color)]">WhatsApp Number (optional)</Label>
               <Input
                 id="whatsappNumber"
                 name="whatsappNumber"
@@ -105,7 +105,7 @@ export function ContactForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="serviceInterest">Service Interested In</Label>
+              <Label htmlFor="serviceInterest" className="text-[var(--jaiguru-contact-label-color)]">Service Interested In</Label>
               <select
                 id="serviceInterest"
                 name="serviceInterest"
@@ -124,7 +124,7 @@ export function ContactForm({
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="preferredDate">Preferred Date</Label>
+              <Label htmlFor="preferredDate" className="text-[var(--jaiguru-contact-label-color)]">Preferred Date</Label>
               <Input
                 id="preferredDate"
                 name="preferredDate"
@@ -133,7 +133,7 @@ export function ContactForm({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="preferredTime">Preferred Time</Label>
+              <Label htmlFor="preferredTime" className="text-[var(--jaiguru-contact-label-color)]">Preferred Time</Label>
               <Input
                 id="preferredTime"
                 name="preferredTime"
@@ -144,7 +144,7 @@ export function ContactForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Your Message</Label>
+            <Label htmlFor="message" className="text-[var(--jaiguru-contact-label-color)]">Your Message</Label>
             <Textarea
               id="message"
               name="message"

@@ -31,10 +31,9 @@ export const siteConfig = {
     foundedLine:
       "Astrologer Arup Shastri is the founder of ASTRO GEMS, a registered enterprise located in Kolkata and registered under the Kolkata Municipal Corporation.",
     copyrightLine:
-      "© 2026 Astrologer Arup Shastri. All rights reserved. Website owned and operated by ASTRO GEMS.",
-    ownedByLine: "jaiguruastroremedy.com is owned and operated by ASTRO GEMS.",
-    registeredLine:
-      "ASTRO GEMS is a registered enterprise under the Kolkata Municipal Corporation.",
+      "© 2026 Astrologer Arup Shastri. All rights reserved. jaiguruastroremedy.com is owned and operated by ASTRO GEMS, a registered enterprise under the Kolkata Municipal Corporation.",
+    ownedByLine: "",
+    registeredLine: "",
   },
   contact: {
     whatsappNumber: "919874886574",

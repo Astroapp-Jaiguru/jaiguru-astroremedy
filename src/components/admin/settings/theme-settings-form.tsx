@@ -310,6 +310,93 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
 
         <Card>
           <CardHeader>
+            <CardTitle className="text-lg">Section Colors</CardTitle>
+            <CardDescription>
+              Background and text colors for key sections: legal pages,
+              contact form fields and the 20+ years experience banner.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Legal Pages
+            </div>
+            <ColorField
+              label="Page Title Color"
+              name="legalTitleColor"
+              value={settings.legalTitleColor}
+              onChange={(v) => set("legalTitleColor", v)}
+            />
+            <ColorField
+              label="Breadcrumb Color"
+              name="legalBreadcrumbColor"
+              value={settings.legalBreadcrumbColor}
+              onChange={(v) => set("legalBreadcrumbColor", v)}
+            />
+            <ColorField
+              label="Content Card Background"
+              name="legalCardBackground"
+              value={settings.legalCardBackground}
+              onChange={(v) => set("legalCardBackground", v)}
+            />
+            <ColorField
+              label="Content Card Border"
+              name="legalCardBorder"
+              value={settings.legalCardBorder}
+              onChange={(v) => set("legalCardBorder", v)}
+            />
+            <ColorField
+              label="Body Text Color"
+              name="legalTextColor"
+              value={settings.legalTextColor}
+              onChange={(v) => set("legalTextColor", v)}
+            />
+            <ColorField
+              label="Heading Text Color"
+              name="legalHeadingColor"
+              value={settings.legalHeadingColor}
+              onChange={(v) => set("legalHeadingColor", v)}
+            />
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Contact Form
+            </div>
+            <ColorField
+              label="Form Card Background"
+              name="contactFormSurface"
+              value={settings.contactFormSurface}
+              onChange={(v) => set("contactFormSurface", v)}
+            />
+            <ColorField
+              label="Field Label Color"
+              name="contactFormLabelColor"
+              value={settings.contactFormLabelColor}
+              onChange={(v) => set("contactFormLabelColor", v)}
+            />
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Experience Banner
+            </div>
+            <ColorField
+              label="Banner Background"
+              name="experienceBannerBackground"
+              value={settings.experienceBannerBackground}
+              onChange={(v) => set("experienceBannerBackground", v)}
+            />
+            <ColorField
+              label="Banner Text Color"
+              name="experienceBannerTextColor"
+              value={settings.experienceBannerTextColor}
+              onChange={(v) => set("experienceBannerTextColor", v)}
+            />
+            <ColorField
+              label="Banner Border Color"
+              name="experienceBannerBorder"
+              value={settings.experienceBannerBorder}
+              onChange={(v) => set("experienceBannerBorder", v)}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle className="text-lg">Live Preview</CardTitle>
             <CardDescription>
               How the theme looks right now on the public website.

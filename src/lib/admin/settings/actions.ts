@@ -57,6 +57,17 @@ export async function saveThemeAction(
     sectionSpacing: int(fd, "sectionSpacing", 80),
     productCardRadius: int(fd, "productCardRadius", 16),
     serviceCardRadius: int(fd, "serviceCardRadius", 16),
+    legalTitleColor: hex(fd, "legalTitleColor", "#4C1D95"),
+    legalBreadcrumbColor: hex(fd, "legalBreadcrumbColor", "#111827"),
+    legalCardBackground: hex(fd, "legalCardBackground", "#FFFFFF"),
+    legalCardBorder: hex(fd, "legalCardBorder", "#D4AF37"),
+    legalTextColor: hex(fd, "legalTextColor", "#111827"),
+    legalHeadingColor: hex(fd, "legalHeadingColor", "#4C1D95"),
+    contactFormSurface: hex(fd, "contactFormSurface", "#1E1B4B"),
+    contactFormLabelColor: hex(fd, "contactFormLabelColor", "#FFFFFF"),
+    experienceBannerBackground: hex(fd, "experienceBannerBackground", "#FACC15"),
+    experienceBannerTextColor: hex(fd, "experienceBannerTextColor", "#111827"),
+    experienceBannerBorder: hex(fd, "experienceBannerBorder", "#D4AF37"),
   };
   try {
     await prisma.themeSetting.upsert({
@@ -86,6 +97,45 @@ export async function resetThemeAction(): Promise<SettingsFormState> {
     console.error("[admin] resetThemeAction failed:", e);
     return { error: "Could not reset theme settings." };
   }
+}
+
+// -------------------------------------------------------------------------
+// Footer settings (SiteSetting "footer")
+// -------------------------------------------------------------------------
+
+const FOOTER_KEY = "footer";
+
+export interface FooterSettings {
+  about: string;
+  ownedBy: string;
+  registered: string;
+  copyright: string;
+}
+
+export async function saveFooterAction(
+  _state: SettingsFormState | undefined,
+  fd: FormData
+): Promise<SettingsFormState> {
+  await requireAdmin();
+  const value: FooterSettings = {
+    about: str(fd, "about"),
+    ownedBy: str(fd, "ownedBy"),
+    registered: str(fd, "registered"),
+    copyright: str(fd, "copyright"),
+  };
+  if (!value.copyright) return { error: "Copyright line is required." };
+  try {
+    await prisma.siteSetting.upsert({
+      where: { key: FOOTER_KEY },
+      update: { value: value as never },
+      create: { key: FOOTER_KEY, value: value as never },
+    });
+  } catch (e) {
+    console.error("[admin] saveFooterAction failed:", e);
+    return { error: "Could not save footer settings. Please try again." };
+  }
+  revalidatePath("/");
+  return { success: true };
 }
 
 // -------------------------------------------------------------------------

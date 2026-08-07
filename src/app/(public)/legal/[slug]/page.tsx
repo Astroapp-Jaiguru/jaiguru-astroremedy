@@ -30,26 +30,29 @@ export default async function LegalPageDetail({ params }: Props) {
   return (
     <section className="scroll-mt-24 py-16 sm:py-20">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <nav className="mb-8 flex items-center gap-2 text-sm text-slate-400">
-          <Link href="/" className="transition hover:text-[#FACC15]">
+        <nav className="mb-8 flex items-center gap-2 text-sm text-[var(--jaiguru-legal-breadcrumb-color)]">
+          <Link
+            href="/"
+            className="font-medium text-[var(--jaiguru-legal-title-color)] transition hover:opacity-75"
+          >
             Home
           </Link>
-          <span>/</span>
-          <span className="text-slate-200">{page.title}</span>
+          <span aria-hidden="true">/</span>
+          <span className="font-semibold">{page.title}</span>
         </nav>
 
-        <h1 className="font-display text-3xl font-bold text-white sm:text-4xl">
+        <h1 className="font-display text-3xl font-bold text-[var(--jaiguru-legal-title-color)] sm:text-4xl">
           {page.title}
         </h1>
         <div className="mt-2 h-1 w-24 rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316]" />
 
-        <div className="mt-6 rounded-3xl border border-[#D4AF37]/20 bg-[#0F172A]/50 p-6 sm:p-10">
+        <div className="mt-6 rounded-3xl border-2 border-[var(--jaiguru-legal-card-border)] bg-[var(--jaiguru-legal-card-background)] p-6 text-[var(--jaiguru-legal-text-color)] shadow-[0_8px_30px_rgba(0,0,0,0.1)] sm:p-10">
           <Markdown content={page.content} />
         </div>
 
         <Link
           href="/contact"
-          className="mt-10 inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-[#FACC15]"
+          className="mt-10 inline-flex items-center gap-2 text-sm font-medium text-[var(--jaiguru-legal-title-color)] transition hover:opacity-75"
         >
           <ArrowLeft className="h-4 w-4" /> Questions? Contact us on WhatsApp
         </Link>

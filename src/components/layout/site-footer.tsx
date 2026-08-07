@@ -157,9 +157,11 @@ export async function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-center text-[13px] text-white/60 sm:flex-row sm:px-6 lg:px-8">
           <div className="flex flex-col items-center gap-1 sm:items-start">
-            <p>{data.footer.copyright}</p>
-            <p>{data.footer.ownedBy}</p>
-            <p>{data.footer.registered}</p>
+            {[data.footer.copyright, data.footer.ownedBy, data.footer.registered]
+              .filter((line) => line && line.trim())
+              .map((line) => (
+                <p key={line}>{line}</p>
+              ))}
           </div>
           <div className="flex max-w-full flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
             {legalPages.map((page) => (

@@ -748,6 +748,14 @@ async function main() {
       product: "",
       service: "",
     },
+    footer: {
+      about:
+        "Premium Vedic Astrology, Vastu, Numerology, Yoga and Spiritual Remedy guidance in Kolkata by Vedic Astrologer Arup Shastri (Jai Guru).",
+      ownedBy: "",
+      registered: "",
+      copyright:
+        "© 2026 Astrologer Arup Shastri. All rights reserved. jaiguruastroremedy.com is owned and operated by ASTRO GEMS, a registered enterprise under the Kolkata Municipal Corporation.",
+    },
   };
   for (const [key, value] of Object.entries(siteSettings)) {
     await prisma.siteSetting.upsert({

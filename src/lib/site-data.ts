@@ -118,7 +118,7 @@ export const defaultSiteData = {
       "Premium Vedic Astrology, Vastu, Numerology, Yoga and Spiritual Remedy guidance in Kolkata by Vedic Astrologer Arup Shastri (Jai Guru).",
     ownedBy: siteConfig.business.ownedByLine,
     registered: siteConfig.business.registeredLine,
-    copyright: `© ${new Date().getFullYear()} Astrologer Arup Shastri. All rights reserved. Website owned and operated by ASTRO GEMS.`,
+    copyright: siteConfig.business.copyrightLine,
   },
 } as const;
 
@@ -190,6 +190,10 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
     (settingsMap.get("contact") as DeepPartial<typeof defaultSiteData.contact>) ??
       {}
   );
+  const footer = deepMerge(
+    defaultSiteData.footer,
+    (settingsMap.get("footer") as DeepPartial<typeof defaultSiteData.footer>) ?? {}
+  );
 
   const socials: SocialLinkData[] = socialRows.length
     ? socialRows.map((r) => ({
@@ -222,7 +226,7 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
     branding,
     hero,
     contact,
-    footer: defaultSiteData.footer,
+    footer,
     socials,
     announcements,
   };

@@ -15,6 +15,17 @@ export interface ThemeSettings {
   sectionSpacing: number;
   productCardRadius: number;
   serviceCardRadius: number;
+  legalTitleColor: string;
+  legalBreadcrumbColor: string;
+  legalCardBackground: string;
+  legalCardBorder: string;
+  legalTextColor: string;
+  legalHeadingColor: string;
+  contactFormSurface: string;
+  contactFormLabelColor: string;
+  experienceBannerBackground: string;
+  experienceBannerTextColor: string;
+  experienceBannerBorder: string;
 }
 
 export const THEME_DEFAULTS: ThemeSettings = {
@@ -28,6 +39,17 @@ export const THEME_DEFAULTS: ThemeSettings = {
   sectionSpacing: 80,
   productCardRadius: 16,
   serviceCardRadius: 16,
+  legalTitleColor: "#4C1D95",
+  legalBreadcrumbColor: "#111827",
+  legalCardBackground: "#FFFFFF",
+  legalCardBorder: "#D4AF37",
+  legalTextColor: "#111827",
+  legalHeadingColor: "#4C1D95",
+  contactFormSurface: "#1E1B4B",
+  contactFormLabelColor: "#FFFFFF",
+  experienceBannerBackground: "#FACC15",
+  experienceBannerTextColor: "#111827",
+  experienceBannerBorder: "#D4AF37",
 };
 
 export const THEME_STORAGE_KEY = "theme";
@@ -97,6 +119,41 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
       THEME_DEFAULTS.serviceCardRadius,
       0,
       32
+    ),
+    legalTitleColor: hex(v.legalTitleColor, THEME_DEFAULTS.legalTitleColor),
+    legalBreadcrumbColor: hex(
+      v.legalBreadcrumbColor,
+      THEME_DEFAULTS.legalBreadcrumbColor
+    ),
+    legalCardBackground: hex(
+      v.legalCardBackground,
+      THEME_DEFAULTS.legalCardBackground
+    ),
+    legalCardBorder: hex(v.legalCardBorder, THEME_DEFAULTS.legalCardBorder),
+    legalTextColor: hex(v.legalTextColor, THEME_DEFAULTS.legalTextColor),
+    legalHeadingColor: hex(
+      v.legalHeadingColor,
+      THEME_DEFAULTS.legalHeadingColor
+    ),
+    contactFormSurface: hex(
+      v.contactFormSurface,
+      THEME_DEFAULTS.contactFormSurface
+    ),
+    contactFormLabelColor: hex(
+      v.contactFormLabelColor,
+      THEME_DEFAULTS.contactFormLabelColor
+    ),
+    experienceBannerBackground: hex(
+      v.experienceBannerBackground,
+      THEME_DEFAULTS.experienceBannerBackground
+    ),
+    experienceBannerTextColor: hex(
+      v.experienceBannerTextColor,
+      THEME_DEFAULTS.experienceBannerTextColor
+    ),
+    experienceBannerBorder: hex(
+      v.experienceBannerBorder,
+      THEME_DEFAULTS.experienceBannerBorder
     ),
   };
 }

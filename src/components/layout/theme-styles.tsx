@@ -54,6 +54,17 @@ export async function ThemeStyles() {
   --jaiguru-section-spacing: ${theme.sectionSpacing}px;
   --jaiguru-body-font: ${bodyFamily};
   --jaiguru-heading-font: ${headingFamily};
+  --jaiguru-legal-title-color: ${theme.legalTitleColor};
+  --jaiguru-legal-breadcrumb-color: ${theme.legalBreadcrumbColor};
+  --jaiguru-legal-card-background: ${theme.legalCardBackground};
+  --jaiguru-legal-card-border: ${theme.legalCardBorder};
+  --jaiguru-legal-text-color: ${theme.legalTextColor};
+  --jaiguru-legal-heading-color: ${theme.legalHeadingColor};
+  --jaiguru-contact-surface: ${theme.contactFormSurface};
+  --jaiguru-contact-label-color: ${theme.contactFormLabelColor};
+  --jaiguru-experience-bg: ${theme.experienceBannerBackground};
+  --jaiguru-experience-text: ${theme.experienceBannerTextColor};
+  --jaiguru-experience-border: ${theme.experienceBannerBorder};
 }
 body,
 .font-sans {

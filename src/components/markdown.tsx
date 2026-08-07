@@ -12,7 +12,7 @@ function inline(text: string): ReactNode[] {
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
-        <strong key={i} className="font-semibold text-white">
+        <strong key={i} className="font-semibold text-[var(--jaiguru-legal-heading-color)]">
           {part.slice(2, -2)}
         </strong>
       );
@@ -22,7 +22,7 @@ function inline(text: string): ReactNode[] {
       (part.startsWith("_") && part.endsWith("_"))
     ) {
       return (
-        <em key={i} className="italic text-slate-300">
+        <em key={i} className="italic text-[var(--jaiguru-legal-text-color)]">
           {part.slice(1, -1)}
         </em>
       );
@@ -43,7 +43,7 @@ export function Markdown({ content }: { content: string }): ReactNode {
     blocks.push(
       <ul key={key++} className="mt-4 space-y-2 pl-1">
         {list.map((item, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-slate-300">
+          <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-[var(--jaiguru-legal-text-color)]">
             <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#FACC15]" />
             <span>{inline(item)}</span>
           </li>
@@ -56,7 +56,7 @@ export function Markdown({ content }: { content: string }): ReactNode {
   const flushPara = () => {
     if (para.length === 0) return;
     blocks.push(
-      <p key={key++} className="mt-4 text-sm leading-relaxed text-slate-300">
+      <p key={key++} className="mt-4 text-sm leading-relaxed text-[var(--jaiguru-legal-text-color)]">
         {inline(para.join(" "))}
       </p>
     );
@@ -73,14 +73,14 @@ export function Markdown({ content }: { content: string }): ReactNode {
     if (line === "---") {
       flushList();
       flushPara();
-      blocks.push(<hr key={key++} className="my-6 border-white/10" />);
+      blocks.push(<hr key={key++} className="my-6 border-[var(--jaiguru-legal-card-border)]/40" />);
       continue;
     }
     if (line.startsWith("### ")) {
       flushList();
       flushPara();
       blocks.push(
-        <h3 key={key++} className="mt-6 font-display text-lg font-bold text-[#FACC15]">
+        <h3 key={key++} className="mt-6 font-display text-lg font-bold text-[var(--jaiguru-legal-heading-color)]">
           {inline(line.slice(4))}
         </h3>
       );
@@ -90,7 +90,7 @@ export function Markdown({ content }: { content: string }): ReactNode {
       flushList();
       flushPara();
       blocks.push(
-        <h2 key={key++} className="mt-8 font-display text-xl font-bold text-white">
+        <h2 key={key++} className="mt-8 font-display text-xl font-bold text-[var(--jaiguru-legal-heading-color)]">
           {inline(line.slice(3))}
         </h2>
       );
@@ -100,7 +100,7 @@ export function Markdown({ content }: { content: string }): ReactNode {
       flushList();
       flushPara();
       blocks.push(
-        <h1 key={key++} className="mt-8 font-display text-2xl font-bold text-white">
+        <h1 key={key++} className="mt-8 font-display text-2xl font-bold text-[var(--jaiguru-legal-heading-color)]">
           {inline(line.slice(2))}
         </h1>
       );

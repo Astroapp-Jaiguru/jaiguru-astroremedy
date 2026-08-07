@@ -21,6 +21,7 @@ import {
   SlidersHorizontal,
   Users,
   KeyRound,
+  SquareUser,
   type LucideIcon,
 } from "lucide-react";
 
@@ -72,6 +73,7 @@ export const adminNav: AdminNavGroup[] = [
       { title: "Social Media", href: "/admin/social-links", icon: Share2 },
       { title: "Contact Messages", href: "/admin/contact", icon: Inbox },
       { title: "Contact Settings", href: "/admin/contact-settings", icon: Phone },
+      { title: "Footer Settings", href: "/admin/footer", icon: SquareUser },
       { title: "Google Map", href: "/admin/map", icon: MapPin },
       { title: "Legal Pages", href: "/admin/legal-pages", icon: FileText },
       { title: "SEO Settings", href: "/admin/seo", icon: Search },

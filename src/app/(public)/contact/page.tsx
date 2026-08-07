@@ -151,7 +151,7 @@ export default async function ContactPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]">
             {/* Contact form */}
-            <div className="rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur sm:p-8">
+            <div className="rounded-3xl border border-[#D4AF37]/30 bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--jaiguru-contact-surface)_80%,transparent),color-mix(in_srgb,#0F172A_80%,transparent))] p-6 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur sm:p-8">
               <h2 className="font-display text-2xl font-bold text-white">
                 Send a Message
               </h2>
@@ -230,9 +230,12 @@ export default async function ContactPage() {
                 </a>
               </div>
 
-              <div className="flex items-center gap-3 rounded-2xl border border-[#D4AF37]/40 bg-[#FACC15]/10 px-5 py-4">
-                <Star className="h-5 w-5 shrink-0 text-[#FACC15]" />
-                <p className="text-sm font-medium text-white">
+              <div
+                className="flex items-center gap-3 rounded-2xl border-2 border-[var(--jaiguru-experience-border)] px-5 py-4 shadow-[0_8px_30px_rgba(212,175,55,0.3)]"
+                style={{ background: "var(--jaiguru-experience-bg)" }}
+              >
+                <Star className="h-5 w-5 shrink-0 text-[var(--jaiguru-experience-text)]" />
+                <p className="text-sm font-bold text-[var(--jaiguru-experience-text)]">
                   20+ Years of Vedic Experience — trusted guidance for your
                   life&apos;s journey.
                 </p>
