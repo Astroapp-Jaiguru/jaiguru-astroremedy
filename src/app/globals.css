@@ -112,6 +112,29 @@
   --jaiguru-product-card-radius: 16px;
   --jaiguru-service-card-radius: 16px;
   --jaiguru-section-spacing: 80px;
+  --jaiguru-hero-1: var(--jaiguru-deep-navy);
+  --jaiguru-hero-2: var(--jaiguru-secondary);
+  --jaiguru-hero-3: var(--jaiguru-primary);
+  --jaiguru-topbar-1: var(--jaiguru-deep-navy);
+  --jaiguru-topbar-2: var(--jaiguru-secondary);
+  --jaiguru-topbar-3: var(--jaiguru-primary);
+  --jaiguru-dark-1: #111827;
+  --jaiguru-dark-2: #1e1b4b;
+  --jaiguru-dark-3: var(--jaiguru-secondary);
+  --jaiguru-whatsapp-hover: #1ebe5b;
+  --jaiguru-primary-hover: color-mix(in srgb, var(--jaiguru-primary) 86%, #000);
+  --jaiguru-accent-ink: color-mix(in srgb, var(--jaiguru-accent) 55%, #000);
+  --jaiguru-page-bg: #0f172a;
+  --jaiguru-primary-text: #0f172a;
+  --jaiguru-secondary-text: #64748b;
+  --jaiguru-cta-primary: var(--jaiguru-primary);
+  --jaiguru-card-bg: #fff7ed;
+  --jaiguru-card-border: #d4af37;
+  --jaiguru-gold-1: #facc15;
+  --jaiguru-gold-2: #d4af37;
+  --jaiguru-gold-3: #f97316;
+  --jaiguru-body-font-size: 16px;
+  --jaiguru-heading-scale: 1;
 }
 
 .dark {
@@ -201,10 +224,10 @@
       ),
       linear-gradient(
         160deg,
-        #0f172a 0%,
-        #1e1b4b 32%,
-        #312e81 62%,
-        #4c1d95 100%
+        var(--jaiguru-page-bg) 0%,
+        color-mix(in srgb, var(--jaiguru-page-bg) 72%, var(--jaiguru-secondary)) 32%,
+        color-mix(in srgb, var(--jaiguru-page-bg) 55%, var(--jaiguru-primary)) 62%,
+        color-mix(in srgb, var(--jaiguru-page-bg) 40%, var(--jaiguru-primary)) 100%
       );
   }
 
@@ -233,7 +256,8 @@
     );
     backdrop-filter: blur(22px) saturate(1.5);
     -webkit-backdrop-filter: blur(22px) saturate(1.5);
-    border: 1px solid rgba(212, 175, 55, 0.35);
+    border: 1px solid
+      color-mix(in srgb, var(--jaiguru-accent-2, #d4af37) 35%, transparent);
     box-shadow:
       0 20px 50px rgba(15, 23, 42, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -243,12 +267,13 @@
   .glass-card-light {
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.96) 0%,
-      rgba(255, 247, 237, 0.92) 100%
+      color-mix(in srgb, var(--jaiguru-card-bg, #fff7ed) 96%, #ffffff) 0%,
+      var(--jaiguru-card-bg, #fff7ed) 100%
     );
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    border: 1px solid rgba(212, 175, 55, 0.45);
+    border: 1px solid
+      color-mix(in srgb, var(--jaiguru-card-border, #d4af37) 45%, transparent);
     box-shadow:
       0 24px 60px rgba(15, 23, 42, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.9);
@@ -257,8 +282,10 @@
   .glass-card-light-hover {
     box-shadow:
       0 30px 70px rgba(15, 23, 42, 0.4),
-      0 0 0 1px rgba(212, 175, 55, 0.55),
-      0 18px 50px rgba(250, 204, 21, 0.22);
+      0 0 0 1px
+        color-mix(in srgb, var(--jaiguru-accent-2, #d4af37) 55%, transparent),
+      0 18px 50px
+        color-mix(in srgb, var(--jaiguru-accent, #facc15) 22%, transparent);
     transform: translateY(-6px);
   }
 
@@ -276,9 +303,9 @@
   .bg-gold-gradient {
     background: linear-gradient(
       90deg,
-      var(--jaiguru-accent, #facc15) 0%,
-      var(--jaiguru-accent-2, #d4af37) 50%,
-      var(--jaiguru-accent-3, #f97316) 100%
+      var(--jaiguru-gold-1, #facc15) 0%,
+      var(--jaiguru-gold-2, #d4af37) 50%,
+      var(--jaiguru-gold-3, #f97316) 100%
     );
   }
 
@@ -315,9 +342,9 @@
   .text-gold-gradient {
     background: linear-gradient(
       90deg,
-      var(--jaiguru-accent, #facc15) 0%,
-      var(--jaiguru-accent-2, #d4af37) 50%,
-      var(--jaiguru-accent-3, #f97316) 100%
+      var(--jaiguru-gold-1, #facc15) 0%,
+      var(--jaiguru-gold-2, #d4af37) 50%,
+      var(--jaiguru-gold-3, #f97316) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;

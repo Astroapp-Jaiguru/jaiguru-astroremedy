@@ -138,7 +138,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           {/* Image */}
           <div className="relative">
             <div
-              className={`relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-3xl border-2 border-[#D4AF37]/30 shadow-[0_18px_60px_rgba(0,0,0,0.5)] ${
+              className={`relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[var(--jaiguru-product-card-radius)] border-2 border-premium-gold/30 shadow-[0_18px_60px_rgba(0,0,0,0.5)] ${
                 product.mainImage ? "" : IMAGE_FALLBACK_STYLES
               }`}
             >
@@ -261,7 +261,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             ) : null}
 
             {meta.length > 0 ? (
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-2xl border border-white/10 bg-[#0F172A]/60 p-5 sm:grid-cols-3">
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-2 rounded-2xl border border-white/10 bg-deep-navy/60 p-5 sm:grid-cols-3">
                 {meta.map((m) => (
                   <div key={m.label}>
                     <dt className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
@@ -276,7 +276,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <PaymentButton
               label="Order on WhatsApp"
               icon={<WhatsappIcon className="h-5 w-5" />}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
               itemName={product.name}
               priceLabel={formatPrice(price)}
               price={price.toString()}

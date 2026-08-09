@@ -46,7 +46,7 @@ export async function GalleryHome(): Promise<ReactElement> {
         src: p.imageUrl,
         alt: p.altText ?? p.title ?? "Gallery photo",
       })),
-      accent: "text-[#FACC15]",
+      accent: "text-golden",
     },
     {
       title: "Video Gallery",
@@ -55,7 +55,7 @@ export async function GalleryHome(): Promise<ReactElement> {
       icon: ClapperboardIcon,
       count: counts.video,
       previews: [],
-      accent: "text-[#4C1D95]",
+      accent: "text-royal-purple",
     },
   ];
 
@@ -83,10 +83,10 @@ export async function GalleryHome(): Promise<ReactElement> {
               <Link
                 key={tile.title}
                 href={tile.href}
-                className={`group relative flex flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border-2 p-8 text-center transition duration-300 hover:-translate-y-1 ${
+                className={`group relative flex flex-col items-center justify-center gap-4 overflow-hidden rounded-[var(--jaiguru-card-radius)] border-2 p-8 text-center transition duration-300 hover:-translate-y-1 ${
                   filled
-                    ? "glass-card border-[#D4AF37]/60"
-                    : "border-dashed border-[#D4AF37]/30 bg-white/5 backdrop-blur"
+                    ? "glass-card border-premium-gold/60"
+                    : "border-dashed border-premium-gold/30 bg-white/5 backdrop-blur"
                 }`}
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.15),transparent_60%)]" />
@@ -96,7 +96,7 @@ export async function GalleryHome(): Promise<ReactElement> {
                     {tile.previews.map((p, i) => (
                       <div
                         key={p.id}
-                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-[#D4AF37]/30 ${
+                        className={`relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-premium-gold/30 ${
                           i === 0 ? "col-span-2 aspect-[2/1]" : ""
                         }`}
                       >
@@ -122,7 +122,7 @@ export async function GalleryHome(): Promise<ReactElement> {
                   </div>
                 ) : (
                   <div
-                    className={`flex h-16 w-16 items-center justify-center rounded-2xl border border-[#D4AF37]/40 bg-white/5 ${tile.accent}`}
+                    className={`flex h-16 w-16 items-center justify-center rounded-2xl border border-premium-gold/40 bg-white/5 ${tile.accent}`}
                   >
                     <Icon className="h-8 w-8" strokeWidth={1.5} />
                   </div>
@@ -142,7 +142,7 @@ export async function GalleryHome(): Promise<ReactElement> {
                 </div>
                 <span
                   className={`text-xs font-semibold uppercase tracking-[0.2em] ${
-                    filled ? "text-[#FACC15]" : "text-slate-500"
+                    filled ? "text-golden" : "text-slate-500"
                   }`}
                 >
                   {filled ? "View Gallery" : "Coming Soon"}

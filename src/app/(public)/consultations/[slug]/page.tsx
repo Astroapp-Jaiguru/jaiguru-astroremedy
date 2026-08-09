@@ -134,11 +134,11 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
 
           {/* Large modern consultation card */}
           <Reveal className="mx-auto max-w-4xl">
-            <div className="glass-card group relative overflow-hidden rounded-[32px] p-8 sm:p-12">
+            <div className="glass-card group relative overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-8 sm:p-12">
               <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[#FACC15]/10 blur-3xl" />
               <div className="pointer-events-none absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-[#4C1D95]/40 blur-3xl" />
               <div className="relative flex flex-col items-center gap-8 text-center sm:flex-row sm:items-start sm:text-left">
-                <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl border border-[#D4AF37]/50 bg-[#FACC15]/10 text-[#FACC15] shadow-[0_0_35px_rgba(250,204,21,0.25)]">
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--jaiguru-card-radius)] border border-premium-gold/50 bg-golden/10 text-golden shadow-[0_0_35px_rgba(250,204,21,0.25)]">
                   <TopicIcon className="h-10 w-10" />
                 </span>
                 <div className="flex-1">
@@ -187,7 +187,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                       href={waMessage}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold text-[#25D366] transition hover:text-[#1EBE5B]"
+                      className="font-semibold text-whatsapp transition hover:text-[#1EBE5B]"
                     >
                       Message us on WhatsApp
                     </a>
@@ -290,7 +290,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                 <RevealItem key={other.slug}>
                   <Link
                     href={other.href}
-                    className="glass-card flex items-center gap-4 rounded-2xl p-5 transition hover:-translate-y-0.5 hover:border-[#D4AF37]/70"
+                    className="glass-card flex items-center gap-4 rounded-2xl p-5 transition hover:-translate-y-0.5 hover:border-premium-gold/70"
                   >
                     <other.icon className="h-6 w-6 shrink-0 text-[#FACC15]" />
                     <span className="flex-1 text-[15px] font-semibold text-white">
@@ -330,7 +330,7 @@ function RelatedServiceCard({
     number
   );
   return (
-    <div className="glass-card flex h-full flex-col gap-3 overflow-hidden rounded-[28px] p-6 transition hover:-translate-y-1 hover:border-[#D4AF37]/70">
+    <div className="glass-card flex h-full flex-col gap-3 overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-6 transition hover:-translate-y-1 hover:border-premium-gold/70">
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-display text-lg font-bold leading-snug text-white">
           {service.name}
@@ -347,7 +347,7 @@ function RelatedServiceCard({
         <PaymentButton
           label="Book"
           icon={<WhatsappIcon className="h-4 w-4" />}
-          className="btn-glow-whatsapp inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-[#25D366] px-4 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[#1EBE5B]"
+          className="btn-glow-whatsapp inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-whatsapp px-4 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[#1EBE5B]"
           itemName={service.name}
           priceLabel={price}
           price={service.price}

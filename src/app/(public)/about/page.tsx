@@ -32,7 +32,7 @@ export default async function AboutPage() {
  />
 
  {/* Founder statement */}
- <div className="mx-auto mt-10 max-w-4xl rounded-3xl p-8 text-center glass-card sm:p-12">
+ <div className="mx-auto mt-10 max-w-4xl rounded-[var(--jaiguru-card-radius)] p-8 text-center glass-card sm:p-12">
  <div className="flex flex-wrap items-center justify-center gap-3">
  <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#FACC15]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#FACC15]">
  <Gem className="h-3.5 w-3.5" /> ASTRO GEMS — Founder & Registered Enterprise
@@ -58,7 +58,7 @@ export default async function AboutPage() {
 
  {/* Story */}
  <div className="mx-auto mt-12 max-w-4xl">
- <div className="rounded-3xl p-8 glass-card">
+ <div className="rounded-[var(--jaiguru-card-radius)] p-8 glass-card">
  <h2 className="font-display text-2xl font-bold text-white">
  {astrologer.name}
  </h2>
@@ -102,7 +102,7 @@ export default async function AboutPage() {
  {astrologer.expertise.map((item) => (
  <div
  key={item}
- className="rounded-2xl p-6 text-center glass-card"
+ className="rounded-[var(--jaiguru-card-radius)] p-6 text-center glass-card"
  >
  <Award className="mx-auto h-8 w-8 text-[#FACC15]" />
  <p className="mt-3 font-display text-lg font-bold text-white">{item}</p>
@@ -126,7 +126,7 @@ export default async function AboutPage() {
  <section className="py-10 sm:py-14">
  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
  <div className="grid gap-6 md:grid-cols-2">
- <div className="rounded-3xl p-8 glass-card">
+ <div className="rounded-[var(--jaiguru-card-radius)] p-8 glass-card">
  <h3 className="font-display text-xl font-bold text-white">
  Registered Business
  </h3>
@@ -154,7 +154,7 @@ export default async function AboutPage() {
  </dl>
  </div>
 
- <div className="rounded-3xl p-8 glass-card">
+ <div className="rounded-[var(--jaiguru-card-radius)] p-8 glass-card">
  <h3 className="font-display text-xl font-bold text-white">Visit Our Chamber</h3>
  <div className="mt-5 space-y-4 text-sm text-slate-300">
  <p className="flex items-start gap-3">
@@ -193,7 +193,7 @@ export default async function AboutPage() {
  highlight="Information"
  subtitle="Official registration details of ASTRO GEMS as a registered enterprise."
  />
- <div className="mx-auto mt-10 max-w-3xl rounded-3xl p-8 glass-card">
+ <div className="mx-auto mt-10 max-w-3xl rounded-[var(--jaiguru-card-radius)] p-8 glass-card">
  <dl className="divide-y divide-white/10">
  <div className="flex flex-col gap-1 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
  <dt className="text-sm text-slate-400">Registered Trade Name</dt>

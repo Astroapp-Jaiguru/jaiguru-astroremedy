@@ -47,10 +47,10 @@ export function SiteHeader({
               <span className="block whitespace-nowrap font-heading text-base font-bold leading-tight tracking-tight text-royal-purple sm:text-lg xl:text-[26px]">
                 {branding.siteName}
               </span>
-              <span className="hidden truncate text-[11px] font-medium text-muted-text lg:block lg:text-xs">
+              <span className="hidden truncate text-[11px] font-medium text-muted-foreground lg:block lg:text-xs">
                 Vedic Astrologer Arup Shastri (Jai Guru)
               </span>
-              <span className="hidden text-[11px] text-muted-text/80 lg:block">
+              <span className="hidden text-[11px] text-muted-foreground/80 lg:block">
                 Expert in Vastu, Numerology, Yoga
               </span>
             </span>

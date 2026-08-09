@@ -25,7 +25,7 @@ export default async function PhotoGalleryPage() {
         />
 
         {photos.length === 0 ? (
-          <div className="mt-10 rounded-3xl border border-dashed border-[#D4AF37]/30 bg-[#0F172A]/40 p-16 text-center text-slate-400">
+          <div className="mt-10 rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center text-slate-400">
             Photos will be uploaded soon. Please check back.
           </div>
         ) : (

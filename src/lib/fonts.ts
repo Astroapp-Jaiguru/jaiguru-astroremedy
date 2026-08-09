@@ -103,6 +103,8 @@ export const BODY_FONT_INSTANCES: Record<string, { style: { fontFamily: string }
   roboto,
   montserrat,
   "open-sans": openSans,
+  georgia: { style: { fontFamily: "Georgia, 'Times New Roman', serif" } },
+  arial: { style: { fontFamily: "Arial, Helvetica, sans-serif" } },
 };
 
 export const HEADING_FONT_INSTANCES: Record<string, { style: { fontFamily: string } }> = {
@@ -111,6 +113,8 @@ export const HEADING_FONT_INSTANCES: Record<string, { style: { fontFamily: strin
   lora,
   "cormorant-garamond": cormorant,
   "dm-serif-display": dmSerif,
+  georgia: { style: { fontFamily: "Georgia, 'Times New Roman', serif" } },
+  arial: { style: { fontFamily: "Arial, Helvetica, sans-serif" } },
 };
 
 export const ALL_FONT_INSTANCES: Record<string, { style: { fontFamily: string } }> = {

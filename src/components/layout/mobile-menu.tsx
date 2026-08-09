@@ -87,7 +87,7 @@ export function MobileMenu({
                       type="button"
                       onClick={() => setExpanded(openSection ? null : item.label)}
                       className={cn(
-                        "flex min-h-[48px] w-full items-center justify-between rounded-xl px-4 text-[15px] font-semibold text-dark-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                        "flex min-h-[48px] w-full items-center justify-between rounded-xl px-4 text-[15px] font-semibold text-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
                         isActive(item.href) && "bg-golden/10 text-royal-purple"
                       )}
                     >
@@ -104,7 +104,7 @@ export function MobileMenu({
                         <Link
                           href={item.href}
                           onClick={() => setOpen(false)}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-text transition-colors hover:bg-golden/10 hover:text-royal-purple"
+                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple"
                         >
                           All Consultations
                         </Link>
@@ -114,7 +114,7 @@ export function MobileMenu({
                             href={child.href}
                             onClick={() => setOpen(false)}
                             className={cn(
-                              "flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                              "flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
                               isActive(child.href) && "bg-golden/10 font-semibold text-royal-purple"
                             )}
                           >
@@ -132,7 +132,7 @@ export function MobileMenu({
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex min-h-[48px] items-center rounded-xl px-4 text-[15px] font-semibold text-dark-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                    "flex min-h-[48px] items-center rounded-xl px-4 text-[15px] font-semibold text-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
                     isActive(item.href) && "bg-golden/10 text-royal-purple"
                   )}
                 >

@@ -44,7 +44,7 @@ export function WhatsAppButton({
       aria-label={label ?? "WhatsApp"}
       className={ctaBase(
         cn(
-          "btn-glow-whatsapp bg-[#25D366] text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[#1eb957] hover:shadow-[0_12px_36px_rgba(37,211,102,0.5)]",
+          "btn-glow-whatsapp bg-whatsapp text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[var(--jaiguru-whatsapp-hover)] hover:shadow-[0_12px_36px_rgba(37,211,102,0.5)]",
           sizes[size],
           iconOnly && "px-0",
           className
@@ -83,8 +83,8 @@ export function CallButton({
       className={ctaBase(
         cn(
           variant === "purple"
-            ? "btn-glow-purple bg-royal-purple text-white hover:bg-indigo-deep"
-            : "btn-glow-gold bg-golden text-dark-text hover:bg-premium-gold",
+            ? "btn-glow-purple bg-[var(--jaiguru-cta-primary)] text-white hover:bg-indigo-deep"
+            : "btn-glow-gold bg-golden text-foreground hover:bg-premium-gold",
           sizes[size],
           iconOnly && "px-0",
           className

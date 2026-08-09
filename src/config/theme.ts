@@ -8,8 +8,29 @@ export interface ThemeSettings {
   primary: string;
   secondary: string;
   accent: string;
+  accent2: string;
+  accent3: string;
+  whatsapp: string;
+  emerald: string;
+  deepNavy: string;
+  pageBackground: string;
+  primaryTextColor: string;
+  secondaryTextColor: string;
+  ctaPrimary: string;
+  cardBackground: string;
+  cardBorder: string;
+  heroGradientStart: string;
+  heroGradientEnd: string;
+  topbarGradientStart: string;
+  topbarGradientEnd: string;
+  footerGradientStart: string;
+  footerGradientEnd: string;
+  goldGradientStart: string;
+  goldGradientEnd: string;
   bodyFont: string;
   headingFont: string;
+  bodyFontSize: number;
+  headingScale: number;
   cardRadius: number;
   buttonRadius: number;
   sectionSpacing: number;
@@ -28,12 +49,37 @@ export interface ThemeSettings {
   experienceBannerBorder: string;
 }
 
+/**
+ * Design defaults = the "Deep Space Luxe" preset. New installations and
+ * the "Reset" button in /admin/theme-settings start from this palette.
+ */
 export const THEME_DEFAULTS: ThemeSettings = {
   primary: "#4C1D95",
-  secondary: "#312E81",
-  accent: "#FACC15",
+  secondary: "#1E1B4B",
+  accent: "#D4AF37",
+  accent2: "#EAB308",
+  accent3: "#B45309",
+  whatsapp: "#10B981",
+  emerald: "#10B981",
+  deepNavy: "#0F172A",
+  pageBackground: "#0F172A",
+  primaryTextColor: "#0F172A",
+  secondaryTextColor: "#64748B",
+  ctaPrimary: "#4C1D95",
+  cardBackground: "#FFF7ED",
+  cardBorder: "#D4AF37",
+  heroGradientStart: "#0F172A",
+  heroGradientEnd: "#4C1D95",
+  topbarGradientStart: "#0F172A",
+  topbarGradientEnd: "#4C1D95",
+  footerGradientStart: "#111827",
+  footerGradientEnd: "#312E81",
+  goldGradientStart: "#FACC15",
+  goldGradientEnd: "#F97316",
   bodyFont: "inter",
   headingFont: "playfair-display",
+  bodyFontSize: 16,
+  headingScale: 1,
   cardRadius: 12,
   buttonRadius: 9999,
   sectionSpacing: 80,
@@ -47,9 +93,9 @@ export const THEME_DEFAULTS: ThemeSettings = {
   legalHeadingColor: "#4C1D95",
   contactFormSurface: "#1E1B4B",
   contactFormLabelColor: "#FFFFFF",
-  experienceBannerBackground: "#FACC15",
+  experienceBannerBackground: "#D4AF37",
   experienceBannerTextColor: "#111827",
-  experienceBannerBorder: "#D4AF37",
+  experienceBannerBorder: "#B45309",
 };
 
 export const THEME_STORAGE_KEY = "theme";
@@ -61,6 +107,8 @@ export const BODY_FONTS = [
   { id: "roboto", label: "Roboto" },
   { id: "montserrat", label: "Montserrat" },
   { id: "open-sans", label: "Open Sans" },
+  { id: "georgia", label: "Georgia" },
+  { id: "arial", label: "Arial" },
 ] as const;
 
 export const HEADING_FONTS = [
@@ -69,6 +117,8 @@ export const HEADING_FONTS = [
   { id: "lora", label: "Lora" },
   { id: "cormorant-garamond", label: "Cormorant Garamond" },
   { id: "dm-serif-display", label: "DM Serif Display" },
+  { id: "georgia", label: "Georgia" },
+  { id: "arial", label: "Arial" },
 ] as const;
 
 /** Validates and normalizes a raw JSON value from the database. */
@@ -89,11 +139,70 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
     primary: hex(v.primary, THEME_DEFAULTS.primary),
     secondary: hex(v.secondary, THEME_DEFAULTS.secondary),
     accent: hex(v.accent, THEME_DEFAULTS.accent),
+    accent2: hex(v.accent2, THEME_DEFAULTS.accent2),
+    accent3: hex(v.accent3, THEME_DEFAULTS.accent3),
+    whatsapp: hex(v.whatsapp, THEME_DEFAULTS.whatsapp),
+    emerald: hex(v.emerald, THEME_DEFAULTS.emerald),
+    deepNavy: hex(v.deepNavy, THEME_DEFAULTS.deepNavy),
+    pageBackground: hex(
+      v.pageBackground,
+      THEME_DEFAULTS.pageBackground
+    ),
+    primaryTextColor: hex(
+      v.primaryTextColor,
+      THEME_DEFAULTS.primaryTextColor
+    ),
+    secondaryTextColor: hex(
+      v.secondaryTextColor,
+      THEME_DEFAULTS.secondaryTextColor
+    ),
+    ctaPrimary: hex(v.ctaPrimary, THEME_DEFAULTS.ctaPrimary),
+    cardBackground: hex(v.cardBackground, THEME_DEFAULTS.cardBackground),
+    cardBorder: hex(v.cardBorder, THEME_DEFAULTS.cardBorder),
+    heroGradientStart: hex(
+      v.heroGradientStart,
+      THEME_DEFAULTS.heroGradientStart
+    ),
+    heroGradientEnd: hex(
+      v.heroGradientEnd,
+      THEME_DEFAULTS.heroGradientEnd
+    ),
+    topbarGradientStart: hex(
+      v.topbarGradientStart,
+      THEME_DEFAULTS.topbarGradientStart
+    ),
+    topbarGradientEnd: hex(
+      v.topbarGradientEnd,
+      THEME_DEFAULTS.topbarGradientEnd
+    ),
+    footerGradientStart: hex(
+      v.footerGradientStart,
+      THEME_DEFAULTS.footerGradientStart
+    ),
+    footerGradientEnd: hex(
+      v.footerGradientEnd,
+      THEME_DEFAULTS.footerGradientEnd
+    ),
+    goldGradientStart: hex(
+      v.goldGradientStart,
+      THEME_DEFAULTS.goldGradientStart
+    ),
+    goldGradientEnd: hex(
+      v.goldGradientEnd,
+      THEME_DEFAULTS.goldGradientEnd
+    ),
     bodyFont: font(v.bodyFont, BODY_FONTS, THEME_DEFAULTS.bodyFont),
     headingFont: font(
       v.headingFont,
       HEADING_FONTS,
       THEME_DEFAULTS.headingFont
+    ),
+    bodyFontSize: num(v.bodyFontSize, THEME_DEFAULTS.bodyFontSize, 12, 20),
+    headingScale: num(
+      v.headingScale,
+      THEME_DEFAULTS.headingScale,
+      0.8,
+      1.3
     ),
     cardRadius: num(v.cardRadius, THEME_DEFAULTS.cardRadius, 0, 32),
     buttonRadius: num(

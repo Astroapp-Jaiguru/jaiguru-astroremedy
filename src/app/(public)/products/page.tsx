@@ -154,7 +154,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         </div>
 
         {products.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-[#D4AF37]/30 bg-[#0F172A]/40 p-16 text-center">
+          <div className="rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center">
             <p className="text-lg font-semibold text-white">No products found</p>
             <p className="mt-2 text-sm text-slate-400">
               Try a different category or search term.

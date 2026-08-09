@@ -40,7 +40,7 @@ export async function FeaturedProducts(): Promise<ReactElement> {
         <Reveal className="mt-12 flex justify-center">
           <Link
             href="/products"
-            className="btn-glow-purple inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#4C1D95] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(76,29,149,0.5)] transition hover:bg-[#3B0F82]"
+            className="btn-glow-purple inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[var(--jaiguru-cta-primary)] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(76,29,149,0.5)] transition hover:bg-[var(--jaiguru-primary-hover)]"
           >
             View All Products
           </Link>

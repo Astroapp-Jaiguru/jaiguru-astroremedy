@@ -21,6 +21,7 @@ import {
   THEME_DEFAULTS,
   type ThemeSettings,
 } from "@/config/theme";
+import { THEME_PRESETS } from "@/config/themes";
 import {
   saveThemeAction,
   resetThemeAction,
@@ -68,6 +69,7 @@ function SliderField({
   onChange,
   min,
   max,
+  step = 1,
   suffix = "px",
 }: {
   label: string;
@@ -76,6 +78,7 @@ function SliderField({
   onChange: (v: number) => void;
   min: number;
   max: number;
+  step?: number;
   suffix?: string;
 }) {
   return (
@@ -93,11 +96,91 @@ function SliderField({
         type="range"
         min={min}
         max={max}
+        step={step}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-3 w-full accent-[#4C1D95]"
       />
       <input type="hidden" name={name} value={value} />
+    </div>
+  );
+}
+
+function GradientField({
+  label,
+  name,
+  start,
+  end,
+  onChangeStart,
+  onChangeEnd,
+}: {
+  label: string;
+  name: string;
+  start: string;
+  end: string;
+  onChangeStart: (v: string) => void;
+  onChangeEnd: (v: string) => void;
+}) {
+  const safeStart = /^#[0-9a-fA-F]{6}$/.test(start) ? start : "#0f172a";
+  const safeEnd = /^#[0-9a-fA-F]{6}$/.test(end) ? end : "#4c1d95";
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div
+        className="mt-2 h-10 rounded-lg border border-input"
+        style={{ background: `linear-gradient(135deg, ${safeStart} 0%, ${safeEnd} 100%)` }}
+        aria-label={`${label} preview`}
+      />
+      <div className="mt-2 grid grid-cols-2 gap-3">
+        <div>
+          <span className="text-xs font-medium text-muted-foreground">
+            Start
+          </span>
+          <div className="mt-1 flex items-center gap-2">
+            <input
+              type="color"
+              value={safeStart}
+              onChange={(e) => onChangeStart(e.target.value)}
+              className="h-9 w-11 cursor-pointer rounded-md border border-input bg-transparent p-1"
+            />
+            <input
+              type="hidden"
+              name={`${name}Start`}
+              value={start}
+            />
+            <Input
+              value={start}
+              onChange={(e) => onChangeStart(e.target.value)}
+              spellCheck={false}
+              className="font-mono"
+            />
+          </div>
+        </div>
+        <div>
+          <span className="text-xs font-medium text-muted-foreground">
+            End
+          </span>
+          <div className="mt-1 flex items-center gap-2">
+            <input
+              type="color"
+              value={safeEnd}
+              onChange={(e) => onChangeEnd(e.target.value)}
+              className="h-9 w-11 cursor-pointer rounded-md border border-input bg-transparent p-1"
+            />
+            <input
+              type="hidden"
+              name={`${name}End`}
+              value={end}
+            />
+            <Input
+              value={end}
+              onChange={(e) => onChangeEnd(e.target.value)}
+              spellCheck={false}
+              className="font-mono"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -175,14 +258,106 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
   return (
     <form action={formAction}>
       <div className="grid gap-6 lg:grid-cols-2">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Select Active Theme</CardTitle>
+            <CardDescription>
+              Pick one of the curated preset themes to instantly fill the
+              color fields below, then press “Save Theme” to apply it to the
+              whole website.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {THEME_PRESETS.map((preset) => {
+                const active =
+                  settings.primary === preset.theme.primary &&
+                  settings.secondary === preset.theme.secondary &&
+                  settings.accent === preset.theme.accent;
+                const swatches = [
+                  preset.theme.primary ?? "#4C1D95",
+                  preset.theme.secondary ?? "#312E81",
+                  preset.theme.accent ?? "#FACC15",
+                  preset.theme.accent2 ?? "#D4AF37",
+                ];
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        ...preset.theme,
+                      }))
+                    }
+                    className={`group rounded-xl border p-4 text-left transition ${
+                      active
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-input hover:border-primary/60"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      {swatches.map((c) => (
+                        <span
+                          key={c}
+                          className="h-5 w-5 rounded-full border border-black/10"
+                          style={{ backgroundColor: c }}
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-2.5 text-sm font-semibold">
+                      {preset.name}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {preset.description}
+                    </p>
+                    <span
+                      className={`mt-2.5 inline-block text-xs font-semibold ${
+                        active ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                      }`}
+                    >
+                      {active ? "Currently applied" : "Apply theme"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Colors</CardTitle>
             <CardDescription>
-              Primary, secondary and accent colors used across the website.
+              Global background, text, accent and CTA colors. The preset
+              themes above are shortcuts that fill these fields.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Global
+            </div>
+            <ColorField
+              label="Page Background"
+              name="pageBackground"
+              value={settings.pageBackground}
+              onChange={(v) => set("pageBackground", v)}
+            />
+            <ColorField
+              label="Primary Text Color"
+              name="primaryTextColor"
+              value={settings.primaryTextColor}
+              onChange={(v) => set("primaryTextColor", v)}
+            />
+            <ColorField
+              label="Secondary Text Color"
+              name="secondaryTextColor"
+              value={settings.secondaryTextColor}
+              onChange={(v) => set("secondaryTextColor", v)}
+            />
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Accents & CTAs
+            </div>
             <ColorField
               label="Primary Color"
               name="primary"
@@ -196,19 +371,115 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
               onChange={(v) => set("secondary", v)}
             />
             <ColorField
-              label="Accent Color"
+              label="Accent Color 1"
               name="accent"
               value={settings.accent}
               onChange={(v) => set("accent", v)}
+            />
+            <ColorField
+              label="Accent Color 2"
+              name="accent2"
+              value={settings.accent2}
+              onChange={(v) => set("accent2", v)}
+            />
+            <ColorField
+              label="Accent Color 3"
+              name="accent3"
+              value={settings.accent3}
+              onChange={(v) => set("accent3", v)}
+            />
+            <ColorField
+              label="WhatsApp Button Color"
+              name="whatsapp"
+              value={settings.whatsapp}
+              onChange={(v) => set("whatsapp", v)}
+            />
+            <ColorField
+              label="Primary CTA Button Color"
+              name="ctaPrimary"
+              value={settings.ctaPrimary}
+              onChange={(v) => set("ctaPrimary", v)}
+            />
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Cards
+            </div>
+            <ColorField
+              label="Card Background Color"
+              name="cardBackground"
+              value={settings.cardBackground}
+              onChange={(v) => set("cardBackground", v)}
+            />
+            <ColorField
+              label="Card Border Color"
+              name="cardBorder"
+              value={settings.cardBorder}
+              onChange={(v) => set("cardBorder", v)}
+            />
+            <ColorField
+              label="Emerald"
+              name="emerald"
+              value={settings.emerald}
+              onChange={(v) => set("emerald", v)}
+            />
+            <ColorField
+              label="Deep Navy"
+              name="deepNavy"
+              value={settings.deepNavy}
+              onChange={(v) => set("deepNavy", v)}
             />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Fonts</CardTitle>
+            <CardTitle className="text-lg">Gradients</CardTitle>
             <CardDescription>
-              Body and heading font families for the whole website.
+              Pick start and end colors for the main gradients — a live
+              preview is shown above each pair before you save.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <GradientField
+              label="Hero Background"
+              name="heroGradient"
+              start={settings.heroGradientStart}
+              end={settings.heroGradientEnd}
+              onChangeStart={(v) => set("heroGradientStart", v)}
+              onChangeEnd={(v) => set("heroGradientEnd", v)}
+            />
+            <GradientField
+              label="Top Header Bar"
+              name="topbarGradient"
+              start={settings.topbarGradientStart}
+              end={settings.topbarGradientEnd}
+              onChangeStart={(v) => set("topbarGradientStart", v)}
+              onChangeEnd={(v) => set("topbarGradientEnd", v)}
+            />
+            <GradientField
+              label="Footer"
+              name="footerGradient"
+              start={settings.footerGradientStart}
+              end={settings.footerGradientEnd}
+              onChangeStart={(v) => set("footerGradientStart", v)}
+              onChangeEnd={(v) => set("footerGradientEnd", v)}
+            />
+            <GradientField
+              label="Gold Accents"
+              name="goldGradient"
+              start={settings.goldGradientStart}
+              end={settings.goldGradientEnd}
+              onChangeStart={(v) => set("goldGradientStart", v)}
+              onChangeEnd={(v) => set("goldGradientEnd", v)}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Typography</CardTitle>
+            <CardDescription>
+              Font families and sizes for the whole website. Georgia and
+              Arial are system fonts and need no download.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -226,9 +497,28 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
               onChange={(v) => set("headingFont", v)}
               options={HEADING_FONTS}
             />
+            <SliderField
+              label="Body Font Size"
+              name="bodyFontSize"
+              value={settings.bodyFontSize}
+              onChange={(v) => set("bodyFontSize", v)}
+              min={12}
+              max={20}
+            />
+            <SliderField
+              label="Heading Size Scale"
+              name="headingScale"
+              value={settings.headingScale}
+              onChange={(v) => set("headingScale", v)}
+              min={0.8}
+              max={1.3}
+              step={0.05}
+              suffix="x"
+            />
             <p className="rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
-              Font changes are applied instantly on the public website after
-              saving.
+              Heading Size Scale multiplies every heading (1 = default
+              size). Font changes are applied instantly on the public
+              website after saving.
             </p>
           </CardContent>
         </Card>
@@ -406,23 +696,29 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
             <div
               className="rounded-xl border p-6 text-white"
               style={{
-                background: `linear-gradient(135deg, ${settings.secondary} 0%, ${settings.primary} 100%)`,
+                background: `linear-gradient(135deg, ${settings.heroGradientStart} 0%, ${settings.heroGradientEnd} 100%)`,
                 borderRadius: `${settings.cardRadius}px`,
               }}
             >
               <p
                 className="font-display text-lg font-bold"
-                style={{ color: settings.accent }}
+                style={{
+                  color: settings.accent,
+                  fontSize: `${Math.round(18 * settings.headingScale)}px`,
+                }}
               >
                 JAIGURU ASTROREMEDY
               </p>
-              <p className="mt-1 text-sm text-white/85">
+              <p
+                className="mt-1 text-sm text-white/85"
+                style={{ fontSize: `${settings.bodyFontSize}px` }}
+              >
                 Theme preview with your chosen colors.
               </p>
               <span
                 className="mt-3 inline-flex items-center rounded-[var(--jaiguru-btn-radius)] px-4 py-2 text-xs font-semibold text-slate-900"
                 style={{
-                  background: settings.accent,
+                  background: `linear-gradient(90deg, ${settings.goldGradientStart} 0%, ${settings.goldGradientEnd} 100%)`,
                   borderRadius: pill
                     ? "9999px"
                     : `${settings.buttonRadius}px`,
@@ -430,6 +726,30 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
               >
                 Book Consultation
               </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Top Header Bar
+                </p>
+                <div
+                  className="mt-1.5 h-8 rounded-lg border border-input"
+                  style={{
+                    background: `linear-gradient(90deg, ${settings.topbarGradientStart} 0%, ${settings.topbarGradientEnd} 100%)`,
+                  }}
+                />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Footer
+                </p>
+                <div
+                  className="mt-1.5 h-8 rounded-lg border border-input"
+                  style={{
+                    background: `linear-gradient(90deg, ${settings.footerGradientStart} 0%, ${settings.footerGradientEnd} 100%)`,
+                  }}
+                />
+              </div>
             </div>
             <div className="flex items-center gap-3 pt-1">
               <Button

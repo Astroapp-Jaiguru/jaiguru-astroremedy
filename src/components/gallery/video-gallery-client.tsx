@@ -21,7 +21,7 @@ export function VideoGalleryClient({ videos }: { videos: VideoData[] }) {
         {videos.map((v) => (
           <article
             key={v.id}
-            className="group relative flex flex-col overflow-hidden rounded-3xl glass-card transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+            className="group relative flex flex-col overflow-hidden rounded-[var(--jaiguru-card-radius)] glass-card transition duration-300 hover:-translate-y-1 hover:border-premium-gold/60"
           >
             <button
               type="button"
@@ -39,10 +39,10 @@ export function VideoGalleryClient({ videos }: { videos: VideoData[] }) {
                   className="object-cover transition duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-[#312E81] via-[#4C1D95] to-[#0F172A]" />
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-deep via-royal-purple to-deep-navy" />
               )}
               <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition group-hover:bg-black/10">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-[#25D366]/40 transition group-hover:scale-110">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp shadow-lg shadow-whatsapp/40 transition group-hover:scale-110">
                   <Play className="ml-1 h-6 w-6 fill-white text-white" />
                 </span>
               </span>

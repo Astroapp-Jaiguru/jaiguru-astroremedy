@@ -168,11 +168,11 @@ export function BookingModal({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent
         showCloseButton
-        className="max-w-md gap-0 overflow-hidden rounded-3xl border border-[#D4AF37]/40 bg-[#0F172A] p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)]"
+        className="max-w-md gap-0 overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)]"
       >
         {/* Header */}
-        <div className="bg-gradient-to-br from-[#4C1D95] via-[#312E81] to-[#0F172A] px-6 pb-5 pt-6">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-[#FACC15]">
+        <div className="bg-gradient-to-br from-royal-purple via-indigo-deep to-deep-navy px-6 pb-5 pt-6">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-golden">
             <CalendarDays className="h-3.5 w-3.5" />
             Book Appointment
           </div>
@@ -230,7 +230,7 @@ export function BookingModal({
                 href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-glow-whatsapp mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B]"
+                className="btn-glow-whatsapp mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B]"
               >
                 <WhatsappIcon className="h-4 w-4" />
                 Open WhatsApp Again
@@ -447,7 +447,7 @@ export function BookingModal({
                       type="button"
                       disabled={!detailsValid}
                       onClick={confirm}
-                      className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B] disabled:opacity-40"
+                      className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B] disabled:opacity-40"
                     >
                       <WhatsappIcon className="h-4 w-4" />
                       Confirm Booking

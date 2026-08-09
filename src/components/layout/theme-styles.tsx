@@ -35,18 +35,29 @@ export async function ThemeStyles() {
   --jaiguru-primary: ${theme.primary};
   --jaiguru-secondary: ${theme.secondary};
   --jaiguru-accent: ${theme.accent};
-  --jaiguru-accent-2: ${theme.accent};
-  --jaiguru-accent-3: ${theme.accent};
-  --jaiguru-deep-navy: ${theme.secondary};
-  --jaiguru-hero-1: var(--jaiguru-deep-navy);
-  --jaiguru-hero-2: var(--jaiguru-secondary);
-  --jaiguru-hero-3: var(--jaiguru-primary);
-  --jaiguru-dark-1: #111827;
-  --jaiguru-dark-2: #1e1b4b;
-  --jaiguru-dark-3: var(--jaiguru-secondary);
-  --jaiguru-topbar-1: var(--jaiguru-deep-navy);
-  --jaiguru-topbar-2: var(--jaiguru-secondary);
-  --jaiguru-topbar-3: var(--jaiguru-primary);
+  --jaiguru-accent-2: ${theme.accent2};
+  --jaiguru-accent-3: ${theme.accent3};
+  --jaiguru-deep-navy: ${theme.deepNavy};
+  --jaiguru-whatsapp: ${theme.whatsapp};
+  --jaiguru-emerald: ${theme.emerald};
+  --jaiguru-page-bg: ${theme.pageBackground};
+  --jaiguru-primary-text: ${theme.primaryTextColor};
+  --jaiguru-secondary-text: ${theme.secondaryTextColor};
+  --jaiguru-cta-primary: ${theme.ctaPrimary};
+  --jaiguru-card-bg: ${theme.cardBackground};
+  --jaiguru-card-border: ${theme.cardBorder};
+  --jaiguru-hero-1: ${theme.heroGradientStart};
+  --jaiguru-hero-3: ${theme.heroGradientEnd};
+  --jaiguru-hero-2: color-mix(in srgb, ${theme.heroGradientStart} 50%, ${theme.heroGradientEnd});
+  --jaiguru-dark-1: ${theme.footerGradientStart};
+  --jaiguru-dark-3: ${theme.footerGradientEnd};
+  --jaiguru-dark-2: color-mix(in srgb, ${theme.footerGradientStart} 50%, ${theme.footerGradientEnd});
+  --jaiguru-topbar-1: ${theme.topbarGradientStart};
+  --jaiguru-topbar-3: ${theme.topbarGradientEnd};
+  --jaiguru-topbar-2: color-mix(in srgb, ${theme.topbarGradientStart} 50%, ${theme.topbarGradientEnd});
+  --jaiguru-gold-1: ${theme.goldGradientStart};
+  --jaiguru-gold-3: ${theme.goldGradientEnd};
+  --jaiguru-gold-2: color-mix(in srgb, ${theme.goldGradientStart} 50%, ${theme.goldGradientEnd});
   --jaiguru-btn-radius: ${buttonRadius};
   --jaiguru-card-radius: ${theme.cardRadius}px;
   --jaiguru-product-card-radius: ${theme.productCardRadius}px;
@@ -54,6 +65,8 @@ export async function ThemeStyles() {
   --jaiguru-section-spacing: ${theme.sectionSpacing}px;
   --jaiguru-body-font: ${bodyFamily};
   --jaiguru-heading-font: ${headingFamily};
+  --jaiguru-body-font-size: ${theme.bodyFontSize}px;
+  --jaiguru-heading-scale: ${theme.headingScale};
   --jaiguru-legal-title-color: ${theme.legalTitleColor};
   --jaiguru-legal-breadcrumb-color: ${theme.legalBreadcrumbColor};
   --jaiguru-legal-card-background: ${theme.legalCardBackground};
@@ -70,11 +83,35 @@ body,
 .font-sans {
   font-family: var(--jaiguru-body-font, var(--font-inter)) !important;
 }
+body {
+  font-size: var(--jaiguru-body-font-size, 16px) !important;
+  color: var(--jaiguru-primary-text, #0f172a);
+}
 h1, h2, h3, h4, h5, h6,
 .font-heading,
 .font-display {
   font-family: var(--jaiguru-heading-font, var(--font-playfair)) !important;
 }
+${theme.headingScale !== 1 ? `
+h1 {
+  font-size: calc(clamp(3rem, 1.6rem + 3.4vw, 3.75rem) * var(--jaiguru-heading-scale, 1)) !important;
+}
+h2 {
+  font-size: calc(clamp(1.875rem, 1.2rem + 1.8vw, 2.75rem) * var(--jaiguru-heading-scale, 1)) !important;
+}
+h3 {
+  font-size: calc(clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem) * var(--jaiguru-heading-scale, 1)) !important;
+}
+h4 {
+  font-size: calc(clamp(1rem, 0.95rem + 0.3vw, 1.125rem) * var(--jaiguru-heading-scale, 1)) !important;
+}
+h5 {
+  font-size: calc(1rem * var(--jaiguru-heading-scale, 1)) !important;
+}
+h6 {
+  font-size: calc(0.875rem * var(--jaiguru-heading-scale, 1)) !important;
+}
+` : ""}
 main section:not(.bg-hero-gradient) {
   padding-top: var(--jaiguru-section-spacing) !important;
   padding-bottom: var(--jaiguru-section-spacing) !important;

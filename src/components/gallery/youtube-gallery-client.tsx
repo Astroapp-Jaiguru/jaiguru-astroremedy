@@ -28,7 +28,7 @@ export function YoutubeGalleryClient({
         {videos.map((v) => (
           <RevealItem key={v.id}>
           <article
-            className="group relative flex h-full flex-col overflow-hidden rounded-[28px] glass-frost-dark transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/80 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]"
+            className="group relative flex h-full flex-col overflow-hidden rounded-[var(--jaiguru-card-radius)] glass-frost-dark transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/80 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]"
           >
             <button
               type="button"

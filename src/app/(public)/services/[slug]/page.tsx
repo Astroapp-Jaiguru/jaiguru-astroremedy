@@ -110,7 +110,7 @@ export default async function ServiceDetailPage({ params }: Props) {
  ) : null}
 
  {service.imageUrl ? (
- <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-3xl border border-[#D4AF37]/30">
+  <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-[var(--jaiguru-service-card-radius)] border border-premium-gold/30">
  <Image
  src={service.imageUrl}
  alt={service.name}
@@ -187,7 +187,7 @@ export default async function ServiceDetailPage({ params }: Props) {
   </div>
 
  <aside className="h-fit space-y-6 lg:sticky lg:top-24">
- <div className="glass-card rounded-3xl p-6">
+  <div className="glass-card rounded-[var(--jaiguru-service-card-radius)] p-6">
  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
  Service Price
  </p>
@@ -241,7 +241,7 @@ export default async function ServiceDetailPage({ params }: Props) {
   </div>
 
  {service.related.length > 0 ? (
- <div className="rounded-3xl border border-[#D4AF37]/20 bg-[#0F172A]/50 p-6">
+  <div className="rounded-[var(--jaiguru-card-radius)] border border-premium-gold/20 bg-deep-navy/50 p-6">
  <h3 className="font-display text-lg font-bold text-white">
  Related Services
  </h3>

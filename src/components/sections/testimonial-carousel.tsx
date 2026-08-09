@@ -73,8 +73,8 @@ export function TestimonialCarousel({
               className="shrink-0 px-2.5 py-1"
               style={{ width: `${width}%` }}
             >
-              <figure className="glass-card flex h-full flex-col gap-4 overflow-hidden rounded-3xl p-6 transition hover:-translate-y-1 hover:border-[#D4AF37]/60 hover:shadow-[0_18px_50px_rgba(212,175,55,0.2)]">
-                <Quote className="h-8 w-8 text-[#FACC15]/15" />
+              <figure className="glass-card flex h-full flex-col gap-4 overflow-hidden rounded-[var(--jaiguru-card-radius)] p-6 transition hover:-translate-y-1 hover:border-premium-gold/60 hover:shadow-[0_18px_50px_rgba(212,175,55,0.2)]">
+                <Quote className="h-8 w-8 text-golden/15" />
                 <div
                   className="flex items-center gap-1"
                   aria-label={`${t.rating} out of 5 stars`}
@@ -85,7 +85,7 @@ export function TestimonialCarousel({
                       className={cn(
                         "h-4 w-4",
                         i < t.rating
-                          ? "fill-[#FACC15] text-[#FACC15]"
+                          ? "fill-golden text-golden"
                           : "fill-slate-700 text-slate-700"
                       )}
                     />
@@ -105,7 +105,7 @@ export function TestimonialCarousel({
                       className="h-10 w-10 rounded-full object-cover"
                     />
                   ) : (
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#FACC15] to-[#F97316] font-display text-base font-bold text-slate-900">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-golden to-saffron font-display text-base font-bold text-slate-900">
                       {t.customerName.charAt(0).toUpperCase()}
                     </span>
                   )}
@@ -131,7 +131,7 @@ export function TestimonialCarousel({
             type="button"
             onClick={() => setPage((p) => (p <= 0 ? pages - 1 : p - 1))}
             aria-label="Previous testimonials"
-            className="absolute -left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#0F172A]/90 text-white transition hover:bg-[#FACC15] hover:text-slate-900"
+            className="absolute -left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-premium-gold/40 bg-deep-navy/90 text-white transition hover:bg-golden hover:text-slate-900"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -139,7 +139,7 @@ export function TestimonialCarousel({
             type="button"
             onClick={() => setPage((p) => (p >= pages - 1 ? 0 : p + 1))}
             aria-label="Next testimonials"
-            className="absolute -right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-[#0F172A]/90 text-white transition hover:bg-[#FACC15] hover:text-slate-900"
+            className="absolute -right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-premium-gold/40 bg-deep-navy/90 text-white transition hover:bg-golden hover:text-slate-900"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -152,7 +152,7 @@ export function TestimonialCarousel({
                 onClick={() => setPage(i)}
                 className={cn(
                   "h-2.5 rounded-full transition-all",
-                  i === current ? "w-7 bg-[#FACC15]" : "w-2.5 bg-white/20 hover:bg-white/40"
+                  i === current ? "w-7 bg-golden" : "w-2.5 bg-white/20 hover:bg-white/40"
                 )}
               />
             ))}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Clock, Mail, Star } from "lucide-react";
 import {
   SocialIconRow,
@@ -43,8 +44,19 @@ export async function SiteFooter() {
           {/* 1. Brand */}
           <div>
             <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold-gradient font-heading text-2xl font-bold text-white">
-                <span aria-hidden="true">ॐ</span>
+              <span className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-2xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20">
+                {data.branding.logo ? (
+                  <Image
+                    src={data.branding.logo}
+                    alt={data.branding.logoAlt}
+                    fill
+                    unoptimized
+                    sizes="52px"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span aria-hidden="true">ॐ</span>
+                )}
               </span>
               <div>
                 <p className="font-heading text-xl font-bold text-white">

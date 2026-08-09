@@ -25,10 +25,9 @@ export default function ConsultationsPage() {
             <RevealItem key={topic.slug}>
               <Link
                 href={topic.href}
-                className="glass-card group relative flex h-full flex-col gap-4 overflow-hidden rounded-3xl p-6 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/80 hover:shadow-[0_16px_50px_rgba(212,175,55,0.28)]"
+                className="glass-card group relative flex h-full flex-col gap-4 overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-6 transition duration-300 hover:-translate-y-1 hover:border-premium-gold/80 hover:shadow-[0_16px_50px_rgba(212,175,55,0.28)]"
               >
-                <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#FACC15]/10 blur-2xl" />
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#D4AF37]/50 bg-[#FACC15]/10 text-[#FACC15] transition group-hover:scale-105">
+                <span className="flex h-14 w-14 items-center justify-center rounded-2xl border border-premium-gold/50 bg-golden/10 text-golden transition group-hover:scale-105">
                   <topic.icon className="h-7 w-7" />
                 </span>
                 <div className="flex-1">

@@ -30,7 +30,7 @@ export default async function TestimonialsPage() {
  />
 
  {testimonials.length === 0 ? (
- <div className="mt-10 rounded-3xl border border-dashed border-[#D4AF37]/30 bg-[#0F172A]/40 p-16 text-center text-slate-400">
+  <div className="mt-10 rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center text-slate-400">
  Testimonials will appear here soon.
  </div>
  ) : (
@@ -38,7 +38,7 @@ export default async function TestimonialsPage() {
  {testimonials.map((t) => (
  <figure
  key={t.id}
- className="relative flex flex-col gap-4 overflow-hidden rounded-3xl p-6 glass-card transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+ className="relative flex flex-col gap-4 overflow-hidden rounded-[var(--jaiguru-card-radius)] p-6 glass-card transition duration-300 hover:-translate-y-1 hover:border-premium-gold/60"
  >
  <Quote className="absolute right-5 top-5 h-10 w-10 text-[#FACC15]/10" />
  <div

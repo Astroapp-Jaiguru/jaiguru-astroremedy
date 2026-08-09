@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/dal";
 import {
   normalizeTheme,
+  THEME_DEFAULTS,
   THEME_STORAGE_KEY,
   type ThemeSettings,
 } from "@/config/theme";
@@ -47,27 +48,132 @@ export async function saveThemeAction(
   await requireAdmin();
   const pill = str(fd, "pill") === "on";
   const theme: ThemeSettings = {
-    primary: hex(fd, "primary", "#4C1D95"),
-    secondary: hex(fd, "secondary", "#312E81"),
-    accent: hex(fd, "accent", "#FACC15"),
+    primary: hex(fd, "primary", THEME_DEFAULTS.primary),
+    secondary: hex(fd, "secondary", THEME_DEFAULTS.secondary),
+    accent: hex(fd, "accent", THEME_DEFAULTS.accent),
+    accent2: hex(fd, "accent2", THEME_DEFAULTS.accent2),
+    accent3: hex(fd, "accent3", THEME_DEFAULTS.accent3),
+    whatsapp: hex(fd, "whatsapp", THEME_DEFAULTS.whatsapp),
+    emerald: hex(fd, "emerald", THEME_DEFAULTS.emerald),
+    deepNavy: hex(fd, "deepNavy", THEME_DEFAULTS.deepNavy),
+    pageBackground: hex(
+      fd,
+      "pageBackground",
+      THEME_DEFAULTS.pageBackground
+    ),
+    primaryTextColor: hex(
+      fd,
+      "primaryTextColor",
+      THEME_DEFAULTS.primaryTextColor
+    ),
+    secondaryTextColor: hex(
+      fd,
+      "secondaryTextColor",
+      THEME_DEFAULTS.secondaryTextColor
+    ),
+    ctaPrimary: hex(fd, "ctaPrimary", THEME_DEFAULTS.ctaPrimary),
+    cardBackground: hex(
+      fd,
+      "cardBackground",
+      THEME_DEFAULTS.cardBackground
+    ),
+    cardBorder: hex(fd, "cardBorder", THEME_DEFAULTS.cardBorder),
+    heroGradientStart: hex(
+      fd,
+      "heroGradientStart",
+      THEME_DEFAULTS.heroGradientStart
+    ),
+    heroGradientEnd: hex(
+      fd,
+      "heroGradientEnd",
+      THEME_DEFAULTS.heroGradientEnd
+    ),
+    topbarGradientStart: hex(
+      fd,
+      "topbarGradientStart",
+      THEME_DEFAULTS.topbarGradientStart
+    ),
+    topbarGradientEnd: hex(
+      fd,
+      "topbarGradientEnd",
+      THEME_DEFAULTS.topbarGradientEnd
+    ),
+    footerGradientStart: hex(
+      fd,
+      "footerGradientStart",
+      THEME_DEFAULTS.footerGradientStart
+    ),
+    footerGradientEnd: hex(
+      fd,
+      "footerGradientEnd",
+      THEME_DEFAULTS.footerGradientEnd
+    ),
+    goldGradientStart: hex(
+      fd,
+      "goldGradientStart",
+      THEME_DEFAULTS.goldGradientStart
+    ),
+    goldGradientEnd: hex(
+      fd,
+      "goldGradientEnd",
+      THEME_DEFAULTS.goldGradientEnd
+    ),
     bodyFont: str(fd, "bodyFont") || "inter",
     headingFont: str(fd, "headingFont") || "playfair-display",
+    bodyFontSize: Math.min(20, Math.max(12, int(fd, "bodyFontSize", 16))),
+    headingScale: Number.isFinite(
+      Number.parseFloat(str(fd, "headingScale"))
+    )
+      ? Math.min(1.3, Math.max(0.8, Number.parseFloat(str(fd, "headingScale"))))
+      : 1,
     cardRadius: int(fd, "cardRadius", 12),
     buttonRadius: pill ? 9999 : int(fd, "buttonRadius", 12),
     sectionSpacing: int(fd, "sectionSpacing", 80),
     productCardRadius: int(fd, "productCardRadius", 16),
     serviceCardRadius: int(fd, "serviceCardRadius", 16),
-    legalTitleColor: hex(fd, "legalTitleColor", "#4C1D95"),
-    legalBreadcrumbColor: hex(fd, "legalBreadcrumbColor", "#111827"),
-    legalCardBackground: hex(fd, "legalCardBackground", "#FFFFFF"),
-    legalCardBorder: hex(fd, "legalCardBorder", "#D4AF37"),
-    legalTextColor: hex(fd, "legalTextColor", "#111827"),
-    legalHeadingColor: hex(fd, "legalHeadingColor", "#4C1D95"),
-    contactFormSurface: hex(fd, "contactFormSurface", "#1E1B4B"),
-    contactFormLabelColor: hex(fd, "contactFormLabelColor", "#FFFFFF"),
-    experienceBannerBackground: hex(fd, "experienceBannerBackground", "#FACC15"),
-    experienceBannerTextColor: hex(fd, "experienceBannerTextColor", "#111827"),
-    experienceBannerBorder: hex(fd, "experienceBannerBorder", "#D4AF37"),
+    legalTitleColor: hex(fd, "legalTitleColor", THEME_DEFAULTS.legalTitleColor),
+    legalBreadcrumbColor: hex(
+      fd,
+      "legalBreadcrumbColor",
+      THEME_DEFAULTS.legalBreadcrumbColor
+    ),
+    legalCardBackground: hex(
+      fd,
+      "legalCardBackground",
+      THEME_DEFAULTS.legalCardBackground
+    ),
+    legalCardBorder: hex(fd, "legalCardBorder", THEME_DEFAULTS.legalCardBorder),
+    legalTextColor: hex(fd, "legalTextColor", THEME_DEFAULTS.legalTextColor),
+    legalHeadingColor: hex(
+      fd,
+      "legalHeadingColor",
+      THEME_DEFAULTS.legalHeadingColor
+    ),
+    contactFormSurface: hex(
+      fd,
+      "contactFormSurface",
+      THEME_DEFAULTS.contactFormSurface
+    ),
+    contactFormLabelColor: hex(
+      fd,
+      "contactFormLabelColor",
+      THEME_DEFAULTS.contactFormLabelColor
+    ),
+    experienceBannerBackground: hex(
+      fd,
+      "experienceBannerBackground",
+      THEME_DEFAULTS.experienceBannerBackground
+    ),
+    experienceBannerTextColor: hex(
+      fd,
+      "experienceBannerTextColor",
+      THEME_DEFAULTS.experienceBannerTextColor
+    ),
+    experienceBannerBorder: hex(
+      fd,
+      "experienceBannerBorder",
+      THEME_DEFAULTS.experienceBannerBorder
+    ),
   };
   try {
     await prisma.themeSetting.upsert({

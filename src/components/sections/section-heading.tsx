@@ -33,14 +33,14 @@ export function SectionHeading({
         className
       )}
     >
-      <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#FACC15]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#FACC15]">
+      <span className="inline-flex items-center gap-2 rounded-full border border-premium-gold/40 bg-golden/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-golden">
         {eyebrow}
       </span>
       {title ? (
         <h2 className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
           {title}{" "}
           {highlight ? (
-            <span className="bg-gradient-to-r from-[#FACC15] via-[#D4AF37] to-[#F97316] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-golden via-premium-gold to-saffron bg-clip-text text-transparent">
               {highlight}
             </span>
           ) : null}
@@ -63,9 +63,9 @@ export function SectionHeading({
           centered && "justify-center"
         )}
       >
-        <span className="h-px w-10 bg-[#D4AF37]/60" />
-        <span className="h-1.5 w-1.5 rotate-45 bg-[#FACC15]" />
-        <span className="h-px w-10 bg-[#D4AF37]/60" />
+        <span className="h-px w-10 bg-premium-gold/60" />
+        <span className="h-1.5 w-1.5 rotate-45 bg-golden" />
+        <span className="h-px w-10 bg-premium-gold/60" />
       </div>
     </div>
   );

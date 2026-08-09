@@ -93,7 +93,7 @@ export default async function ServicesPage({
  </p>
 
  {services.length === 0 ? (
- <div className="mt-10 rounded-3xl border border-dashed border-[#D4AF37]/30 bg-[#0F172A]/40 p-16 text-center text-slate-400">
+  <div className="mt-10 rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center text-slate-400">
  No services in this category yet. Please check back soon.
  </div>
  ) : (
@@ -101,7 +101,7 @@ export default async function ServicesPage({
  {services.map((s) => (
  <article
  key={s.id}
- className="group relative flex flex-col gap-4 overflow-hidden rounded-3xl p-6 glass-card transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+ className="group relative flex flex-col gap-4 overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-6 glass-card transition duration-300 hover:-translate-y-1 hover:border-premium-gold/60"
  >
  <div className="flex items-center justify-between gap-3">
  <ModeBadge mode={s.mode} />

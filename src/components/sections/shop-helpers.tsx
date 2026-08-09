@@ -39,7 +39,7 @@ export function RatingStars({ rating }: { rating: string | number }) {
             className={cn(
               "h-3.5 w-3.5",
               i < stars
-                ? "fill-[#FACC15] text-[#FACC15]"
+                ? "fill-golden text-golden"
                 : "fill-slate-700 text-slate-700"
             )}
           />
@@ -54,4 +54,4 @@ export function RatingStars({ rating }: { rating: string | number }) {
 
 /** Gradient used behind product image placeholders. */
 export const IMAGE_FALLBACK_STYLES =
-  "bg-gradient-to-br from-[#1E1B4B] via-[#312E81] to-[#4C1D95]";
+  "bg-gradient-to-br from-[var(--jaiguru-dark-2)] via-indigo-deep to-royal-purple";

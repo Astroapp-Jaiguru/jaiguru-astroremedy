@@ -178,7 +178,7 @@ export async function Hero() {
 
           {/* Astrologer main image */}
           <div className="relative">
-            <div className="relative overflow-hidden rounded-[32px] border-2 border-golden/45 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+            <div className="relative overflow-hidden rounded-[calc(var(--jaiguru-card-radius)*2)] border-2 border-golden/45 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="relative aspect-[4/5] w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

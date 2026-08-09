@@ -41,7 +41,7 @@ export function ContactForm({
   return (
     <form action={formAction} className="space-y-5">
       {state?.success ? (
-        <div className="glass-card rounded-3xl p-8 text-center">
+        <div className="glass-card rounded-[var(--jaiguru-card-radius)] p-8 text-center">
           <CheckCircle2 className="mx-auto h-14 w-14 text-[#4ADE80]" />
           <h3 className="mt-4 font-display text-2xl font-bold text-white">
             Thank You!
@@ -55,7 +55,7 @@ export function ContactForm({
             <WhatsAppButton href={followUpLink} label="Chat on WhatsApp" />
             <a
               href="/contact"
-              className="text-sm font-medium text-[#FACC15] underline-offset-4 hover:underline"
+              className="text-sm font-medium text-golden underline-offset-4 hover:underline"
             >
               Send another message
             </a>
@@ -77,7 +77,7 @@ export function ContactForm({
                 name="name"
                 required
                 placeholder="e.g. Ramesh Agarwal"
-                className="border-[#D4AF37]/30 bg-white/5 text-white placeholder:text-slate-500"
+                className="border-premium-gold/30 bg-white/5 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="space-y-2">
@@ -88,7 +88,7 @@ export function ContactForm({
                 type="tel"
                 required
                 placeholder="+91 98765 43210"
-                className="border-[#D4AF37]/30 bg-white/5 text-white placeholder:text-slate-500"
+                className="border-premium-gold/30 bg-white/5 text-white placeholder:text-slate-500"
               />
             </div>
           </div>
@@ -101,7 +101,7 @@ export function ContactForm({
                 name="whatsappNumber"
                 type="tel"
                 placeholder="+91 98765 43210"
-                className="border-[#D4AF37]/30 bg-white/5 text-white placeholder:text-slate-500"
+                className="border-premium-gold/30 bg-white/5 text-white placeholder:text-slate-500"
               />
             </div>
             <div className="space-y-2">
@@ -110,7 +110,7 @@ export function ContactForm({
                 id="serviceInterest"
                 name="serviceInterest"
                 defaultValue=""
-                className="flex h-10 w-full rounded-lg border border-[#D4AF37]/30 bg-[#0F172A] px-3 text-sm text-white outline-none transition-colors focus-visible:border-[#FACC15] disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-[#0F172A]"
+                className="flex h-10 w-full rounded-lg border border-premium-gold/30 bg-white/5 px-3 text-sm text-white outline-none transition-colors focus-visible:border-golden disabled:cursor-not-allowed disabled:opacity-50 [&>option]:bg-deep-navy"
               >
                 <option value="">General Enquiry</option>
                 {serviceOptions.map((service) => (
@@ -129,7 +129,7 @@ export function ContactForm({
                 id="preferredDate"
                 name="preferredDate"
                 type="date"
-                className="border-[#D4AF37]/30 bg-white/5 text-white [color-scheme:dark]"
+                className="border-premium-gold/30 bg-white/5 text-white [color-scheme:dark]"
               />
             </div>
             <div className="space-y-2">
@@ -138,7 +138,7 @@ export function ContactForm({
                 id="preferredTime"
                 name="preferredTime"
                 type="time"
-                className="border-[#D4AF37]/30 bg-white/5 text-white [color-scheme:dark]"
+                className="border-premium-gold/30 bg-white/5 text-white [color-scheme:dark]"
               />
             </div>
           </div>
@@ -150,14 +150,14 @@ export function ContactForm({
               name="message"
               rows={5}
               placeholder="Tell us about your concern or query..."
-              className="border-[#D4AF37]/30 bg-white/5 text-white placeholder:text-slate-500"
+              className="border-premium-gold/30 bg-white/5 text-white placeholder:text-slate-500"
             />
           </div>
 
           <Button
             type="submit"
             disabled={pending}
-            className="btn-glow-gold w-full bg-gold-gradient font-semibold text-cosmic-black hover:opacity-90 sm:w-auto sm:min-w-[220px]"
+            className="btn-glow-gold w-full rounded-[var(--jaiguru-btn-radius)] bg-gold-gradient font-semibold text-cosmic-black hover:opacity-90 sm:w-auto sm:min-w-[220px]"
           >
             {pending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -167,7 +167,7 @@ export function ContactForm({
             {pending ? "Sending..." : "Send Message"}
           </Button>
           <p className="flex items-center gap-1.5 text-xs text-slate-400">
-            <Sparkles className="h-3.5 w-3.5 text-[#FACC15]" />
+            <Sparkles className="h-3.5 w-3.5 text-golden" />
             We usually respond within a few hours during business hours.
           </p>
         </>

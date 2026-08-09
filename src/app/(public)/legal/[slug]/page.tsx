@@ -46,7 +46,7 @@ export default async function LegalPageDetail({ params }: Props) {
         </h1>
         <div className="mt-2 h-1 w-24 rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316]" />
 
-        <div className="mt-6 rounded-3xl border-2 border-[var(--jaiguru-legal-card-border)] bg-[var(--jaiguru-legal-card-background)] p-6 text-[var(--jaiguru-legal-text-color)] shadow-[0_8px_30px_rgba(0,0,0,0.1)] sm:p-10">
+        <div className="mt-6 rounded-[var(--jaiguru-card-radius)] border-2 border-[var(--jaiguru-legal-card-border)] bg-[var(--jaiguru-legal-card-background)] p-6 text-[var(--jaiguru-legal-text-color)] shadow-[0_8px_30px_rgba(0,0,0,0.1)] sm:p-10">
           <Markdown content={page.content} />
         </div>
 

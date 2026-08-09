@@ -55,7 +55,7 @@ export function PaymentButton(props: PaymentButtonProps) {
         onClick={() => setOpen(true)}
         className={
           props.className ??
-          "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-6 py-3 text-sm font-bold text-white shadow-lg shadow-[#25D366]/25 transition hover:bg-[#1EBE5B]"
+          "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white shadow-lg shadow-whatsapp/25 transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
         }
       >
         {props.icon}
@@ -114,11 +114,11 @@ function PaymentModal(
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent
         showCloseButton
-        className="max-w-md gap-0 overflow-hidden rounded-3xl border border-[#D4AF37]/40 bg-[#0F172A] p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)]"
+        className="max-w-md gap-0 overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)]"
       >
         {/* Header */}
-        <div className="bg-gradient-to-br from-[#4C1D95] via-[#312E81] to-[#0F172A] px-6 pb-5 pt-6">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-[#FACC15]">
+        <div className="bg-gradient-to-br from-royal-purple via-indigo-deep to-deep-navy px-6 pb-5 pt-6">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-golden">
             <ShieldCheck className="h-3.5 w-3.5" />
             Secure UPI Payment
           </div>
@@ -127,10 +127,10 @@ function PaymentModal(
               {itemName}
             </DialogTitle>
             <div className="flex items-center gap-3">
-              <span className="font-display text-2xl font-bold text-[#FACC15]">
+              <span className="font-display text-2xl font-bold text-golden">
                 {priceLabel}
               </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#25D366]/15 px-2.5 py-1 text-[10px] font-semibold text-[#25D366]">
+              <span className="inline-flex items-center gap-1 rounded-full bg-whatsapp/15 px-2.5 py-1 text-[10px] font-semibold text-whatsapp">
                 <BadgeCheck className="h-3 w-3" /> Pay securely
               </span>
             </div>
@@ -143,7 +143,7 @@ function PaymentModal(
             href={upiUri}
             target="_blank"
             rel="noopener noreferrer"
-            className="group btn-glow-gold flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#FACC15] to-[#F97316] px-4 py-3.5 text-sm font-bold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
+            className="group btn-glow-gold flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-golden to-saffron px-4 py-3.5 text-sm font-bold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
           >
             <Wallet className="h-4 w-4" />
             Pay via PhonePe / Google Pay
@@ -154,25 +154,25 @@ function PaymentModal(
             ) : null}
           </a>
           <p className="flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-400">
-            <Smartphone className="mt-0.5 h-3 w-3 shrink-0 text-[#FACC15]" />
+            <Smartphone className="mt-0.5 h-3 w-3 shrink-0 text-golden" />
             Opens your UPI app with the amount pre-filled. Best on a mobile
             phone.
           </p>
 
           {/* Option 2: Manual UPI ID */}
-          <div className="rounded-2xl border border-dashed border-[#D4AF37]/50 bg-[#1E1B4B]/50 px-4 py-3">
+          <div className="rounded-2xl border border-dashed border-premium-gold/50 bg-[var(--jaiguru-dark-2)]/50 px-4 py-3">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Or pay manually to UPI ID
             </p>
             <div className="mt-1.5 flex items-center justify-between gap-3">
-              <code className="break-all text-sm font-bold text-[#FACC15]">
+              <code className="break-all text-sm font-bold text-golden">
                 {upiId || "UPI not configured"}
               </code>
               <button
                 type="button"
                 onClick={copyUpi}
                 disabled={!upiId}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900 disabled:opacity-40"
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-premium-gold/50 px-3 py-1.5 text-xs font-semibold text-golden transition hover:bg-golden hover:text-slate-900 disabled:opacity-40"
               >
                 {copied ? (
                   <Check className="h-3.5 w-3.5" />
@@ -213,14 +213,14 @@ function PaymentModal(
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-glow-whatsapp flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
+            className="btn-glow-whatsapp flex items-center justify-center gap-2 rounded-2xl bg-whatsapp px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
           >
             <WhatsappIcon className="h-4 w-4" />
             Pay via WhatsApp
           </a>
 
           <p className="flex items-start gap-1.5 text-[11px] leading-relaxed text-slate-400">
-            <Info className="mt-0.5 h-3 w-3 shrink-0 text-[#FACC15]" />
+            <Info className="mt-0.5 h-3 w-3 shrink-0 text-golden" />
             After paying, share the payment screenshot on WhatsApp so we can
             confirm and process your order.
           </p>

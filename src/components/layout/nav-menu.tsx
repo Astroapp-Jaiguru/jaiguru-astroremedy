@@ -55,7 +55,7 @@ function NavLink({
     <Link
       href={item.href}
       className={cn(
-        "relative pb-2 text-[15px] font-semibold text-dark-text transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-golden after:transition-all after:duration-300 hover:text-royal-purple hover:after:w-full",
+        "relative pb-2 text-[15px] font-semibold text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-golden after:transition-all after:duration-300 hover:text-royal-purple hover:after:w-full",
         isActive && "text-royal-purple after:w-full"
       )}
     >
@@ -80,7 +80,7 @@ export function NavMenu({ className }: { className?: string }) {
             <div key={item.label} className="group relative">
               <button
                 type="button"
-                className="flex cursor-pointer items-center gap-1 pb-2 text-[15px] font-semibold text-dark-text transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-golden after:transition-all after:duration-300 hover:text-royal-purple group-hover:after:w-full"
+                className="flex cursor-pointer items-center gap-1 pb-2 text-[15px] font-semibold text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-golden after:transition-all after:duration-300 hover:text-royal-purple group-hover:after:w-full"
               >
                 {item.label}
                 <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
@@ -96,7 +96,7 @@ export function NavMenu({ className }: { className?: string }) {
                         key={child.href}
                         href={child.href}
                         className={cn(
-                          "block rounded-xl px-4 py-2.5 text-sm font-medium text-muted-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                          "block rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
                           childActive && "bg-golden/10 text-royal-purple"
                         )}
                       >

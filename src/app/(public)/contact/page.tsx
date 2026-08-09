@@ -109,7 +109,7 @@ export default async function ContactPage() {
  {contactCards.map((card) => {
  const inner = (
  <>
- <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FACC15]/10 text-[#FACC15]">
+  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-golden/10 text-golden">
  {card.icon}
  </span>
  <span>
@@ -129,14 +129,14 @@ export default async function ContactPage() {
  {...(card.external
  ? { target: "_blank", rel: "noopener noreferrer" }
  : {})}
- className="flex items-center gap-3 rounded-2xl p-5 glass-card transition-colors hover:border-[#FACC15]/60"
+ className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 glass-card transition-colors hover:border-golden/60"
  >
  {inner}
  </a>
  ) : (
  <div
  key={card.label}
- className="flex items-center gap-3 rounded-2xl p-5 glass-card"
+ className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 glass-card"
  >
  {inner}
  </div>
@@ -151,7 +151,7 @@ export default async function ContactPage() {
  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
  <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr]">
  {/* Contact form */}
- <div className="rounded-3xl border border-[#D4AF37]/30 bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--jaiguru-contact-surface)_80%,transparent),color-mix(in_srgb,#0F172A_80%,transparent))] p-6 glass-card sm:p-8">
+  <div className="rounded-[var(--jaiguru-card-radius)] border border-premium-gold/30 bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--jaiguru-contact-surface)_80%,transparent),color-mix(in_srgb,var(--jaiguru-deep-navy)_80%,transparent))] p-6 glass-card sm:p-8">
  <h2 className="font-display text-2xl font-bold text-white">
  Send a Message
  </h2>
@@ -168,13 +168,13 @@ export default async function ContactPage() {
 
  {/* Chamber + map */}
  <div className="space-y-6">
- <div className="rounded-3xl p-6 glass-card sm:p-8">
+  <div className="rounded-[var(--jaiguru-card-radius)] p-6 glass-card sm:p-8">
  <h3 className="font-display text-xl font-bold text-white">
  Visit Our Chamber
  </h3>
  <div className="mt-5 space-y-4 text-sm text-slate-300">
  <p className="flex items-start gap-3">
- <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
+ <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
  <span>
  {contact.address}
  <br />
@@ -188,11 +188,11 @@ export default async function ContactPage() {
  Government of India.
  </p>
  <p className="flex items-start gap-3">
- <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
+ <Clock className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
  <span>{contact.businessHours}</span>
  </p>
  <p className="flex items-start gap-3">
- <IndianRupee className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
+ <IndianRupee className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
  <span>
  Consultation Fee:{" "}
  <span className="font-semibold text-white">
@@ -214,7 +214,7 @@ export default async function ContactPage() {
  </div>
 
  {/* Google map */}
- <div className="overflow-hidden rounded-3xl border border-[#D4AF37]/30 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
+  <div className="overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/30 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
  <iframe
  src={mapsEmbedUrl}
  title={`Google Map - ${siteConfig.astrologer.name} Chamber, ${contact.address}`}
@@ -227,7 +227,7 @@ export default async function ContactPage() {
  href={mapsDirectionsUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="flex items-center justify-center gap-2 bg-gradient-to-b from-[#1E1B4B] to-[#0F172A] px-4 py-3 text-sm font-semibold text-[#FACC15] transition-colors hover:bg-[#1E1B4B]"
+  className="flex items-center justify-center gap-2 bg-gradient-to-b from-[var(--jaiguru-dark-2)] to-deep-navy px-4 py-3 text-sm font-semibold text-golden transition-colors hover:bg-[var(--jaiguru-dark-2)]"
  >
  <Navigation className="h-4 w-4" />
  Get Directions
