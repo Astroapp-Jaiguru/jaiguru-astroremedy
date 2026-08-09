@@ -285,10 +285,10 @@ function FloatingCard({
         <FloatingIcon name={icon} />
       </span>
       <span>
-        <span className="block text-[11px] font-semibold text-white/90">
+        <span className="block text-[11px] font-semibold text-deep-navy">
           {label}
         </span>
-        <span className="block text-[13px] font-bold text-golden">
+        <span className="block text-[13px] font-bold text-royal-purple">
           {value}
         </span>
       </span>
