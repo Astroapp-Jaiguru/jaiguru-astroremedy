@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu } from "lucide-react";
 import {
@@ -22,11 +23,15 @@ export function MobileMenu({
   socials,
   whatsappHref,
   callNumber,
+  logo,
+  logoAlt,
 }: {
   navItems: NavItem[];
   socials: { platform: string; url: string }[];
   whatsappHref: string;
   callNumber: string;
+  logo: string | null;
+  logoAlt: string;
 }) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -51,8 +56,15 @@ export function MobileMenu({
         className="w-[85%] max-w-[360px] border-l border-golden/20 bg-white p-0"
       >
         <SheetHeader className="flex-row items-center gap-3 border-b border-border/60 p-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white">
-            ॐ
+          <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white">
+            <Image
+              src={logo ?? "/favicon.png"}
+              alt={logoAlt}
+              fill
+              unoptimized={!!logo}
+              sizes="44px"
+              className="h-full w-full object-cover"
+            />
           </div>
           <div className="flex-1">
             <SheetTitle className="font-heading text-lg font-bold text-royal-purple">

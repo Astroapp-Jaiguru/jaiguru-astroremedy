@@ -1,12 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
 import { NavMenu, MAIN_NAV_ITEMS } from "@/components/layout/nav-menu";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 
 /**
  * Main Header (scope UI spec §5.2).
- * Sticky, white/translucent with backdrop blur. Square logo placeholder,
- * brand wordmark in Playfair Display, desktop navigation and pill CTAs.
+ * Sticky, white/translucent with backdrop blur. Logo image (CMS override,
+ * falls back to the site favicon), brand wordmark in Playfair Display,
+ * desktop navigation and pill CTAs.
  */
 export function SiteHeader({
   branding,
@@ -32,7 +34,14 @@ export function SiteHeader({
           {/* Brand */}
           <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3 xl:gap-4">
             <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20 sm:h-11 sm:w-11 sm:text-2xl xl:h-[52px] xl:w-[52px] xl:text-3xl">
-              <span aria-hidden="true">ॐ</span>
+              <Image
+                src={branding.logo ?? "/favicon.png"}
+                alt={branding.logoAlt}
+                fill
+                unoptimized={!!branding.logo}
+                sizes="52px"
+                className="h-full w-full object-cover"
+              />
             </span>
             <span className="min-w-0">
               <span className="block whitespace-nowrap font-heading text-base font-bold leading-tight tracking-tight text-royal-purple sm:text-lg xl:text-[26px]">
@@ -81,6 +90,8 @@ export function SiteHeader({
               socials={socials}
               whatsappHref={whatsappHref}
               callNumber={contact.callNumber}
+              logo={branding.logo}
+              logoAlt={branding.logoAlt}
             />
           </div>
         </div>
