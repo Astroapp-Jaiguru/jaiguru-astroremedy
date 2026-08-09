@@ -73,7 +73,7 @@ export function TestimonialCarousel({
               className="shrink-0 px-2.5 py-1"
               style={{ width: `${width}%` }}
             >
-              <figure className="flex h-full flex-col gap-4 overflow-hidden rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 p-6 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-[#D4AF37]/60">
+              <figure className="glass-card flex h-full flex-col gap-4 overflow-hidden rounded-3xl p-6 transition hover:-translate-y-1 hover:border-[#D4AF37]/60 hover:shadow-[0_18px_50px_rgba(212,175,55,0.2)]">
                 <Quote className="h-8 w-8 text-[#FACC15]/15" />
                 <div
                   className="flex items-center gap-1"

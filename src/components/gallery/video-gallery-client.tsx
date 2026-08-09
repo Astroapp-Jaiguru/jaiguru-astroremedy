@@ -21,7 +21,7 @@ export function VideoGalleryClient({ videos }: { videos: VideoData[] }) {
         {videos.map((v) => (
           <article
             key={v.id}
-            className="group relative flex flex-col overflow-hidden rounded-3xl border border-[#D4AF37]/30 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+            className="group relative flex flex-col overflow-hidden rounded-3xl glass-card transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
           >
             <button
               type="button"

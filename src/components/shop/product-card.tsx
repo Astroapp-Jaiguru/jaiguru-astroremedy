@@ -85,7 +85,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
   );
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[28px] border border-white/60 bg-white/90 shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/60 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]">
+    <article className="glass-card-light group flex flex-col overflow-hidden rounded-[28px] transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/70 hover:shadow-[0_18px_50px_rgba(250,204,21,0.28)]">
       <div className="relative">
         {product.mainImage ? (
           <Image
@@ -143,7 +143,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
           <PaymentButton
             label="Order"
             icon={<WhatsappIcon className="h-3.5 w-3.5" />}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-3 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-[#1EBE5B]"
+            className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-3 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[#1EBE5B]"
             itemName={product.name}
             priceLabel={formatPrice(orderPrice)}
             price={orderPrice}

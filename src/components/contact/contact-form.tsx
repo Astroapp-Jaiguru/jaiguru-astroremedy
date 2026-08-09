@@ -41,7 +41,7 @@ export function ContactForm({
   return (
     <form action={formAction} className="space-y-5">
       {state?.success ? (
-        <div className="rounded-3xl border border-[#D4AF37]/40 bg-gradient-to-b from-[#1E1B4B]/80 to-[#0F172A]/80 p-8 text-center shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur">
+        <div className="glass-card rounded-3xl p-8 text-center">
           <CheckCircle2 className="mx-auto h-14 w-14 text-[#4ADE80]" />
           <h3 className="mt-4 font-display text-2xl font-bold text-white">
             Thank You!
@@ -157,7 +157,7 @@ export function ContactForm({
           <Button
             type="submit"
             disabled={pending}
-            className="w-full bg-gold-gradient font-semibold text-cosmic-black hover:opacity-90 sm:w-auto sm:min-w-[220px]"
+            className="btn-glow-gold w-full bg-gold-gradient font-semibold text-cosmic-black hover:opacity-90 sm:w-auto sm:min-w-[220px]"
           >
             {pending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

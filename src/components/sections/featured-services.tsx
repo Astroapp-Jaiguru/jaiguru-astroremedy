@@ -54,7 +54,7 @@ function ServiceCard({
   );
   const GroupIcon = group.slug.includes("yoga") ? GraduationCap : BookOpen;
   return (
-    <article className="group flex flex-col overflow-hidden rounded-[28px] border border-white/10 bg-white/90 shadow-[0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/60 hover:shadow-[0_18px_50px_rgba(250,204,21,0.22)]">
+    <article className="glass-card-light group flex flex-col overflow-hidden rounded-[28px] transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/70 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]">
       <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-gradient-to-br from-[#0F172A] via-[#312E81] to-[#4C1D95]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(250,204,21,0.2),transparent_55%)]" />
         <GroupIcon className="h-14 w-14 text-[#FACC15]/70 drop-shadow-[0_0_18px_rgba(250,204,21,0.4)]" />
@@ -82,7 +82,7 @@ function ServiceCard({
           <PaymentButton
             label="Book"
             icon={<WhatsappIcon className="h-3.5 w-3.5" />}
-            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-4 py-2.5 text-xs font-semibold text-white shadow-md transition hover:bg-[#1EBE5B]"
+            className="btn-glow-whatsapp inline-flex items-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-[#25D366] px-4 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[#1EBE5B]"
             itemName={service.name}
             priceLabel={price}
             price={service.price}
@@ -151,13 +151,13 @@ export async function FeaturedServices(): Promise<ReactElement> {
         <Reveal className="mt-14 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#4C1D95] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(76,29,149,0.45)] transition hover:bg-[#3B0F82]"
+            className="btn-glow-purple inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#4C1D95] px-8 py-3.5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(76,29,149,0.5)] transition hover:bg-[#3B0F82]"
           >
             View All Services
           </Link>
           <Link
             href="/astrology-course"
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border-2 border-[#D4AF37] px-8 py-3 text-sm font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900"
+            className="btn-glow-gold inline-flex items-center gap-2 whitespace-nowrap rounded-full border-2 border-[#D4AF37] px-8 py-3 text-sm font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900"
           >
             Join Astrology Course
           </Link>

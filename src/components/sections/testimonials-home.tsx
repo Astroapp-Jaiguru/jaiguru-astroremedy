@@ -34,7 +34,7 @@ export async function TestimonialsHome(): Promise<ReactElement> {
         <Reveal className="mt-10 flex justify-center">
           <Link
             href="/testimonials"
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border-2 border-[#D4AF37] px-8 py-3 text-sm font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900"
+            className="btn-glow-gold inline-flex items-center gap-2 whitespace-nowrap rounded-full border-2 border-[#D4AF37] bg-[#D4AF37]/10 px-8 py-3 text-sm font-semibold text-[#FACC15] shadow-[0_8px_25px_rgba(212,175,55,0.25)] backdrop-blur transition hover:bg-[#FACC15] hover:text-slate-900"
           >
             Read All Reviews
           </Link>

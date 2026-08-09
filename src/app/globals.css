@@ -172,6 +172,96 @@
 }
 
 @layer components {
+  /* ------------------------------------------------------------------ *
+   * Vivid celestial page wallpaper (v3 "bright cosmic" overhaul).
+   * Deep cosmic blue base with radiant gold / royal purple / emerald
+   * aurora glows so every transparent section sits on a rich canvas.
+   * ------------------------------------------------------------------ */
+  .bg-celestial {
+    background:
+      radial-gradient(
+        ellipse 75% 45% at 12% 0%,
+        color-mix(in srgb, var(--jaiguru-accent, #facc15) 16%, transparent) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 55% 40% at 88% 8%,
+        color-mix(in srgb, var(--color-royal-purple, #7c3aed) 40%, transparent) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 45% at 85% 70%,
+        color-mix(in srgb, var(--jaiguru-emerald, #16a34a) 13%, transparent) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 70% 55% at 50% 100%,
+        color-mix(in srgb, var(--jaiguru-primary, #4c1d95) 60%, transparent) 0%,
+        transparent 65%
+      ),
+      linear-gradient(
+        160deg,
+        #0f172a 0%,
+        #1e1b4b 32%,
+        #312e81 62%,
+        #4c1d95 100%
+      );
+  }
+
+  /* Cosmic star sprinkles over the wallpaper */
+  .bg-celestial-stars {
+    background-image: radial-gradient(
+        rgba(255, 255, 255, 0.5) 1px,
+        transparent 1px
+      ),
+      radial-gradient(rgba(212, 175, 55, 0.4) 1px, transparent 1px);
+    background-position:
+      0 0,
+      60px 40px;
+    background-size:
+      130px 130px,
+      190px 190px;
+  }
+
+  /* Frosted dark glass card (white text surfaces on the celestial canvas) */
+  .glass-card {
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.14) 0%,
+      rgba(255, 255, 255, 0.06) 55%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    backdrop-filter: blur(22px) saturate(1.5);
+    -webkit-backdrop-filter: blur(22px) saturate(1.5);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow:
+      0 20px 50px rgba(15, 23, 42, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* Bright frosted glass card (dark text surfaces, product/service cards) */
+  .glass-card-light {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.96) 0%,
+      rgba(255, 247, 237, 0.92) 100%
+    );
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    box-shadow:
+      0 24px 60px rgba(15, 23, 42, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .glass-card-light-hover {
+    box-shadow:
+      0 30px 70px rgba(15, 23, 42, 0.4),
+      0 0 0 1px rgba(212, 175, 55, 0.55),
+      0 18px 50px rgba(250, 204, 21, 0.22);
+    transform: translateY(-6px);
+  }
+
   /* Hero cosmic gradient (scope UI spec) */
   .bg-hero-gradient {
     background: linear-gradient(

@@ -85,8 +85,8 @@ export async function GalleryHome(): Promise<ReactElement> {
                 href={tile.href}
                 className={`group relative flex flex-col items-center justify-center gap-4 overflow-hidden rounded-3xl border-2 p-8 text-center transition duration-300 hover:-translate-y-1 ${
                   filled
-                    ? "border-[#D4AF37]/70 bg-gradient-to-br from-[#1E1B4B] via-[#312E81] to-[#4C1D95]"
-                    : "border-dashed border-[#D4AF37]/30 bg-[#0F172A]/40"
+                    ? "glass-card border-[#D4AF37]/60"
+                    : "border-dashed border-[#D4AF37]/30 bg-white/5 backdrop-blur"
                 }`}
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.15),transparent_60%)]" />

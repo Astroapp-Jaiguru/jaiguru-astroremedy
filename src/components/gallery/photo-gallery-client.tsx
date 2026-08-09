@@ -22,7 +22,7 @@ export function PhotoGalleryClient({ photos }: { photos: PhotoData[] }) {
             type="button"
             onClick={() => setLightboxIndex(i)}
             aria-label={`View ${p.title ?? "photo"}`}
-            className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[#D4AF37]/30 bg-[#0F172A]/60 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
+            className="group relative aspect-[4/3] w-full overflow-hidden rounded-2xl glass-card p-0 transition duration-300 hover:-translate-y-1 hover:border-[#D4AF37]/60"
           >
             <Image
               src={p.imageUrl}

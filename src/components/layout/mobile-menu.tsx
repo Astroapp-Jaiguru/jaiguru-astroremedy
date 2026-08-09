@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -29,7 +29,11 @@ export function MobileMenu({
   callNumber: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const pathname = usePathname();
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -63,11 +67,53 @@ export function MobileMenu({
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <nav className="flex flex-col">
             {navItems.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname === item.href ||
-                    pathname.startsWith(item.href + "/");
+              if (item.children && item.children.length > 0) {
+                const openSection = expanded === item.label;
+                return (
+                  <div key={item.label} className="border-b border-border/50 py-1">
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(openSection ? null : item.label)}
+                      className={cn(
+                        "flex min-h-[48px] w-full items-center justify-between rounded-xl px-4 text-[15px] font-semibold text-dark-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                        isActive(item.href) && "bg-golden/10 text-royal-purple"
+                      )}
+                    >
+                      {item.label}
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          openSection && "rotate-180"
+                        )}
+                      />
+                    </button>
+                    {openSection ? (
+                      <div className="mb-2 ml-3 flex flex-col border-l-2 border-golden/30 pl-2">
+                        <Link
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-text transition-colors hover:bg-golden/10 hover:text-royal-purple"
+                        >
+                          All Consultations
+                        </Link>
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            onClick={() => setOpen(false)}
+                            className={cn(
+                              "flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                              isActive(child.href) && "bg-golden/10 font-semibold text-royal-purple"
+                            )}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }
               return (
                 <Link
                   key={item.label}
@@ -75,7 +121,7 @@ export function MobileMenu({
                   onClick={() => setOpen(false)}
                   className={cn(
                     "flex min-h-[48px] items-center rounded-xl px-4 text-[15px] font-semibold text-dark-text transition-colors hover:bg-golden/10 hover:text-royal-purple",
-                    isActive && "bg-golden/10 text-royal-purple"
+                    isActive(item.href) && "bg-golden/10 text-royal-purple"
                   )}
                 >
                   {item.label}

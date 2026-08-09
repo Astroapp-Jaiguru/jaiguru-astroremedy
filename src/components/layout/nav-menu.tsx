@@ -16,14 +16,17 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "About", href: "/about" },
   {
     label: "Consultations",
-    href: "/services",
+    href: "/consultations",
     children: [
-      { label: "Astrology Consultation", href: "/astrology-consultation" },
-      { label: "Numerology Consultation", href: "/numerology-consultation" },
-      { label: "Vastu Consultation", href: "/vastu-consultation" },
-      { label: "Medical Astrology", href: "/medical-astrology" },
-      { label: "Spiritual Remedies", href: "/spiritual-remedies" },
-      { label: "Black Magic Protection", href: "/black-magic-protection" },
+      { label: "Astrology Consultation", href: "/consultations/astrology" },
+      { label: "Numerology Consultation", href: "/consultations/numerology" },
+      { label: "Vastu Consultation", href: "/consultations/vastu" },
+      { label: "Medical Astrology Guidance", href: "/consultations/medical-astrology" },
+      { label: "Spiritual Remedy Guidance", href: "/consultations/spiritual-remedies" },
+      { label: "Gemstone Recommendation", href: "/consultations/gemstone" },
+      { label: "Yoga Guidance", href: "/consultations/yoga" },
+      { label: "Black Magic Protection Guidance", href: "/consultations/black-magic-protection" },
+      { label: "Personal Problem Guidance", href: "/consultations/personal-problem" },
     ],
   },
   { label: "Products", href: "/products" },
@@ -83,7 +86,7 @@ export function NavMenu({ className }: { className?: string }) {
                 <ChevronDown className="h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
               </button>
               <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                <div className="w-56 rounded-2xl border border-golden/25 bg-white p-2 shadow-[0_20px_60px_rgba(15,23,42,0.15)]">
+                <div className="w-72 rounded-2xl border border-golden/25 bg-white p-2 shadow-[0_20px_60px_rgba(15,23,42,0.15)]">
                   {item.children.map((child) => {
                     const childActive =
                       pathname === child.href ||

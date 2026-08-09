@@ -143,7 +143,7 @@ function PaymentModal(
             href={upiUri}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#FACC15] to-[#F97316] px-4 py-3.5 text-sm font-bold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.35)] transition hover:brightness-105"
+            className="group btn-glow-gold flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#FACC15] to-[#F97316] px-4 py-3.5 text-sm font-bold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
           >
             <Wallet className="h-4 w-4" />
             Pay via PhonePe / Google Pay
@@ -213,7 +213,7 @@ function PaymentModal(
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.3)] transition hover:bg-[#1EBE5B]"
+            className="btn-glow-whatsapp flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
           >
             <WhatsappIcon className="h-4 w-4" />
             Pay via WhatsApp

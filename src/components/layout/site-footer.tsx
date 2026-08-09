@@ -21,18 +21,18 @@ export async function SiteFooter() {
   const quickLinks = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
-    { label: "Consultations", href: "/services" },
+    { label: "Consultations", href: "/consultations" },
     { label: "Products", href: "/products" },
     { label: "Testimonials", href: "/testimonials" },
     { label: "Contact", href: "/contact" },
   ];
 
   const catalogLinks = [
-    { label: "Astrology Consultation", href: "/astrology-consultation" },
-    { label: "Numerology Consultation", href: "/numerology-consultation" },
-    { label: "Vastu Consultation", href: "/vastu-consultation" },
-    { label: "Yoga Guidance", href: "/yoga-guidance" },
-    { label: "Spiritual Remedies", href: "/spiritual-remedies" },
+    { label: "Astrology Consultation", href: "/consultations/astrology" },
+    { label: "Numerology Consultation", href: "/consultations/numerology" },
+    { label: "Vastu Consultation", href: "/consultations/vastu" },
+    { label: "Yoga Guidance", href: "/consultations/yoga" },
+    { label: "Spiritual Remedies", href: "/consultations/spiritual-remedies" },
     { label: "Photo Gallery", href: "/photo-gallery" },
   ];
 

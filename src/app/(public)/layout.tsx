@@ -27,7 +27,13 @@ export default function PublicLayout({ children }: LayoutProps<"/">) {
     <>
       <ThemeStyles />
       <SiteHeaderShell />
-      <main className="flex-1">{children}</main>
+      <main className="relative flex-1 overflow-hidden bg-celestial">
+        <div
+          className="bg-celestial-stars pointer-events-none absolute inset-0"
+          aria-hidden="true"
+        />
+        <div className="relative">{children}</div>
+      </main>
       <SiteFooter />
       <FloatingCta />
     </>
