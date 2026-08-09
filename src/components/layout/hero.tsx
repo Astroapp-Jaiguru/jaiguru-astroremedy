@@ -6,7 +6,7 @@ import {
 } from "@/components/layout/cta-buttons";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
-import { siteConfig, whatsappLink } from "@/config/site";
+import { whatsappLink } from "@/config/site";
 import { Starfield } from "@/components/motion/starfield";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -180,16 +180,12 @@ export async function Hero() {
           <div className="relative">
             <div className="relative overflow-hidden rounded-[32px] border-2 border-golden/45 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="relative aspect-[4/5] w-full">
-                {hero.astrologerImage ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={hero.astrologerImage}
-                    alt="Vedic Astrologer Arup Shastri (Jai Guru)"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
-                ) : (
-                  <PlaceholderCard />
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={hero.astrologerImage ?? "/astrologer.jpeg"}
+                  alt="Vedic Astrologer Arup Shastri (Jai Guru)"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
               </div>
             </div>
 
@@ -203,21 +199,12 @@ export async function Hero() {
                       "linear-gradient(135deg, var(--jaiguru-secondary) 0%, var(--jaiguru-primary) 60%, var(--jaiguru-accent-3) 160%)",
                   }}
                 >
-                  {hero.masterImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={hero.masterImage}
-                      alt="Guru Blessings"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span
-                      className="font-heading text-3xl font-bold text-white sm:text-5xl"
-                      aria-hidden="true"
-                    >
-                      ॐ
-                    </span>
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={hero.masterImage ?? "/master.jpeg"}
+                    alt="Guru Blessings"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <span className="absolute left-1/2 top-full mt-2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-golden px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-deep-navy shadow-md">
                   Guru Blessings
@@ -291,31 +278,6 @@ function FloatingCard({
         <span className="block text-[13px] font-bold text-royal-purple">
           {value}
         </span>
-      </span>
-    </div>
-  );
-}
-
-function PlaceholderCard() {
-  return (
-    <div
-      className="flex h-full w-full flex-col items-center justify-center gap-3"
-      style={{
-        background:
-          "linear-gradient(160deg, var(--jaiguru-dark-2) 0%, var(--jaiguru-secondary) 55%, var(--jaiguru-primary) 100%)",
-      }}
-    >
-      <div className="flex items-center justify-center">
-        <Star className="h-24 w-24 text-golden/30" strokeWidth={1} />
-      </div>
-      <p className="px-6 text-center font-heading text-xl text-white/80">
-        Astrologer Photo
-      </p>
-      <p className="text-sm text-white/50">
-        {siteConfig.astrologer.name}
-      </p>
-      <span className="mt-2 rounded-full border border-golden/40 px-3 py-1 text-[11px] uppercase tracking-wider text-golden/80">
-        Coming Soon
       </span>
     </div>
   );
