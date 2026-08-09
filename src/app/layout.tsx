@@ -23,6 +23,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     description: seo.description,
     keywords: seo.keywords,
+    icons: {
+      icon: "/favicon.png",
+    },
     openGraph: {
       type: "website",
       siteName: siteConfig.name,
