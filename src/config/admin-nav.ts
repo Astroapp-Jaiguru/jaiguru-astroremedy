@@ -22,6 +22,7 @@ import {
   Users,
   KeyRound,
   SquareUser,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,6 +48,16 @@ export const adminNav: AdminNavGroup[] = [
       { title: "Products", href: "/admin/products", icon: Package },
       { title: "Services", href: "/admin/services", icon: Sparkles },
       { title: "Categories", href: "/admin/categories", icon: FolderTree },
+    ],
+  },
+  {
+    label: "Bookings",
+    items: [
+      {
+        title: "Calendar Blocks",
+        href: "/admin/bookings",
+        icon: CalendarDays,
+      },
     ],
   },
   {

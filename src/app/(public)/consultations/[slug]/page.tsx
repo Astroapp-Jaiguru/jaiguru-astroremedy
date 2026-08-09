@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BadgeCheck, ChevronRight, Sparkles } from "lucide-react";
+import { BadgeCheck, CalendarCheck, ChevronRight, Sparkles } from "lucide-react";
 import {
   CONSULTATION_TOPICS,
   getConsultationTopic,
@@ -9,6 +9,7 @@ import {
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
 import { PaymentButton } from "@/components/shop/payment-button";
+import { BookingButton } from "@/components/shop/booking-modal";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CallButton } from "@/components/layout/cta-buttons";
 import {
@@ -19,7 +20,10 @@ import {
 } from "@/lib/shop-data";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import { durationLabel } from "@/lib/booking";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { ShareButtons } from "@/components/social/share-buttons";
+import { absoluteUrl } from "@/lib/share";
 
 /**
  * Dedicated consultation pages (scope §7.5).
@@ -38,9 +42,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const topic = getConsultationTopic(slug);
   if (!topic) return { title: "Consultation not found" };
+  const url = absoluteUrl(`/consultations/${topic.slug}`);
   return {
     title: `${topic.title} | JAIGURU ASTROREMEDY`,
     description: topic.longDescription.slice(0, 160),
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      siteName: "JAIGURU ASTROREMEDY",
+      title: topic.title,
+      description: topic.longDescription.slice(0, 160),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: topic.title,
+      description: topic.longDescription.slice(0, 160),
+    },
   };
 }
 
@@ -125,7 +143,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                 </span>
                 <div className="flex-1">
                   <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
-                    {topic.fee} · 45+ minutes
+                    {topic.fee} · {durationLabel(topic.durationMinutes)}
                   </p>
                   <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">
                     {topic.title}
@@ -147,15 +165,15 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   </ul>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <a
-                      href={waMessage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-glow-whatsapp inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-8 py-3.5 text-[15px] font-semibold text-white shadow-[0_10px_30px_rgba(37,211,102,0.4)] transition hover:bg-[#1EBE5B]"
-                    >
-                      <WhatsappIcon className="h-5 w-5" />
-                      Book This Consultation
-                    </a>
+                    <BookingButton
+                      label="Book This Consultation"
+                      icon={<CalendarCheck className="h-5 w-5" />}
+                      className="btn-glow-gold inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316] px-8 py-3.5 text-[15px] font-semibold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
+                      serviceName={topic.title}
+                      durationMinutes={topic.durationMinutes}
+                      priceLabel={topic.fee}
+                      whatsappNumber={number}
+                    />
                     <CallButton
                       href={`tel:${contact.callNumber}`}
                       label="Call to Book"
@@ -164,8 +182,23 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   </div>
                   <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-400 sm:justify-start">
                     <Sparkles className="h-3.5 w-3.5 text-[#FACC15]" />
-                    We usually respond within a few hours during business hours.
+                    Prefer chat?{" "}
+                    <a
+                      href={waMessage}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#25D366] transition hover:text-[#1EBE5B]"
+                    >
+                      Message us on WhatsApp
+                    </a>
+                    {" "}— we usually respond within a few hours during business hours.
                   </p>
+                  <ShareButtons
+                    title={topic.title}
+                    description={topic.description}
+                    path={`/consultations/${topic.slug}`}
+                    className="mt-8"
+                  />
                 </div>
               </div>
             </div>

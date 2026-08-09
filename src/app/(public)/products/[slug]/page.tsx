@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Check, ChevronRight } from "lucide-react";
+import { BadgeCheck, Check, ChevronRight, Truck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
@@ -11,6 +11,8 @@ import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { ShareButtons } from "@/components/social/share-buttons";
+import { absoluteUrl } from "@/lib/share";
 
 /**
  * Product detail page (scope §15.3). Image, title, category, price +
@@ -28,9 +30,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const product = await prisma.product.findUnique({ where: { slug } });
   if (!product) return { title: "Product not found" };
+  const url = absoluteUrl(`/products/${product.slug}`);
   return {
     title: `${product.name} | JAIGURU ASTROREMEDY`,
     description: product.shortDescription ?? product.longDescription ?? undefined,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      siteName: "JAIGURU ASTROREMEDY",
+      title: product.name,
+      description:
+        product.shortDescription ?? product.longDescription ?? undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description:
+        product.shortDescription ?? product.longDescription ?? undefined,
+    },
   };
 }
 
@@ -182,6 +200,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     ? "Pre Order"
                     : "Out of Stock"}
               </span>
+              {product.hasCertificate ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#059669] to-[#25D366] px-3 py-1 text-xs font-bold text-white shadow-[0_4px_14px_rgba(37,211,102,0.35)]">
+                  <BadgeCheck className="h-3.5 w-3.5" />
+                  Lab Certified
+                </span>
+              ) : null}
+              {product.estimatedDeliveryTime ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[#4C1D95]/25 px-3 py-1 text-xs font-semibold text-[#D4AF37]">
+                  <Truck className="h-3.5 w-3.5" />
+                  Delivery: {product.estimatedDeliveryTime}
+                </span>
+              ) : null}
             </div>
 
             <h1 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl">
@@ -257,6 +287,18 @@ export default async function ProductDetailPage({ params }: PageProps) {
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with
               availability, shipping and payment via UPI.
+            </p>
+            <ShareButtons
+              title={product.name}
+              description={product.shortDescription ?? undefined}
+              path={`/products/${product.slug}`}
+            />
+            <p className="rounded-xl border border-white/10 bg-[#0F172A]/40 px-4 py-3 text-xs leading-relaxed text-slate-400">
+              <span className="font-semibold text-slate-300">Note:</span> The
+              color and quality of the product may slightly differ from the
+              original image due to lighting, screen resolution, and natural
+              variations in the material. Please consider this before placing
+              your order.
             </p>
           </div>
         </div>

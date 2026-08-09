@@ -2,13 +2,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
- ArrowLeft,
- Check,
- Clock,
- GraduationCap,
- MapPin,
- Sparkles,
- Star,
+  ArrowLeft,
+  CalendarCheck,
+  Check,
+  Clock,
+  GraduationCap,
+  MapPin,
+  Sparkles,
+  Star,
 } from "lucide-react";
 import Image from "next/image";
 import { WhatsappIcon } from "@/components/layout/social-icons";
@@ -16,7 +17,10 @@ import { getServiceBySlug, SERVICE_MODE_LABELS } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
 import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
-import { PaymentButton } from "@/components/shop/payment-button";
+import { BookingButton } from "@/components/shop/booking-modal";
+import { whatsappLink } from "@/config/site";
+import { ShareButtons } from "@/components/social/share-buttons";
+import { absoluteUrl } from "@/lib/share";
 
 export const dynamic = "force-dynamic";
 
@@ -28,11 +32,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  const { slug } = await params;
  const service = await getServiceBySlug(slug);
  if (!service) return {};
+ const url = absoluteUrl(`/services/${service.slug}`);
+ const description =
+  service.shortDescription ??
+  `${service.name} — ${SERVICE_MODE_LABELS[service.mode]} service by Vedic Astrologer Arup Shastri (Jai Guru), Kolkata.`;
  return {
  title: `${service.name} | JAIGURU ASTROREMEDY`,
- description:
- service.shortDescription ??
- `${service.name} — ${SERVICE_MODE_LABELS[service.mode]} service by Vedic Astrologer Arup Shastri (Jai Guru), Kolkata.`,
+ description,
+ alternates: { canonical: url },
+ openGraph: {
+  type: "website",
+  url,
+  siteName: "JAIGURU ASTROREMEDY",
+  title: service.name,
+  description,
+ },
+ twitter: {
+  card: "summary_large_image",
+  title: service.name,
+  description,
+ },
  };
 }
 
@@ -41,19 +60,20 @@ export default async function ServiceDetailPage({ params }: Props) {
  const service = await getServiceBySlug(slug);
  if (!service) notFound();
 
- const { contact } = await getSiteData();
- const priceLabel =
- service.priceLabel ??
- (service.price ? formatPrice(service.price) : "On Request");
- const bookingMessage = serviceBookingMessage(
- {
- name: service.name,
- mode: SERVICE_MODE_LABELS[service.mode],
- price: priceLabel,
- url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
- },
- contact.upiId
- );
+  const { contact } = await getSiteData();
+  const priceLabel =
+    service.priceLabel ??
+    (service.price ? formatPrice(service.price) : "On Request");
+  const bookingMessage = serviceBookingMessage(
+  {
+  name: service.name,
+  mode: SERVICE_MODE_LABELS[service.mode],
+  price: priceLabel,
+  url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
+  },
+  contact.upiId
+  );
+  const waChatHref = whatsappLink(bookingMessage, contact.whatsappNumber);
 
  return (
  <section className="scroll-mt-24 py-16 sm:py-20">
@@ -136,28 +156,35 @@ export default async function ServiceDetailPage({ params }: Props) {
  </div>
  ) : null}
 
- {service.syllabus.length > 0 ? (
- <div className="mt-10">
- <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
- <GraduationCap className="h-5 w-5 text-[#FACC15]" /> Syllabus /
- What&apos;s Covered
- </h2>
- <ol className="mt-4 space-y-3">
- {service.syllabus.map((item, i) => (
- <li
- key={i}
- className="flex items-start gap-3 rounded-xl border border-[#D4AF37]/20 bg-[#0F172A]/50 px-4 py-3 text-sm text-slate-300"
- >
- <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#FACC15] to-[#F97316] text-xs font-bold text-slate-900">
- {i + 1}
- </span>
- {item}
- </li>
- ))}
- </ol>
- </div>
- ) : null}
- </div>
+  {service.syllabus.length > 0 ? (
+  <div className="mt-10">
+  <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
+  <GraduationCap className="h-5 w-5 text-[#FACC15]" /> Syllabus /
+  What&apos;s Covered
+  </h2>
+  <ol className="mt-4 space-y-3">
+  {service.syllabus.map((item, i) => (
+  <li
+  key={i}
+  className="flex items-start gap-3 rounded-xl border border-[#D4AF37]/20 bg-[#0F172A]/50 px-4 py-3 text-sm text-slate-300"
+  >
+  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#FACC15] to-[#F97316] text-xs font-bold text-slate-900">
+  {i + 1}
+  </span>
+  {item}
+  </li>
+  ))}
+  </ol>
+  </div>
+  ) : null}
+
+  <ShareButtons
+  title={service.name}
+  description={service.shortDescription ?? undefined}
+  path={`/services/${service.slug}`}
+  className="mt-10"
+  />
+  </div>
 
  <aside className="h-fit space-y-6 lg:sticky lg:top-24">
  <div className="glass-card rounded-3xl p-6">
@@ -178,26 +205,40 @@ export default async function ServiceDetailPage({ params }: Props) {
  <dt className="text-slate-400">Mode:</dt>
  <dd>{SERVICE_MODE_LABELS[service.mode]}</dd>
  </div>
- {service.serviceArea ? (
- <div className="flex items-start gap-3 text-slate-300">
- <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
- <dt className="text-slate-400">Service area:</dt>
- <dd>{service.serviceArea}</dd>
- </div>
- ) : null}
- </dl>
- <PaymentButton
- label="Book on WhatsApp"
- icon={<WhatsappIcon className="h-4 w-4" />}
- className="mt-6 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#25D366]/25 transition hover:bg-[#1EBE5B]"
- itemName={service.name}
- priceLabel={priceLabel}
- price={service.price ?? priceLabel}
- upiId={contact.upiId}
- whatsappNumber={contact.whatsappNumber}
- whatsappMessage={bookingMessage}
- />
- </div>
+  {service.serviceArea ? (
+  <div className="flex items-start gap-3 text-slate-300">
+  <Star className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
+  <dt className="text-slate-400">Service area:</dt>
+  <dd>{service.serviceArea}</dd>
+  </div>
+  ) : null}
+  {service.slotDuration ? (
+  <div className="flex items-start gap-3 text-slate-300">
+  <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#FACC15]" />
+  <dt className="text-slate-400">Session length:</dt>
+  <dd>{service.slotDuration >= 60 ? `${service.slotDuration / 60} hour${service.slotDuration / 60 > 1 ? "s" : ""}` : `${service.slotDuration} mins`}</dd>
+  </div>
+  ) : null}
+  </dl>
+  <BookingButton
+  label="Book Appointment"
+  icon={<CalendarCheck className="h-4 w-4" />}
+  className="mt-6 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316] px-8 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-[#FACC15]/25 transition hover:brightness-105"
+  serviceName={service.name}
+  durationMinutes={service.slotDuration ?? undefined}
+  priceLabel={priceLabel}
+  whatsappNumber={contact.whatsappNumber}
+  />
+  <a
+  href={waChatHref}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#25D366]/40 bg-[#25D366]/10 px-6 py-3 text-sm font-semibold text-[#25D366] transition hover:bg-[#25D366]/20"
+  >
+  <WhatsappIcon className="h-4 w-4" />
+  Chat directly on WhatsApp
+  </a>
+  </div>
 
  {service.related.length > 0 ? (
  <div className="rounded-3xl border border-[#D4AF37]/20 bg-[#0F172A]/50 p-6">

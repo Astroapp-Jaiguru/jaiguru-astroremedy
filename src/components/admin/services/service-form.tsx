@@ -16,6 +16,7 @@ export interface ServiceFormValues {
   categoryId: string;
   mode: string;
   duration: string;
+  slotDuration: string;
   price: string;
   priceLabel: string;
   imageUrl: string;
@@ -98,6 +99,20 @@ export function ServiceForm({
         <div className="space-y-2">
           <Label htmlFor="duration">Duration</Label>
           <Input id="duration" name="duration" defaultValue={service?.duration ?? ""} placeholder="e.g. 8 sessions / 1 session" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="slotDuration">Slot Duration</Label>
+          <select
+            id="slotDuration"
+            name="slotDuration"
+            defaultValue={service?.slotDuration ?? "60"}
+            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <option value="30">30 mins</option>
+            <option value="45">45 mins</option>
+            <option value="60">1 hour</option>
+            <option value="90">1.5 hours</option>
+          </select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="price">Price (₹)</Label>

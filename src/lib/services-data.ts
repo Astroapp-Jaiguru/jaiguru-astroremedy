@@ -69,6 +69,7 @@ export interface ServiceDetailData extends ServiceCardData {
   benefits: string[];
   syllabus: string[];
   serviceArea: string | null;
+  slotDuration: number | null;
   related: ServiceCardData[];
 }
 
@@ -108,6 +109,7 @@ export const getServiceBySlug = cache(
         benefits: row.benefits ?? [],
         syllabus: row.syllabus ?? [],
         serviceArea: row.serviceArea,
+        slotDuration: row.slotDuration,
         related: related.map((s) => ({
           id: s.id,
           name: s.name,

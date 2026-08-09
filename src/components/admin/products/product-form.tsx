@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { createProductAction, updateProductAction } from "@/lib/admin/products/actions";
+
+export const DELIVERY_TIME_OPTIONS = [
+  "1-2 Business Days",
+  "3-5 Business Days",
+  "5-7 Business Days",
+  "1-2 Weeks",
+  "2-3 Weeks",
+  "Custom (Enter manually)",
+] as const;
+
+const CUSTOM_OPTION = "Custom (Enter manually)";
 
 export interface ProductFormValues {
   id?: string;
@@ -29,6 +40,8 @@ export interface ProductFormValues {
   size: string;
   weight: string;
   color: string;
+  estimatedDeliveryTime: string;
+  hasCertificate: boolean;
   isFeatured: boolean;
   isPopular: boolean;
   isNewArrival: boolean;
@@ -46,6 +59,15 @@ export function ProductForm({
   const action = product?.id ? updateProductAction : createProductAction;
   const [state, formAction, pending] = useActionState(action, undefined);
   const isEdit = Boolean(product?.id);
+
+  const savedDelivery = product?.estimatedDeliveryTime ?? "";
+  const isCustom = !DELIVERY_TIME_OPTIONS.some((o) => o === savedDelivery);
+  const [deliverySelection, setDeliverySelection] = useState(
+    isCustom && savedDelivery ? CUSTOM_OPTION : savedDelivery
+  );
+  const [customDelivery, setCustomDelivery] = useState(
+    isCustom && savedDelivery ? savedDelivery : ""
+  );
 
   return (
     <form action={formAction} className="space-y-6">
@@ -162,6 +184,35 @@ export function ProductForm({
           <Label htmlFor="color">Color</Label>
           <Input id="color" name="color" defaultValue={product?.color ?? ""} />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="estimatedDeliveryTime">Estimated Delivery Time</Label>
+          <select
+            id="estimatedDeliveryTime"
+            name="estimatedDeliveryTime"
+            value={deliverySelection}
+            onChange={(e) => setDeliverySelection(e.target.value)}
+            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <option value="">Select delivery time</option>
+            {DELIVERY_TIME_OPTIONS.map((o) => (
+              <option key={o} value={o}>
+                {o}
+              </option>
+            ))}
+          </select>
+        </div>
+        {deliverySelection === CUSTOM_OPTION ? (
+          <div className="space-y-2">
+            <Label htmlFor="customDelivery">Custom Delivery Time</Label>
+            <Input
+              id="customDelivery"
+              name="customDelivery"
+              value={customDelivery}
+              onChange={(e) => setCustomDelivery(e.target.value)}
+              placeholder="e.g. 7-10 Business Days"
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -176,6 +227,10 @@ export function ProductForm({
         <label className="flex items-center gap-2 rounded-lg border p-3 text-sm">
           <input type="checkbox" name="isNewArrival" defaultChecked={product?.isNewArrival ?? false} className="size-4 accent-[#4C1D95]" />
           New Arrival
+        </label>
+        <label className="flex items-center gap-2 rounded-lg border p-3 text-sm">
+          <input type="checkbox" name="hasCertificate" defaultChecked={product?.hasCertificate ?? false} className="size-4 accent-[#4C1D95]" />
+          Test Certificate Available (Lab Certified)
         </label>
         <label className="flex items-center gap-2 rounded-lg border p-3 text-sm">
           <input type="checkbox" name="isActive" defaultChecked={product?.isActive ?? true} className="size-4 accent-[#4C1D95]" />

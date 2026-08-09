@@ -70,6 +70,13 @@ function parseProductForm(fd: FormData) {
   const categoryId = str(fd, "categoryId");
   const stockStatus = str(fd, "stockStatus") || "IN_STOCK";
 
+  const estimatedDeliveryTime = str(fd, "estimatedDeliveryTime");
+  const customDelivery = str(fd, "customDelivery");
+  const finalDeliveryTime =
+    estimatedDeliveryTime === "Custom (Enter manually)"
+      ? customDelivery
+      : estimatedDeliveryTime;
+
   const finalDiscount =
     discountPrice !== null &&
     price !== null &&
@@ -97,9 +104,11 @@ function parseProductForm(fd: FormData) {
     size: str(fd, "size") || null,
     weight: str(fd, "weight") || null,
     color: str(fd, "color") || null,
+    estimatedDeliveryTime: finalDeliveryTime || null,
     isFeatured: checked(fd, "isFeatured"),
     isPopular: checked(fd, "isPopular"),
     isNewArrival: checked(fd, "isNewArrival"),
+    hasCertificate: checked(fd, "hasCertificate"),
     isActive: checked(fd, "isActive"),
   };
 }
@@ -141,9 +150,11 @@ export async function createProductAction(
         size: data.size,
         weight: data.weight,
         color: data.color,
+        estimatedDeliveryTime: data.estimatedDeliveryTime,
         isFeatured: data.isFeatured,
         isPopular: data.isPopular,
         isNewArrival: data.isNewArrival,
+        hasCertificate: data.hasCertificate,
         isActive: data.isActive,
         sortOrder: data.sortOrder,
       },
@@ -198,9 +209,11 @@ export async function updateProductAction(
         size: data.size,
         weight: data.weight,
         color: data.color,
+        estimatedDeliveryTime: data.estimatedDeliveryTime,
         isFeatured: data.isFeatured,
         isPopular: data.isPopular,
         isNewArrival: data.isNewArrival,
+        hasCertificate: data.hasCertificate,
         isActive: data.isActive,
         sortOrder: data.sortOrder,
       },

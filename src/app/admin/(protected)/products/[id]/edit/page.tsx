@@ -44,9 +44,11 @@ export default async function EditProductPage({ params }: PageProps) {
     size: product.size ?? "",
     weight: product.weight ?? "",
     color: product.color ?? "",
+    estimatedDeliveryTime: product.estimatedDeliveryTime ?? "",
     isFeatured: product.isFeatured,
     isPopular: product.isPopular,
     isNewArrival: product.isNewArrival,
+    hasCertificate: product.hasCertificate,
     isActive: product.isActive,
     sortOrder: String(product.sortOrder),
   };

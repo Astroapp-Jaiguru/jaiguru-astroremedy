@@ -24,6 +24,8 @@ export interface ConsultationTopic {
   icon: LucideIcon;
   href: string;
   fee: string;
+  /** Session length in minutes used by the booking calendar. */
+  durationMinutes: number;
   /** Keywords used to match related products & services. */
   keywords: string[];
   /** Short benefit bullets shown on the dedicated page. */
@@ -41,6 +43,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Star,
     href: "/consultations/astrology",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["gemstone", "rudraksha", "kundli", "mala", "yantra"],
     benefits: [
       "Full birth chart (kundli) reading",
@@ -59,6 +62,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Hash,
     href: "/consultations/numerology",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["gemstone", "mala", "yantra", "ring"],
     benefits: [
       "Core, expression & destiny number analysis",
@@ -77,6 +81,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Compass,
     href: "/consultations/vastu",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["yantra", "idol", "vastu", "crystal"],
     benefits: [
       "Direction-wise energy audit of every room",
@@ -95,6 +100,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Stethoscope,
     href: "/consultations/medical-astrology",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["gemstone", "mala", "rudraksha", "health"],
     benefits: [
       "Planetary health map from your chart",
@@ -113,6 +119,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Sparkles,
     href: "/consultations/spiritual-remedies",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["mala", "rudraksha", "yantra", "incense"],
     benefits: [
       "Personalised mantra & japa plan",
@@ -131,6 +138,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Gem,
     href: "/consultations/gemstone",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["gemstone", "ring", "rudraksha", "crystal"],
     benefits: [
       "Chart-based gemstone selection only",
@@ -149,6 +157,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Activity,
     href: "/consultations/yoga",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["yoga", "mala", "mat", "meditation"],
     benefits: [
       "Routine designed for YOUR constitution",
@@ -167,6 +176,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: Shield,
     href: "/consultations/black-magic-protection",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["yantra", "rudraksha", "kavach", "incense"],
     benefits: [
       "Detection of negative energy or influence",
@@ -185,6 +195,7 @@ export const CONSULTATION_TOPICS: ConsultationTopic[] = [
     icon: HeartHandshake,
     href: "/consultations/personal-problem",
     fee: "₹700",
+    durationMinutes: 30,
     keywords: ["gemstone", "mala", "yantra", "rudraksha"],
     benefits: [
       "Honest root-cause reading of your problem",

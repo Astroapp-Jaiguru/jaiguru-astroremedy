@@ -31,6 +31,7 @@ export default async function EditServicePage({ params }: PageProps) {
     categoryId: service.categoryId,
     mode: service.mode,
     duration: service.duration ?? "",
+    slotDuration: service.slotDuration ? String(service.slotDuration) : "60",
     price: service.price ? service.price.toString() : "",
     priceLabel: service.priceLabel ?? "",
     imageUrl: service.imageUrl ?? "",

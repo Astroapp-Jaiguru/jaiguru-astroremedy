@@ -99,6 +99,8 @@ model Product {
   weight           String?
   color            String?
   tags             String[]       @default([])
+  estimatedDeliveryTime String?
+  hasCertificate   Boolean        @default(false)
   isFeatured       Boolean        @default(false)
   isPopular        Boolean        @default(false)
   isNewArrival     Boolean        @default(false)
@@ -163,6 +165,7 @@ model Service {
   benefits         String[]      @default([])
   syllabus         String[]      @default([])
   serviceArea      String?
+  slotDuration     Int?
   faqs             Json?
   whatsappMessage  String?
   isFeatured       Boolean       @default(false)
@@ -176,6 +179,22 @@ model Service {
 
   @@index([categoryId])
   @@index([isActive, isFeatured])
+}
+
+// ---------------------------------------------------------------------------
+// Booking availability (admin blocks days/time slots for the public booking
+// calendar; users cannot select blocked slots)
+// ---------------------------------------------------------------------------
+
+model BookingBlock {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  allDay    Boolean  @default(false)
+  timeSlots String[] @default([])
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([date])
 }
 
 // ---------------------------------------------------------------------------

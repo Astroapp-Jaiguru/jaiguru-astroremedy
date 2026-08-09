@@ -66,6 +66,7 @@ function parseServiceForm(fd: FormData) {
   const mode = str(fd, "mode") || "ONLINE";
   const price = toNumber(str(fd, "price"));
   const sortOrder = toNumber(str(fd, "sortOrder")) ?? 0;
+  const slotDuration = toNumber(str(fd, "slotDuration"));
 
   return {
     name,
@@ -73,6 +74,7 @@ function parseServiceForm(fd: FormData) {
     mode,
     price,
     sortOrder,
+    slotDuration,
     duration: str(fd, "duration") || null,
     priceLabel: str(fd, "priceLabel") || null,
     imageUrl: str(fd, "imageUrl") || null,
@@ -106,6 +108,7 @@ export async function createServiceAction(
         categoryId: data.categoryId,
         mode: data.mode as never,
         duration: data.duration,
+        slotDuration: data.slotDuration,
         price: data.price,
         priceLabel: data.priceLabel,
         imageUrl: data.imageUrl,
@@ -152,6 +155,7 @@ export async function updateServiceAction(
         categoryId: data.categoryId,
         mode: data.mode as never,
         duration: data.duration,
+        slotDuration: data.slotDuration,
         price: data.price,
         priceLabel: data.priceLabel,
         imageUrl: data.imageUrl,
