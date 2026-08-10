@@ -207,7 +207,7 @@ export async function Hero() {
                   />
                 </div>
                 <span className="absolute left-1/2 top-full mt-2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-golden px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-deep-navy shadow-md">
-                  Guru Blessings
+                  Jai Guru
                 </span>
               </div>
             </div>
