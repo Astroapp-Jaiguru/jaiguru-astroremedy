@@ -4,6 +4,7 @@ import {
   Sparkles,
   MessageSquareQuote,
   Inbox,
+  ShoppingBag,
   Plus,
   ArrowRight,
 } from "lucide-react";
@@ -14,7 +15,7 @@ import { siteConfig } from "@/config/site";
 
 async function getStats() {
   try {
-    const [products, services, testimonials, messages, categories, users] =
+    const [products, services, testimonials, messages, categories, users, orders] =
       await Promise.all([
         prisma.product.count(),
         prisma.service.count(),
@@ -22,8 +23,9 @@ async function getStats() {
         prisma.contactMessage.count(),
         prisma.productCategory.count(),
         prisma.user.count(),
+        prisma.order.count(),
       ]);
-    return { products, services, testimonials, messages, categories, users };
+    return { products, services, testimonials, messages, categories, users, orders };
   } catch {
     return {
       products: 0,
@@ -32,6 +34,7 @@ async function getStats() {
       messages: 0,
       categories: 0,
       users: 0,
+      orders: 0,
     };
   }
 }
@@ -65,8 +68,15 @@ export default async function AdminDashboardPage() {
       title: "Contact Messages",
       value: stats.messages,
       icon: Inbox,
-      href: "/admin/contact",
+      href: "/admin/contact-messages",
       color: "text-premium-gold",
+    },
+    {
+      title: "Orders & Bookings",
+      value: stats.orders,
+      icon: ShoppingBag,
+      href: "/admin/orders",
+      color: "text-indigo-500",
     },
   ];
 

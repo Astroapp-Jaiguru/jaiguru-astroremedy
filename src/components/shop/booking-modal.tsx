@@ -25,6 +25,7 @@ import {
   slotEnd12h,
 } from "@/lib/booking";
 import { cn } from "@/lib/utils";
+import { recordOrderAction } from "@/lib/orders/record";
 
 /**
  * Professional booking modal (services & consultations).
@@ -153,6 +154,18 @@ export function BookingModal({
 
   const confirm = () => {
     if (!detailsValid) return;
+    void recordOrderAction({
+      customerName: name.trim(),
+      phone: phone.trim(),
+      whatsappNumber: waNumber || undefined,
+      itemName: serviceName,
+      itemType: "SERVICE",
+      amount: priceLabel,
+      amountLabel: priceLabel,
+      preferredDate: date ?? undefined,
+      preferredTime: slot || undefined,
+      source: "booking-modal",
+    }).catch(() => undefined);
     window.open(waHref, "_blank", "noopener,noreferrer");
     setStep("done");
   };

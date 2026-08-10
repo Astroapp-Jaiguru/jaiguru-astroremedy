@@ -51,9 +51,34 @@ export async function deleteContactMessageAction(
   try {
     await prisma.contactMessage.delete({ where: { id } });
     revalidatePath("/admin/contact");
+    revalidatePath("/admin/contact-messages");
     return { ok: true };
   } catch (e) {
     console.error("[admin] deleteContactMessage failed:", e);
+    return { ok: false };
+  }
+}
+
+/**
+ * Read / Unread toggle.
+ * A message is "unread" while its status is NEW; reading moves it to
+ * IN_PROGRESS, unreading sets it back to NEW.
+ */
+export async function setContactMessageReadAction(
+  id: string,
+  read: boolean
+): Promise<{ ok: boolean }> {
+  await requireAdmin();
+  try {
+    await prisma.contactMessage.update({
+      where: { id },
+      data: { status: read ? "IN_PROGRESS" : "NEW" },
+    });
+    revalidatePath("/admin/contact-messages");
+    revalidatePath(`/admin/contact/${id}`);
+    return { ok: true };
+  } catch (e) {
+    console.error("[admin] setContactMessageRead failed:", e);
     return { ok: false };
   }
 }

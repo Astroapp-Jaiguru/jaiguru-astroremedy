@@ -22,6 +22,7 @@ import {
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { whatsappLink } from "@/config/site";
 import { buildUpiUri, extractAmount } from "@/lib/upi";
+import { recordOrderAction } from "@/lib/orders/record";
 
 /**
  * Payment popup (UPI). Opens when a product "Order" or service "Book"
@@ -213,6 +214,15 @@ function PaymentModal(
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => {
+              void recordOrderAction({
+                itemName,
+                itemType: "PRODUCT",
+                amount: am ?? priceLabel,
+                amountLabel: priceLabel,
+                source: "payment-modal",
+              }).catch(() => undefined);
+            }}
             className="btn-glow-whatsapp flex items-center justify-center gap-2 rounded-2xl bg-whatsapp px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
           >
             <WhatsappIcon className="h-4 w-4" />

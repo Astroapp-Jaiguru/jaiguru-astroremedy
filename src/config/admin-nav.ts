@@ -13,6 +13,7 @@ import {
   SquarePlay,
   MessageSquareQuote,
   Inbox,
+  ShoppingBag,
   Share2,
   Phone,
   MapPin,
@@ -23,6 +24,9 @@ import {
   KeyRound,
   SquareUser,
   CalendarDays,
+  Mail,
+  BarChart3,
+  ServerCog,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +62,18 @@ export const adminNav: AdminNavGroup[] = [
         href: "/admin/bookings",
         icon: CalendarDays,
       },
+      {
+        title: "Orders & Leads",
+        href: "/admin/orders",
+        icon: ShoppingBag,
+      },
+    ],
+  },
+  {
+    label: "Audience",
+    items: [
+      { title: "Subscribers", href: "/admin/subscribers", icon: Mail },
+      { title: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     ],
   },
   {
@@ -82,7 +98,7 @@ export const adminNav: AdminNavGroup[] = [
       { title: "YouTube Gallery", href: "/admin/gallery/youtube", icon: SquarePlay },
       { title: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
       { title: "Social Media", href: "/admin/social-links", icon: Share2 },
-      { title: "Contact Messages", href: "/admin/contact", icon: Inbox },
+      { title: "Contact Messages", href: "/admin/contact-messages", icon: Inbox },
       { title: "Contact Settings", href: "/admin/contact-settings", icon: Phone },
       { title: "Footer Settings", href: "/admin/footer", icon: SquareUser },
       { title: "Google Map", href: "/admin/map", icon: MapPin },
@@ -96,6 +112,7 @@ export const adminNav: AdminNavGroup[] = [
     items: [
       { title: "Admin Users", href: "/admin/users", icon: Users },
       { title: "Change Password", href: "/admin/change-password", icon: KeyRound },
+      { title: "System Status", href: "/admin/system", icon: ServerCog },
     ],
   },
 ];
