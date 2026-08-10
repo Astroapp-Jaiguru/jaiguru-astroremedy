@@ -4,24 +4,32 @@ import Image from "next/image";
 import { YoutubeIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { getGalleryCounts } from "@/lib/shop-data";
-import { getHomeGalleryPreviews } from "@/lib/gallery-data";
+import {
+  getGallerySections,
+  getHomeGalleryPreviews,
+} from "@/lib/gallery-data";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { cn } from "@/lib/utils";
 import type { ReactElement } from "react";
 
 /**
  * Homepage gallery band (scope §7.8).
- * Shows YouTube / Photo / Video gallery tiles. When items exist in the
- * database the tiles automatically display preview thumbnails and link to
- * the full galleries; empty galleries show a premium "coming soon" tile.
+ * Shows YouTube / Photo / Video gallery tiles. Visibility of each tile is
+ * controlled from Admin → Homepage (Show YouTube / Photo / Video Gallery).
+ * Disabled tiles disappear and the remaining tiles automatically expand
+ * (2 tiles fill two columns, 1 tile centers large) so the section always
+ * stays balanced.
  */
 export async function GalleryHome(): Promise<ReactElement> {
-  const [counts, previews] = await Promise.all([
+  const [counts, previews, sections] = await Promise.all([
     getGalleryCounts(),
     getHomeGalleryPreviews(),
+    getGallerySections(),
   ]);
 
   const tiles = [
     {
+      key: "youtube" as const,
       title: "YouTube Gallery",
       description:
         "Astrology, vastu, gemstone and remedy videos by Jai Guru.",
@@ -34,8 +42,10 @@ export async function GalleryHome(): Promise<ReactElement> {
         alt: v.title,
       })),
       accent: "text-[#FF0000]",
+      visible: sections.youtube,
     },
     {
+      key: "photo" as const,
       title: "Photo Gallery",
       description: "Moments from poojas, courses, remedies and the chamber.",
       href: "/photo-gallery",
@@ -47,8 +57,10 @@ export async function GalleryHome(): Promise<ReactElement> {
         alt: p.altText ?? p.title ?? "Gallery photo",
       })),
       accent: "text-golden",
+      visible: sections.photo,
     },
     {
+      key: "video" as const,
       title: "Video Gallery",
       description: "Live sessions, pujas, testimonials and special moments.",
       href: "/video-gallery",
@@ -56,8 +68,21 @@ export async function GalleryHome(): Promise<ReactElement> {
       count: counts.video,
       previews: [],
       accent: "text-royal-purple",
+      visible: sections.video,
     },
-  ];
+  ].filter((t) => t.visible);
+
+  if (tiles.length === 0) return <></>;
+
+  const count = tiles.length;
+  const gridCols =
+    count === 3
+      ? "md:grid-cols-3"
+      : count === 2
+        ? "md:grid-cols-2"
+        : "md:grid-cols-1";
+  const bandWidth =
+    count === 3 ? "max-w-7xl" : count === 2 ? "max-w-4xl" : "max-w-xl";
 
   return (
     <section
@@ -65,7 +90,7 @@ export async function GalleryHome(): Promise<ReactElement> {
       aria-label="Media gallery"
       className="scroll-mt-24 py-20"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", bandWidth)}>
         <Reveal>
           <SectionHeading
             eyebrow="Media & Moments"
@@ -74,7 +99,9 @@ export async function GalleryHome(): Promise<ReactElement> {
             subtitle="Live streams, photos and videos from poojas, courses, sessions and remedies performed at the chamber."
           />
         </Reveal>
-        <RevealGroup className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <RevealGroup
+          className={cn("grid grid-cols-1 gap-6", gridCols)}
+        >
           {tiles.map((tile) => {
             const Icon = tile.icon;
             const filled = tile.count > 0;

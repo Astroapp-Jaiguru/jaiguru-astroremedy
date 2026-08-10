@@ -431,3 +431,32 @@ export async function saveContactAction(
   revalidatePath("/");
   return { success: true };
 }
+// -------------------------------------------------------------------------
+// Homepage gallery sections (visibility toggles)
+// -------------------------------------------------------------------------
+
+const GALLERY_SECTIONS_KEY = "gallerySections";
+
+export async function updateGallerySectionsAction(
+  _state: SettingsFormState | undefined,
+  fd: FormData
+): Promise<SettingsFormState> {
+  await requireAdmin();
+  const value = {
+    youtube: fd.get("gallery-youtube") === "on",
+    photo: fd.get("gallery-photo") === "on",
+    video: fd.get("gallery-video") === "on",
+  };
+  try {
+    await prisma.siteSetting.upsert({
+      where: { key: GALLERY_SECTIONS_KEY },
+      update: { value: value as never },
+      create: { key: GALLERY_SECTIONS_KEY, value: value as never },
+    });
+  } catch (e) {
+    console.error("[admin] updateGallerySectionsAction failed:", e);
+    return { error: "Could not save gallery section settings. Please try again." };
+  }
+  revalidatePath("/");
+  return { success: true };
+}

@@ -1,30 +1,32 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { requireAdmin } from "@/lib/dal";
+import { getGallerySections } from "@/lib/gallery-data";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GallerySectionsForm } from "@/components/admin/settings/gallery-sections-form";
 
-export default function AdminPage() {
+export const metadata = { title: "Homepage | Admin" };
+
+export default async function AdminHomepagePage() {
+  await requireAdmin();
+  const sections = await getGallerySections();
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-2xl font-bold">Homepage</h1>
-        <p className="text-sm text-muted-foreground">Homepage section visibility & order management.</p>
+        <p className="text-sm text-muted-foreground">
+          Homepage section visibility settings.
+        </p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Coming in a later phase</CardTitle>
+          <CardTitle className="text-lg">Gallery Sections</CardTitle>
           <CardDescription>
-            This module is scaffolded. Full CRUD UI will be implemented in its
-            dedicated phase.
+            Control which gallery tiles appear in the &quot;Explore Our Gallery&quot;
+            band on the homepage. The layout adjusts automatically.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            The route structure and navigation are ready.
-          </p>
+          <GallerySectionsForm initial={sections} />
         </CardContent>
       </Card>
     </div>

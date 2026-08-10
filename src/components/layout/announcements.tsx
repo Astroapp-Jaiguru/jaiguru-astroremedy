@@ -3,9 +3,9 @@ import type { AnnouncementData } from "@/lib/site-data";
 
 /**
  * Renders all active announcement bars (scope UI spec §8).
- * Both bars stack directly below the main header. Bar 1 and bar 2 take
- * their colors from the active theme (theme variables), any extra bars
- * cycle back to tone 1/2.
+ * The site enforces exactly TWO bars: they stack directly below the main
+ * header, and bar 1 / bar 2 take their colors from the active theme's
+ * announcement variables (tone 1 / tone 2).
  */
 export function AnnouncementBars({
   announcements,
@@ -14,7 +14,7 @@ export function AnnouncementBars({
 }) {
   return (
     <div aria-label="Announcements" className="w-full">
-      {announcements.map((a, i) => (
+      {announcements.slice(0, 2).map((a, i) => (
         <AnnouncementBar
           key={a.id}
           announcement={a}

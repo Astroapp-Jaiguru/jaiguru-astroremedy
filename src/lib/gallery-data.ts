@@ -148,3 +148,50 @@ export function placeholderImage(
     label
   )}`;
 }
+
+// -------------------------------------------------------------------------
+// Homepage gallery section visibility (admin-controlled toggles)
+// -------------------------------------------------------------------------
+
+export interface GallerySectionsSettings {
+  youtube: boolean;
+  photo: boolean;
+  video: boolean;
+}
+
+export const DEFAULT_GALLERY_SECTIONS: GallerySectionsSettings = {
+  youtube: true,
+  photo: true,
+  video: true,
+};
+
+export const GALLERY_SECTIONS_STORAGE_KEY = "gallerySections";
+
+/**
+ * Reads the admin-controlled visibility toggles for the three homepage
+ * gallery sections (YouTube / Photo / Video). Stored as a JSON SiteSetting
+ * row; defaults to all visible.
+ */
+export const getGallerySections =
+  cache(async (): Promise<GallerySectionsSettings> => {
+    try {
+      const row = await prisma.siteSetting.findUnique({
+        where: { key: GALLERY_SECTIONS_STORAGE_KEY },
+      });
+      const v =
+        row?.value && typeof row.value === "object"
+          ? (row.value as Record<string, unknown>)
+          : {};
+      return {
+        youtube:
+          typeof v.youtube === "boolean" ? v.youtube : DEFAULT_GALLERY_SECTIONS.youtube,
+        photo:
+          typeof v.photo === "boolean" ? v.photo : DEFAULT_GALLERY_SECTIONS.photo,
+        video:
+          typeof v.video === "boolean" ? v.video : DEFAULT_GALLERY_SECTIONS.video,
+      };
+    } catch (e) {
+      console.error("[gallery-data] getGallerySections failed:", e);
+      return { ...DEFAULT_GALLERY_SECTIONS };
+    }
+  });

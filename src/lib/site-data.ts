@@ -172,6 +172,7 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
     prisma.announcement.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
+      take: 2,
     }),
   ]);
 
