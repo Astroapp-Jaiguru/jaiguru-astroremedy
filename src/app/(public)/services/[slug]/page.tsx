@@ -78,17 +78,17 @@ export default async function ServiceDetailPage({ params }: Props) {
  return (
  <section className="scroll-mt-24 py-16 sm:py-20">
  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
- <nav className="mb-8 flex items-center gap-2 text-sm text-slate-400">
- <Link href="/" className="transition hover:text-[#FACC15]">
- Home
- </Link>
- <span>/</span>
- <Link href="/services" className="transition hover:text-[#FACC15]">
- Services
- </Link>
- <span>/</span>
- <span className="truncate text-slate-200">{service.name}</span>
- </nav>
+<nav className="mb-8 flex items-center gap-2 text-sm text-[color:var(--jaiguru-page-text-muted)]">
+  <Link href="/" className="transition hover:text-[#FACC15]">
+  Home
+  </Link>
+  <span>/</span>
+  <Link href="/services" className="transition hover:text-[#FACC15]">
+  Services
+  </Link>
+  <span>/</span>
+  <span className="truncate text-[color:var(--jaiguru-page-text)]">{service.name}</span>
+  </nav>
 
  <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_400px]">
  <div>
@@ -100,11 +100,11 @@ export default async function ServiceDetailPage({ params }: Props) {
  {service.categoryName}
  </span>
  </div>
- <h1 className="mt-4 font-display text-3xl font-bold text-white sm:text-4xl">
- {service.name}
- </h1>
- {service.shortDescription ? (
- <p className="mt-4 text-base leading-relaxed text-slate-300">
+<h1 className="mt-4 font-display text-3xl font-bold text-[var(--jaiguru-page-text)] sm:text-4xl">
+  {service.name}
+  </h1>
+  {service.shortDescription ? (
+  <p className="mt-4 text-base leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
  {service.shortDescription}
  </p>
  ) : null}
@@ -129,17 +129,17 @@ export default async function ServiceDetailPage({ params }: Props) {
  .map((paragraph, i) => (
  <p
  key={i}
- className="text-sm leading-relaxed text-slate-400"
- >
- {paragraph}
- </p>
- ))}
- </div>
- ) : null}
+className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]"
+  >
+  {paragraph}
+  </p>
+  ))}
+  </div>
+  ) : null}
 
- {service.benefits.length > 0 ? (
- <div className="mt-10">
- <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
+  {service.benefits.length > 0 ? (
+  <div className="mt-10">
+  <h2 className="flex items-center gap-2 font-display text-xl font-bold text-[var(--jaiguru-page-text)]">
  <Sparkles className="h-5 w-5 text-[#FACC15]" /> What You Get
  </h2>
  <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -158,7 +158,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   {service.syllabus.length > 0 ? (
   <div className="mt-10">
-  <h2 className="flex items-center gap-2 font-display text-xl font-bold text-white">
+  <h2 className="flex items-center gap-2 font-display text-xl font-bold text-[var(--jaiguru-page-text)]">
   <GraduationCap className="h-5 w-5 text-[#FACC15]" /> Syllabus /
   What&apos;s Covered
   </h2>

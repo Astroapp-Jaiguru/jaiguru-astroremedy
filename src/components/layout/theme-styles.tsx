@@ -10,10 +10,20 @@ import {
 } from "@/lib/fonts";
 
 /**
- * Injects the admin-configured theme (Phase 8) onto the public frontend as
+ * Injects the admin-configured theme (Phase 9) onto the public frontend as
  * CSS custom properties. Colors, fonts, radii and section spacing are read
  * from the ThemeSetting model and applied instantly on every request.
  */
+function isLightColor(hex: string): boolean {
+  const m = /^#([0-9a-fA-F]{6})$/.exec(hex);
+  if (!m) return false;
+  const n = Number.parseInt(m[1], 16);
+  const r = (n >> 16) & 255;
+  const g = (n >> 8) & 255;
+  const b = n & 255;
+  return 0.299 * r + 0.587 * g + 0.114 * b > 165;
+}
+
 export async function ThemeStyles() {
   let theme: ThemeSettings = normalizeTheme(undefined);
   try {
@@ -30,6 +40,16 @@ export async function ThemeStyles() {
   const buttonRadius =
     theme.buttonRadius >= 9999 ? "9999px" : `${theme.buttonRadius}px`;
 
+  /**
+   * Contrasting text color for content that sits directly on the page
+   * background (section headings etc.): white on dark pages, dark ink on
+   * light pages (e.g. the Butter Gold theme).
+   */
+  const pageTextColor = isLightColor(theme.pageBackground)
+    ? "#0F172A"
+    : "#FFFFFF";
+  const pageTextMuted = `color-mix(in srgb, ${pageTextColor} 78%, var(--jaiguru-page-bg))`;
+
   const css = `
 :root {
   --jaiguru-primary: ${theme.primary};
@@ -41,6 +61,8 @@ export async function ThemeStyles() {
   --jaiguru-whatsapp: ${theme.whatsapp};
   --jaiguru-emerald: ${theme.emerald};
   --jaiguru-page-bg: ${theme.pageBackground};
+  --jaiguru-page-text: ${pageTextColor};
+  --jaiguru-page-text-muted: ${pageTextMuted};
   --jaiguru-primary-text: ${theme.primaryTextColor};
   --jaiguru-secondary-text: ${theme.secondaryTextColor};
   --jaiguru-cta-primary: ${theme.ctaPrimary};
@@ -78,6 +100,18 @@ export async function ThemeStyles() {
   --jaiguru-experience-bg: ${theme.experienceBannerBackground};
   --jaiguru-experience-text: ${theme.experienceBannerTextColor};
   --jaiguru-experience-border: ${theme.experienceBannerBorder};
+  --jaiguru-topbar-bg: ${theme.topbarBackground};
+  --jaiguru-topbar-text: ${theme.topbarTextColor};
+  --jaiguru-topbar-border: color-mix(in srgb, ${theme.topbarTextColor} 22%, transparent);
+  --jaiguru-announcement-1-bg: ${theme.announcementBar1Background};
+  --jaiguru-announcement-1-text: ${theme.announcementBar1TextColor};
+  --jaiguru-announcement-1-border: color-mix(in srgb, ${theme.announcementBar1TextColor} 30%, transparent);
+  --jaiguru-announcement-2-bg: ${theme.announcementBar2Background};
+  --jaiguru-announcement-2-text: ${theme.announcementBar2TextColor};
+  --jaiguru-announcement-2-border: color-mix(in srgb, ${theme.announcementBar2TextColor} 30%, transparent);
+  --jaiguru-footer-bg: ${theme.footerBackground};
+  --jaiguru-footer-heading: ${theme.footerHeadingColor};
+  --jaiguru-footer-border: color-mix(in srgb, ${theme.footerHeadingColor} 18%, transparent);
 }
 body,
 .font-sans {

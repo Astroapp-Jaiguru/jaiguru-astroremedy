@@ -7,8 +7,8 @@ import { whatsappLink } from "@/config/site";
 
 /**
  * Top Header / Contact Bar (scope UI spec §5.1).
- * Deep cosmic navy gradient, gold icons, WhatsApp + Call on the left,
- * social icons on the right.
+ * Background, text, icons and borders are fully controlled by the active
+ * theme (--jaiguru-topbar-* variables) so every theme changes the bar.
  */
 export function TopHeader({
   contact,
@@ -29,29 +29,29 @@ export function TopHeader({
   );
 
   return (
-    <div className="bg-topbar-gradient text-white">
+    <div className="bg-topbar-gradient border-b border-[color:var(--jaiguru-topbar-border)] text-[color:var(--jaiguru-topbar-text)]">
       <div className="mx-auto flex h-[42px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Left: booking + contact numbers */}
         <div className="flex min-w-0 items-center gap-3 text-sm">
-          <span className="hidden items-center gap-1.5 font-medium text-white/75 sm:flex">
-            <UserRoundCheck className="h-4 w-4 text-golden" />
+          <span className="hidden items-center gap-1.5 font-medium opacity-75 sm:flex">
+            <UserRoundCheck className="h-4 w-4" />
             {contact.bookingLabel}
           </span>
-          <span className="hidden text-white/25 sm:block" aria-hidden="true">
+          <span className="hidden opacity-40 sm:block" aria-hidden="true">
             |
           </span>
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 font-semibold text-golden transition-colors hover:text-white"
+            className="flex items-center gap-1.5 font-semibold transition-opacity hover:opacity-100"
           >
             <WhatsappIcon className="h-4 w-4" />
             <span className="truncate">{contact.whatsappDisplay}</span>
           </a>
           <a
             href={`tel:${contact.callNumber}`}
-            className="flex items-center gap-1.5 font-semibold text-golden transition-colors hover:text-white"
+            className="flex items-center gap-1.5 font-semibold transition-opacity hover:opacity-100"
           >
             <Phone className="h-4 w-4" />
             <span className="truncate">{contact.callDisplay}</span>

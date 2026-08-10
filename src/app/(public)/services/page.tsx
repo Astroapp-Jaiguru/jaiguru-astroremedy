@@ -87,7 +87,7 @@ export default async function ServicesPage({
  })}
  </div>
 
- <p className="mt-6 text-center text-sm text-slate-400">
+ <p className="mt-6 text-center text-sm text-[color:var(--jaiguru-page-text-muted)]">
  Showing {services.length} service
  {services.length === 1 ? "" : "s"}
  </p>

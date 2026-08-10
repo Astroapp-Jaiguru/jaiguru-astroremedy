@@ -214,7 +214,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               ) : null}
             </div>
 
-            <h1 className="font-display text-3xl font-bold leading-tight text-white sm:text-4xl">
+            <h1 className="font-display text-3xl font-bold leading-tight text-[var(--jaiguru-page-text)] sm:text-4xl">
               {product.name}
             </h1>
 
@@ -237,12 +237,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
 
             {product.shortDescription ? (
-              <p className="leading-relaxed text-slate-300">
+              <p className="leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
                 {product.shortDescription}
               </p>
             ) : null}
             {product.longDescription ? (
-              <p className="text-sm leading-relaxed text-slate-400">
+              <p className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
                 {product.longDescription}
               </p>
             ) : null}
@@ -250,7 +250,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.benefits.length > 0 ? (
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {product.benefits.map((b) => (
-                  <li key={b} className="flex items-center gap-2 text-sm text-slate-300">
+                  <li key={b} className="flex items-center gap-2 text-sm text-[color:var(--jaiguru-page-text-muted)]">
                     <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#25D366]/15">
                       <Check className="h-3 w-3 text-[#25D366]" />
                     </span>
@@ -305,7 +305,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
         {relatedData.length > 0 ? (
           <div className="mt-20">
-            <h2 className="mb-8 font-display text-2xl font-bold text-white">
+            <h2 className="mb-8 font-display text-2xl font-bold text-[var(--jaiguru-page-text)]">
               You May Also{" "}
               <span className="bg-gradient-to-r from-[#FACC15] via-[#D4AF37] to-[#F97316] bg-clip-text text-transparent">
                 Like

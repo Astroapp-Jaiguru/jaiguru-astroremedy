@@ -125,7 +125,7 @@ export async function FeaturedServices(): Promise<ReactElement> {
           {groups.map((group) => (
             <div key={group.slug}>
               <div className="mb-8 flex items-center gap-4">
-                <h3 className="font-display text-xl font-bold text-white sm:text-2xl">
+                <h3 className="font-display text-xl font-bold text-[var(--jaiguru-page-text)] sm:text-2xl">
                   {group.name}
                 </h3>
                 <span className="h-px flex-1 bg-gradient-to-r from-premium-gold/60 to-transparent" />

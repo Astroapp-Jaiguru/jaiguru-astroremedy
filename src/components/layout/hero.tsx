@@ -176,8 +176,8 @@ export async function Hero() {
             <FloatingCard icon="whatsapp" label="WhatsApp Booking" value="Fast Response" />
           </div>
 
-          {/* Astrologer main image */}
-          <div className="relative">
+          {/* Astrologer main image (frame + master circle shifted down ~12px for visual balance) */}
+          <div className="relative mt-3">
             <div className="relative overflow-hidden rounded-[calc(var(--jaiguru-card-radius)*2)] border-2 border-golden/45 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="relative aspect-[4/5] w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

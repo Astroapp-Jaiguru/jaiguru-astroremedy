@@ -155,8 +155,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
         {products.length === 0 ? (
           <div className="rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center">
-            <p className="text-lg font-semibold text-white">No products found</p>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="text-lg font-semibold text-[var(--jaiguru-page-text)]">No products found</p>
+            <p className="mt-2 text-sm text-[color:var(--jaiguru-page-text-muted)]">
               Try a different category or search term.
             </p>
           </div>

@@ -47,6 +47,14 @@ export interface ThemeSettings {
   experienceBannerBackground: string;
   experienceBannerTextColor: string;
   experienceBannerBorder: string;
+  topbarBackground: string;
+  topbarTextColor: string;
+  announcementBar1Background: string;
+  announcementBar1TextColor: string;
+  announcementBar2Background: string;
+  announcementBar2TextColor: string;
+  footerBackground: string;
+  footerHeadingColor: string;
 }
 
 /**
@@ -96,6 +104,14 @@ export const THEME_DEFAULTS: ThemeSettings = {
   experienceBannerBackground: "#D4AF37",
   experienceBannerTextColor: "#111827",
   experienceBannerBorder: "#B45309",
+  topbarBackground: "#0F172A",
+  topbarTextColor: "#D4AF37",
+  announcementBar1Background: "#10B981",
+  announcementBar1TextColor: "#FFFFFF",
+  announcementBar2Background: "#D4AF37",
+  announcementBar2TextColor: "#0F172A",
+  footerBackground: "#111827",
+  footerHeadingColor: "#D4AF37",
 };
 
 export const THEME_STORAGE_KEY = "theme";
@@ -263,6 +279,29 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
     experienceBannerBorder: hex(
       v.experienceBannerBorder,
       THEME_DEFAULTS.experienceBannerBorder
+    ),
+    topbarBackground: hex(v.topbarBackground, THEME_DEFAULTS.topbarBackground),
+    topbarTextColor: hex(v.topbarTextColor, THEME_DEFAULTS.topbarTextColor),
+    announcementBar1Background: hex(
+      v.announcementBar1Background,
+      THEME_DEFAULTS.announcementBar1Background
+    ),
+    announcementBar1TextColor: hex(
+      v.announcementBar1TextColor,
+      THEME_DEFAULTS.announcementBar1TextColor
+    ),
+    announcementBar2Background: hex(
+      v.announcementBar2Background,
+      THEME_DEFAULTS.announcementBar2Background
+    ),
+    announcementBar2TextColor: hex(
+      v.announcementBar2TextColor,
+      THEME_DEFAULTS.announcementBar2TextColor
+    ),
+    footerBackground: hex(v.footerBackground, THEME_DEFAULTS.footerBackground),
+    footerHeadingColor: hex(
+      v.footerHeadingColor,
+      THEME_DEFAULTS.footerHeadingColor
     ),
   };
 }

@@ -37,7 +37,7 @@ export function SectionHeading({
         {eyebrow}
       </span>
       {title ? (
-        <h2 className="font-display text-3xl font-bold text-white sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
+        <h2 className="font-display text-3xl font-bold text-[var(--jaiguru-page-text)] sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
           {title}{" "}
           {highlight ? (
             <span className="bg-gradient-to-r from-golden via-premium-gold to-saffron bg-clip-text text-transparent">
@@ -50,7 +50,7 @@ export function SectionHeading({
       {subtitle ? (
         <p
           className={cn(
-            "max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base",
+            "max-w-2xl text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)] sm:text-base",
             centered && "mx-auto"
           )}
         >

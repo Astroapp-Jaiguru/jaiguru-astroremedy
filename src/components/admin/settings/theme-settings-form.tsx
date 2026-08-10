@@ -268,7 +268,7 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {THEME_PRESETS.map((preset) => {
                 const active =
                   settings.primary === preset.theme.primary &&
@@ -448,22 +448,6 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
               onChangeEnd={(v) => set("heroGradientEnd", v)}
             />
             <GradientField
-              label="Top Header Bar"
-              name="topbarGradient"
-              start={settings.topbarGradientStart}
-              end={settings.topbarGradientEnd}
-              onChangeStart={(v) => set("topbarGradientStart", v)}
-              onChangeEnd={(v) => set("topbarGradientEnd", v)}
-            />
-            <GradientField
-              label="Footer"
-              name="footerGradient"
-              start={settings.footerGradientStart}
-              end={settings.footerGradientEnd}
-              onChangeStart={(v) => set("footerGradientStart", v)}
-              onChangeEnd={(v) => set("footerGradientEnd", v)}
-            />
-            <GradientField
               label="Gold Accents"
               name="goldGradient"
               start={settings.goldGradientStart}
@@ -471,6 +455,87 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
               onChangeStart={(v) => set("goldGradientStart", v)}
               onChangeEnd={(v) => set("goldGradientEnd", v)}
             />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Header, Announcements & Footer</CardTitle>
+            <CardDescription>
+              Background and text colors for the top header bar, the two
+              scrolling announcement bars and the footer. Every theme fully
+              restyles these zones.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Top Header Bar
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ColorField
+                label="Background"
+                name="topbarBackground"
+                value={settings.topbarBackground}
+                onChange={(v) => set("topbarBackground", v)}
+              />
+              <ColorField
+                label="Text / Icons"
+                name="topbarTextColor"
+                value={settings.topbarTextColor}
+                onChange={(v) => set("topbarTextColor", v)}
+              />
+            </div>
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Announcement Bar 1
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ColorField
+                label="Background"
+                name="announcementBar1Background"
+                value={settings.announcementBar1Background}
+                onChange={(v) => set("announcementBar1Background", v)}
+              />
+              <ColorField
+                label="Text"
+                name="announcementBar1TextColor"
+                value={settings.announcementBar1TextColor}
+                onChange={(v) => set("announcementBar1TextColor", v)}
+              />
+            </div>
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Announcement Bar 2
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ColorField
+                label="Background"
+                name="announcementBar2Background"
+                value={settings.announcementBar2Background}
+                onChange={(v) => set("announcementBar2Background", v)}
+              />
+              <ColorField
+                label="Text"
+                name="announcementBar2TextColor"
+                value={settings.announcementBar2TextColor}
+                onChange={(v) => set("announcementBar2TextColor", v)}
+              />
+            </div>
+            <div className="rounded-lg bg-muted/60 p-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Footer
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ColorField
+                label="Background"
+                name="footerBackground"
+                value={settings.footerBackground}
+                onChange={(v) => set("footerBackground", v)}
+              />
+              <ColorField
+                label="Column Heading Color"
+                name="footerHeadingColor"
+                value={settings.footerHeadingColor}
+                onChange={(v) => set("footerHeadingColor", v)}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -727,28 +792,67 @@ export function ThemeSettingsForm({ initial }: { initial: ThemeSettings }) {
                 Book Consultation
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="space-y-3 pt-1">
               <div>
                 <p className="text-xs font-medium text-muted-foreground">
                   Top Header Bar
                 </p>
                 <div
-                  className="mt-1.5 h-8 rounded-lg border border-input"
+                  className="mt-1.5 flex h-8 items-center rounded-lg border border-input px-3 text-[11px] font-semibold"
                   style={{
-                    background: `linear-gradient(90deg, ${settings.topbarGradientStart} 0%, ${settings.topbarGradientEnd} 100%)`,
+                    background: settings.topbarBackground,
+                    color: settings.topbarTextColor,
                   }}
-                />
+                >
+                  WhatsApp · Call · Social
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Announcement Bar 1
+                </p>
+                <div
+                  className="mt-1.5 flex h-8 items-center rounded-lg border border-input px-3 text-[11px] font-semibold"
+                  style={{
+                    background: settings.announcementBar1Background,
+                    color: settings.announcementBar1TextColor,
+                  }}
+                >
+                  ✦ Announcement bar one
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Announcement Bar 2
+                </p>
+                <div
+                  className="mt-1.5 flex h-8 items-center rounded-lg border border-input px-3 text-[11px] font-semibold"
+                  style={{
+                    background: settings.announcementBar2Background,
+                    color: settings.announcementBar2TextColor,
+                  }}
+                >
+                  ✦ Announcement bar two
+                </div>
               </div>
               <div>
                 <p className="text-xs font-medium text-muted-foreground">
                   Footer
                 </p>
                 <div
-                  className="mt-1.5 h-8 rounded-lg border border-input"
-                  style={{
-                    background: `linear-gradient(90deg, ${settings.footerGradientStart} 0%, ${settings.footerGradientEnd} 100%)`,
-                  }}
-                />
+                  className="mt-1.5 rounded-lg border border-input p-3"
+                  style={{ background: settings.footerBackground }}
+                >
+                  <p
+                    className="text-[11px] font-bold"
+                    style={{ color: settings.footerHeadingColor }}
+                  >
+                    Quick Links
+                  </p>
+                  <p className="mt-1 text-[11px] text-white/70">
+                    Footer summary text
+                  </p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-3 pt-1">

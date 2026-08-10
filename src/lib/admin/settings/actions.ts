@@ -174,6 +174,46 @@ export async function saveThemeAction(
       "experienceBannerBorder",
       THEME_DEFAULTS.experienceBannerBorder
     ),
+    topbarBackground: hex(
+      fd,
+      "topbarBackground",
+      THEME_DEFAULTS.topbarBackground
+    ),
+    topbarTextColor: hex(
+      fd,
+      "topbarTextColor",
+      THEME_DEFAULTS.topbarTextColor
+    ),
+    announcementBar1Background: hex(
+      fd,
+      "announcementBar1Background",
+      THEME_DEFAULTS.announcementBar1Background
+    ),
+    announcementBar1TextColor: hex(
+      fd,
+      "announcementBar1TextColor",
+      THEME_DEFAULTS.announcementBar1TextColor
+    ),
+    announcementBar2Background: hex(
+      fd,
+      "announcementBar2Background",
+      THEME_DEFAULTS.announcementBar2Background
+    ),
+    announcementBar2TextColor: hex(
+      fd,
+      "announcementBar2TextColor",
+      THEME_DEFAULTS.announcementBar2TextColor
+    ),
+    footerBackground: hex(
+      fd,
+      "footerBackground",
+      THEME_DEFAULTS.footerBackground
+    ),
+    footerHeadingColor: hex(
+      fd,
+      "footerHeadingColor",
+      THEME_DEFAULTS.footerHeadingColor
+    ),
   };
   try {
     await prisma.themeSetting.upsert({

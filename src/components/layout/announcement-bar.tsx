@@ -8,11 +8,16 @@ import type { AnnouncementData } from "@/lib/site-data";
  * Single scrolling announcement bar (scope UI spec §8).
  * Right-to-left marquee, pauses on hover. Text may contain "||" to separate
  * multiple messages rendered with a star separator.
+ *
+ * Bar colors (background, text, star icons and bottom border) come from the
+ * active theme - bar 1 vs bar 2 select their own theme variables.
  */
 export function AnnouncementBar({
   announcement,
+  tone = 1,
 }: {
   announcement: AnnouncementData;
+  tone?: 1 | 2;
 }) {
   const messages = announcement.text
     .split("||")
@@ -54,10 +59,11 @@ export function AnnouncementBar({
     <div
       role="region"
       aria-label={announcement.title ?? "Announcement"}
-      className="announcement-wrap overflow-hidden"
+      className="announcement-wrap overflow-hidden border-b"
       style={{
-        backgroundColor: announcement.backgroundColor,
-        color: announcement.textColor,
+        backgroundColor: `var(--jaiguru-announcement-${tone}-bg, #10b981)`,
+        color: `var(--jaiguru-announcement-${tone}-text, #ffffff)`,
+        borderColor: `var(--jaiguru-announcement-${tone}-border, rgba(255,255,255,0.3))`,
       }}
     >
       <div

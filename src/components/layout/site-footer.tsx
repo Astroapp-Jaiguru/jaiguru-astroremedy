@@ -12,8 +12,10 @@ import { whatsappLink } from "@/config/site";
 
 /**
  * Footer (scope UI spec §19).
- * Dark premium gradient, 4 columns: brand / quick links / products-services /
- * contact + socials. Gold headings, circular gold social buttons.
+ * Theme-controlled premium background + heading color, 4 columns: brand /
+ * quick links / products-services / contact + socials. Gold headings,
+ * circular gold social buttons. Logo matches the header logo exactly
+ * (same image + size, managed by the same Branding settings).
  */
 export async function SiteFooter() {
   const [data, legalPages] = await Promise.all([getSiteData(), getLegalPages()]);
@@ -44,19 +46,15 @@ export async function SiteFooter() {
           {/* 1. Brand */}
           <div>
             <div className="flex items-center gap-3">
-              <span className="relative flex h-[52px] w-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-2xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20">
-                {data.branding.logo ? (
-                  <Image
-                    src={data.branding.logo}
-                    alt={data.branding.logoAlt}
-                    fill
-                    unoptimized
-                    sizes="52px"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <span aria-hidden="true">ॐ</span>
-                )}
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20 sm:h-11 sm:w-11 sm:text-2xl xl:h-[52px] xl:w-[52px] xl:text-3xl">
+                <Image
+                  src={data.branding.logo ?? "/favicon.png"}
+                  alt={data.branding.logoAlt}
+                  fill
+                  unoptimized={!!data.branding.logo}
+                  sizes="52px"
+                  className="h-full w-full object-cover"
+                />
               </span>
               <div>
                 <p className="font-heading text-xl font-bold text-white">
@@ -166,7 +164,7 @@ export async function SiteFooter() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-[color:var(--jaiguru-footer-border)]">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 pb-24 pt-5 text-center text-[13px] text-white/60 sm:flex-row sm:px-6 lg:px-8 lg:pb-5">
           <div className="flex flex-col items-center gap-1 sm:items-start">
             {[data.footer.copyright, data.footer.ownedBy, data.footer.registered]
@@ -201,7 +199,9 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <h3 className="font-heading text-lg font-bold text-golden">{title}</h3>
+      <h3 className="font-heading text-lg font-bold text-[color:var(--jaiguru-footer-heading)]">
+        {title}
+      </h3>
       <div className="mt-4">{children}</div>
     </div>
   );
