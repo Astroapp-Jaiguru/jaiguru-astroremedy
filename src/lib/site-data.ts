@@ -56,12 +56,42 @@ const DEFAULT_ANNOUNCEMENTS: Omit<AnnouncementData, "id">[] = [
 ];
 
 const DEFAULT_SOCIALS: SocialLinkData[] = [
-  { platform: "facebook", url: "", sortOrder: 1, isActive: true },
-  { platform: "youtube", url: "", sortOrder: 2, isActive: true },
-  { platform: "instagram", url: "", sortOrder: 3, isActive: true },
-  { platform: "twitter", url: "", sortOrder: 4, isActive: true },
-  { platform: "whatsapp", url: "", sortOrder: 5, isActive: true },
-  { platform: "googlebusiness", url: "", sortOrder: 6, isActive: true },
+  {
+    platform: "facebook",
+    url: "https://www.facebook.com/share/1RYoFyYaA4/",
+    sortOrder: 1,
+    isActive: true,
+  },
+  {
+    platform: "youtube",
+    url: "https://youtube.com/@astroguru8527?si=tJQG3M2t2LKAT8RV",
+    sortOrder: 2,
+    isActive: true,
+  },
+  {
+    platform: "instagram",
+    url: "https://www.instagram.com/astrologerarup?igsh=enlqaHlqOXVkdmpv",
+    sortOrder: 3,
+    isActive: true,
+  },
+  {
+    platform: "twitter",
+    url: "https://x.com/arupkar23",
+    sortOrder: 4,
+    isActive: true,
+  },
+  {
+    platform: "whatsapp",
+    url: "https://wa.me/919874886574",
+    sortOrder: 5,
+    isActive: true,
+  },
+  {
+    platform: "googlebusiness",
+    url: "https://g.page/r/CYafHFscPcN7EAE",
+    sortOrder: 6,
+    isActive: true,
+  },
 ];
 
 /** Default content used when a SiteSetting row is missing. */

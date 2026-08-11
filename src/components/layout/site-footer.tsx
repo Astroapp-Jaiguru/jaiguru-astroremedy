@@ -5,6 +5,7 @@ import { MapPin, Phone, Clock, Mail, Star } from "lucide-react";
 import {
   SocialIconRow,
   WhatsappIcon,
+  GoogleIcon,
 } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { getLegalPages } from "@/lib/legal-data";
@@ -71,6 +72,22 @@ export async function SiteFooter() {
               20+ Years of Vedic Experience
             </p>
             <SocialIconRow links={data.socials} className="mt-6" />
+            {(() => {
+              const g = data.socials.find(
+                (s) => s.platform === "googlebusiness"
+              );
+              return g?.url ? (
+                <a
+                  href={g.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[13px] text-white/75 transition-colors hover:border-golden/50 hover:text-golden"
+                >
+                  <GoogleIcon className="h-4 w-4 text-golden" />
+                  Visit our Google Business Profile
+                </a>
+              ) : null;
+            })()}
           </div>
 
           {/* 2. Quick links */}

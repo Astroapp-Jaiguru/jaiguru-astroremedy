@@ -4,6 +4,7 @@ import { getSeoDefaults } from "@/lib/seo-data";
 import { SiteHeaderShell } from "@/components/layout/site-header-shell";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { FloatingCta } from "@/components/layout/floating-cta";
+import { FacebookCommentButton } from "@/components/layout/facebook-comment-button";
 import { ThemeStyles } from "@/components/layout/theme-styles";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -36,6 +37,7 @@ export default function PublicLayout({ children }: LayoutProps<"/">) {
       </main>
       <SiteFooter />
       <FloatingCta />
+      <FacebookCommentButton />
     </>
   );
 }
