@@ -12,6 +12,11 @@ export async function TypographyOverrides() {
 
   const blocks: string[] = [];
 
+  const rule = (attr: string, css: string) =>
+    // Doubled attribute selector: beats element-scoped !important theme
+    // rules (e.g. `h1 .text-gold-gradient`) via higher specificity.
+    `[data-typo="${attr}"][data-typo="${attr}"] {\n${css}\n}`;
+
   for (const [section, map] of [
     ["hero", overrides.hero],
     ["branding", overrides.branding],
@@ -20,18 +25,18 @@ export async function TypographyOverrides() {
     for (const [field, o] of Object.entries(map)) {
       const css = buildOverrideCss(o);
       if (!css) continue;
-      blocks.push(`[data-typo="${section}-${field}"] {\n${css}\n}`);
+      blocks.push(rule(`${section}-${field}`, css));
     }
   }
 
   for (const [id, entry] of Object.entries(overrides.faq)) {
     if (entry.question) {
       const css = buildOverrideCss(entry.question);
-      if (css) blocks.push(`[data-typo="faq-${id}-question"] {\n${css}\n}`);
+      if (css) blocks.push(rule(`faq-${id}-question`, css));
     }
     if (entry.answer) {
       const css = buildOverrideCss(entry.answer);
-      if (css) blocks.push(`[data-typo="faq-${id}-answer"] {\n${css}\n}`);
+      if (css) blocks.push(rule(`faq-${id}-answer`, css));
     }
   }
 
