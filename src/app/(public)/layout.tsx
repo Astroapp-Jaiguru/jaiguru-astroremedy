@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { FloatingCta } from "@/components/layout/floating-cta";
 import { FacebookCommentButton } from "@/components/layout/facebook-comment-button";
 import { ThemeStyles } from "@/components/layout/theme-styles";
+import { TypographyOverrides } from "@/components/layout/typography-overrides";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoDefaults();
@@ -27,6 +28,7 @@ export default function PublicLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <ThemeStyles />
+      <TypographyOverrides />
       <SiteHeaderShell />
       <main className="relative flex-1 overflow-hidden bg-celestial">
         <div

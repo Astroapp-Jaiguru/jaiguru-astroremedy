@@ -59,11 +59,12 @@ export async function SiteFooter() {
                 />
               </span>
               <div>
-                <p className="font-heading text-xl font-bold text-white">
+                <p data-typo="branding-footerBrand" className="font-heading text-xl font-bold text-white">
                   {data.branding.siteName}
                 </p>
                 <p className="text-xs text-white/70">
-                  {data.astrologer.title} {data.astrologer.name}
+                  <span data-typo="astrologer-title">{data.astrologer.title}</span>{" "}
+                  <span data-typo="astrologer-name">{data.astrologer.name}</span>
                 </p>
               </div>
             </div>

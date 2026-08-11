@@ -1,12 +1,16 @@
 import { getSiteData } from "@/lib/site-data";
 import { requireAdmin } from "@/lib/dal";
+import { getTypographyOverrides } from "@/lib/typography-overrides";
 import { AstrologerForm } from "@/components/admin/content/astrologer-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminAstrologerPage() {
   await requireAdmin();
-  const data = await getSiteData();
+  const [data, overrides] = await Promise.all([
+    getSiteData(),
+    getTypographyOverrides(),
+  ]);
   const a = data.astrologer;
 
   return (
@@ -27,6 +31,7 @@ export default async function AdminAstrologerPage() {
           photoUrl: a.photoUrl ?? "",
           expertise: [...a.expertise],
           specialties: [...a.specialties],
+          typography: overrides.astrologer,
         }}
       />
     </div>

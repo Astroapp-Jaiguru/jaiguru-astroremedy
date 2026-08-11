@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { saveHeroAction } from "@/lib/admin/content/actions";
 import type { HeroSettings } from "@/lib/admin/content/actions";
+import { TypographyOverridePanel } from "@/components/admin/content/typography-override-panel";
 
 export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
   const router = useRouter();
@@ -57,6 +58,11 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
                 Small pill above the headline.
               </p>
             </div>
+            <TypographyOverridePanel
+              field="badge"
+              label="Badge Text"
+              override={initial.typography?.badge}
+            />
             <div className="space-y-2">
               <Label htmlFor="headlineLine1">Headline Line 1</Label>
               <Input
@@ -65,6 +71,11 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
                 defaultValue={initial.headlineLine1}
               />
             </div>
+            <TypographyOverridePanel
+              field="headlineLine1"
+              label="Headline Line 1"
+              override={initial.typography?.headlineLine1}
+            />
             <div className="space-y-2">
               <Label htmlFor="headlineLine2">Headline Line 2</Label>
               <Input
@@ -76,6 +87,11 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
                 Renders in gold gradient. Required.
               </p>
             </div>
+            <TypographyOverridePanel
+              field="headlineLine2"
+              label="Headline Line 2 (Highlight)"
+              override={initial.typography?.headlineLine2}
+            />
             <div className="space-y-2">
               <Label htmlFor="headlineLine3">Headline Line 3</Label>
               <Input
@@ -84,6 +100,11 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
                 defaultValue={initial.headlineLine3}
               />
             </div>
+            <TypographyOverridePanel
+              field="headlineLine3"
+              label="Headline Line 3"
+              override={initial.typography?.headlineLine3}
+            />
             <div className="space-y-2">
               <Label htmlFor="subtext">Subheading Text</Label>
               <Textarea
@@ -93,6 +114,11 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
                 defaultValue={initial.subtext}
               />
             </div>
+            <TypographyOverridePanel
+              field="subtext"
+              label="Subheading Text"
+              override={initial.typography?.subtext}
+            />
             <div className="space-y-2">
               <Label htmlFor="feeText">Fee Label Text</Label>
               <Input

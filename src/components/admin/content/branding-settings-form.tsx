@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { saveBrandingAction } from "@/lib/admin/content/actions";
 import type { BrandingSettings } from "@/lib/admin/content/actions";
+import { TypographyOverridePanel } from "@/components/admin/content/typography-override-panel";
 
 export function BrandingSettingsForm({
   initial,
@@ -59,14 +60,29 @@ export function BrandingSettingsForm({
               <Label htmlFor="siteName">Site Title</Label>
               <Input id="siteName" name="siteName" defaultValue={initial.siteName} />
             </div>
+            <TypographyOverridePanel
+              field="siteName"
+              label="Site Name (header)"
+              override={initial.typography?.siteName}
+            />
             <div className="space-y-2">
               <Label htmlFor="tagline">Tagline</Label>
               <Input id="tagline" name="tagline" defaultValue={initial.tagline} />
             </div>
+            <TypographyOverridePanel
+              field="tagline"
+              label="Tagline (header)"
+              override={initial.typography?.tagline}
+            />
             <div className="space-y-2">
               <Label htmlFor="logoAlt">Logo Alt Text</Label>
               <Input id="logoAlt" name="logoAlt" defaultValue={initial.logoAlt} />
             </div>
+            <TypographyOverridePanel
+              field="footerBrand"
+              label="Footer Brand Text"
+              override={initial.typography?.footerBrand}
+            />
             <ImageUploader
               name="favicon"
               value={favicon}

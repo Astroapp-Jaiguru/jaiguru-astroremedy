@@ -98,24 +98,34 @@ export async function Hero() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-4 sm:px-6 lg:min-h-[720px] lg:grid-cols-[55fr_45fr] lg:items-start lg:gap-10 lg:px-8 lg:pb-24 lg:pt-4">
         {/* Left: content */}
         <Reveal className="text-center lg:text-left">
-          <span className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-golden backdrop-blur-sm">
+          <span
+            data-typo="hero-badge"
+            className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold uppercase tracking-[0.08em] text-golden backdrop-blur-sm"
+          >
             <Star className="h-3.5 w-3.5" />
             {hero.badge}
           </span>
 
           <h1 className="mt-6 font-heading text-[clamp(2.125rem,1rem+3.2vw,4.25rem)] font-bold leading-[1.08] text-white [text-shadow:0_2px_30px_rgba(250,204,21,0.25)]">
             {hero.headlineLine1 && (
-              <span className="block">{hero.headlineLine1}</span>
+              <span data-typo="hero-headlineLine1" className="block">
+                {hero.headlineLine1}
+              </span>
             )}
-            <span className="block text-gold-gradient">
+            <span data-typo="hero-headlineLine2" className="block text-gold-gradient">
               {hero.headlineLine2 || "Astrology, Vastu, Numerology"}
             </span>
             {hero.headlineLine3 && (
-              <span className="block">{hero.headlineLine3}</span>
+              <span data-typo="hero-headlineLine3" className="block">
+                {hero.headlineLine3}
+              </span>
             )}
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg lg:mx-0">
+          <p
+            data-typo="hero-subtext"
+            className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg lg:mx-0"
+          >
             {hero.subtext}
           </p>
 

@@ -3,10 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/dal";
+import type {
+  FaqTypographyMap,
+  TypographyOverride,
+} from "@/lib/typography-overrides";
+
+const FAQ_TYPOGRAPHY_KEY = "faq-typography";
 
 /**
  * Admin FAQ (homepage section) - full CRUD: question, answer, optional
- * category, sort order and active toggle.
+ * category, sort order and active toggle. Question/answer also support
+ * per-field local typography overrides stored in the "faq-typography"
+ * SiteSetting row, keyed by FAQ id.
  */
 
 export interface FaqInput {
@@ -15,6 +23,22 @@ export interface FaqInput {
   category: string;
   sortOrder: number;
   isActive: boolean;
+  typography?: { question?: TypographyOverride; answer?: TypographyOverride };
+}
+
+async function getFaqTypography(): Promise<FaqTypographyMap> {
+  const row = await prisma.siteSetting.findUnique({
+    where: { key: FAQ_TYPOGRAPHY_KEY },
+  });
+  return ((row?.value ?? {}) as FaqTypographyMap);
+}
+
+async function saveFaqTypography(map: FaqTypographyMap): Promise<void> {
+  await prisma.siteSetting.upsert({
+    where: { key: FAQ_TYPOGRAPHY_KEY },
+    update: { value: map as never },
+    create: { key: FAQ_TYPOGRAPHY_KEY, value: map as never },
+  });
 }
 
 export async function upsertFaqAction(
@@ -45,6 +69,28 @@ export async function upsertFaqAction(
     console.error("[admin] upsertFaqAction failed:", e);
     return { ok: false, error: "Could not save the FAQ." };
   }
+
+  try {
+    const map = await getFaqTypography();
+    const targetId = id ?? (await prisma.faq.findFirst({
+      where: { question, answer },
+      orderBy: { createdAt: "desc" },
+    }))?.id;
+    if (targetId) {
+      if (input.typography?.question || input.typography?.answer) {
+        map[targetId] = {
+          question: input.typography?.question,
+          answer: input.typography?.answer,
+        };
+      } else {
+        delete map[targetId];
+      }
+      await saveFaqTypography(map);
+    }
+  } catch (e) {
+    console.error("[admin] upsertFaqAction typography failed:", e);
+  }
+
   revalidatePath("/admin/faq");
   revalidatePath("/");
   return { ok: true };
@@ -58,6 +104,11 @@ export async function deleteFaqAction(
     const row = await prisma.faq.findUnique({ where: { id } });
     if (!row) return { ok: false, error: "FAQ not found." };
     await prisma.faq.delete({ where: { id } });
+    const map = await getFaqTypography();
+    if (map[id]) {
+      delete map[id];
+      await saveFaqTypography(map);
+    }
   } catch (e) {
     console.error("[admin] deleteFaqAction failed:", e);
     return { ok: false, error: "Could not delete the FAQ." };

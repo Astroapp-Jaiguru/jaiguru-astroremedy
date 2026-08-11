@@ -1,12 +1,16 @@
 import { getSiteData } from "@/lib/site-data";
 import { requireAdmin } from "@/lib/dal";
+import { getTypographyOverrides } from "@/lib/typography-overrides";
 import { HeroSettingsForm } from "@/components/admin/content/hero-settings-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminHeroPage() {
   await requireAdmin();
-  const data = await getSiteData();
+  const [data, overrides] = await Promise.all([
+    getSiteData(),
+    getTypographyOverrides(),
+  ]);
   const hero = data.hero;
 
   return (
@@ -32,6 +36,7 @@ export default async function AdminHeroPage() {
           whatsappLabel: hero.buttons.whatsapp.label,
           callLabel: hero.buttons.call.label,
           productsLabel: hero.buttons.products.label,
+          typography: overrides.hero,
         }}
       />
     </div>

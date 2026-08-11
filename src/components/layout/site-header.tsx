@@ -45,10 +45,10 @@ export function SiteHeader({
               />
             </span>
             <span className="min-w-0">
-              <span className="block whitespace-nowrap font-heading text-base font-bold leading-tight tracking-tight text-royal-purple sm:text-lg xl:text-[26px]">
+              <span data-typo="branding-siteName" className="block whitespace-nowrap font-heading text-base font-bold leading-tight tracking-tight text-royal-purple sm:text-lg xl:text-[26px]">
                 {branding.siteName}
               </span>
-              <span className="hidden truncate text-[11px] font-medium text-muted-foreground lg:block lg:text-xs">
+              <span data-typo="branding-tagline" className="hidden truncate text-[11px] font-medium text-muted-foreground lg:block lg:text-xs">
                 {branding.tagline}
               </span>
               <span className="hidden text-[11px] text-muted-foreground/80 lg:block">

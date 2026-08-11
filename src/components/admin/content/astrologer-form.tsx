@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import { saveAstrologerAction } from "@/lib/admin/content/actions";
 import type { AstrologerSettings } from "@/lib/admin/content/actions";
+import { TypographyOverridePanel } from "@/components/admin/content/typography-override-panel";
 
 export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
   const router = useRouter();
@@ -59,6 +60,11 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
                 placeholder="Arup Shastri (Jai Guru)"
               />
             </div>
+            <TypographyOverridePanel
+              field="name"
+              label="Full Name"
+              override={initial.typography?.name}
+            />
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input
@@ -68,6 +74,11 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
                 placeholder="Vedic Astrologer"
               />
             </div>
+            <TypographyOverridePanel
+              field="title"
+              label="Title"
+              override={initial.typography?.title}
+            />
             <div className="space-y-2">
               <Label htmlFor="subtitle">Subtitle</Label>
               <Input
@@ -77,6 +88,11 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
                 placeholder="A Spiritual Master, True Healer"
               />
             </div>
+            <TypographyOverridePanel
+              field="subtitle"
+              label="Subtitle"
+              override={initial.typography?.subtitle}
+            />
             <div className="space-y-2">
               <Label htmlFor="yearsExperience">Years of Experience</Label>
               <Input
@@ -121,6 +137,11 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
                 placeholder="One or two paragraphs introducing the astrologer..."
               />
             </div>
+            <TypographyOverridePanel
+              field="bio"
+              label="Bio / About Text"
+              override={initial.typography?.bio}
+            />
             <div className="space-y-2">
               <Label htmlFor="expertise">Expertise (comma separated)</Label>
               <Textarea

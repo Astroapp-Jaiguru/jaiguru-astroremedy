@@ -59,15 +59,15 @@ const data = await getSiteData();
  {/* Story */}
  <div className="mx-auto mt-12 max-w-4xl">
  <div className="rounded-[var(--jaiguru-card-radius)] p-8 glass-card">
- <h2 className="font-display text-2xl font-bold text-white">
- {astrologer.name}
- </h2>
- <p className="mt-1 text-sm font-semibold uppercase tracking-widest text-[#FACC15]">
- {astrologer.title} · {astrologer.subtitle}
- </p>
+  <h2 data-typo="astrologer-name" className="font-display text-2xl font-bold text-white">
+  {astrologer.name}
+  </h2>
+  <p className="mt-1 text-sm font-semibold uppercase tracking-widest text-[#FACC15]">
+  <span data-typo="astrologer-title">{astrologer.title}</span> · <span data-typo="astrologer-subtitle">{astrologer.subtitle}</span>
+  </p>
 <div className="mt-5 space-y-4 text-sm leading-relaxed text-slate-300">
   {astrologer.bio ? (
-  <p className="rounded-xl border border-[#D4AF37]/25 bg-white/5 p-4 font-normal text-slate-200">
+  <p data-typo="astrologer-bio" className="rounded-xl border border-[#D4AF37]/25 bg-white/5 p-4 font-normal text-slate-200">
   {astrologer.bio}
   </p>
   ) : null}

@@ -38,6 +38,11 @@ import {
   deleteFaqAction,
   toggleFaqAction,
 } from "@/lib/admin/faqs/actions";
+import { TypographyOverridePanel } from "@/components/admin/content/typography-override-panel";
+import type {
+  TypographyOverride,
+  FaqTypographyOverride,
+} from "@/lib/typography-overrides";
 
 export interface FaqRow {
   id: string;
@@ -46,6 +51,7 @@ export interface FaqRow {
   category: string | null;
   sortOrder: number;
   isActive: boolean;
+  typography?: FaqTypographyOverride;
 }
 
 type FormState = {
@@ -54,6 +60,8 @@ type FormState = {
   category: string;
   sortOrder: string;
   isActive: boolean;
+  questionOverride?: TypographyOverride;
+  answerOverride?: TypographyOverride;
 };
 
 const emptyForm: FormState = {
@@ -62,6 +70,8 @@ const emptyForm: FormState = {
   category: "",
   sortOrder: "0",
   isActive: true,
+  questionOverride: undefined,
+  answerOverride: undefined,
 };
 
 export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
@@ -91,6 +101,8 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
       category: row.category ?? "",
       sortOrder: String(row.sortOrder),
       isActive: row.isActive,
+      questionOverride: row.typography?.question,
+      answerOverride: row.typography?.answer,
     });
   }
 
@@ -110,6 +122,10 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
         category: form.category,
         sortOrder: Number.parseInt(form.sortOrder, 10) || 0,
         isActive: form.isActive,
+        typography: {
+          question: form.questionOverride,
+          answer: form.answerOverride,
+        },
       });
       if (res.ok) {
         toast.success(editingId ? "FAQ updated" : "FAQ created");
@@ -189,6 +205,15 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
               />
             </div>
             <div className="space-y-2">
+              <TypographyOverridePanel
+                field="question"
+                label="Question"
+                override={form.questionOverride}
+                mode="controlled"
+                onValueChange={(v) => setForm({ ...form, questionOverride: v })}
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="faq-category">Category (optional)</Label>
               <Input
                 id="faq-category"
@@ -209,6 +234,15 @@ export function FaqManager({ faqs }: { faqs: FaqRow[] }) {
                   setForm({ ...form, answer: e.target.value })
                 }
                 placeholder="The full answer shown when the question is opened..."
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <TypographyOverridePanel
+                field="answer"
+                label="Answer"
+                override={form.answerOverride}
+                mode="controlled"
+                onValueChange={(v) => setForm({ ...form, answerOverride: v })}
               />
             </div>
             <div className="space-y-2">

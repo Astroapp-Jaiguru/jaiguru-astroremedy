@@ -1,12 +1,16 @@
 import { getSiteData } from "@/lib/site-data";
 import { requireAdmin } from "@/lib/dal";
+import { getTypographyOverrides } from "@/lib/typography-overrides";
 import { BrandingSettingsForm } from "@/components/admin/content/branding-settings-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminBrandingPage() {
   await requireAdmin();
-  const data = await getSiteData();
+  const [data, overrides] = await Promise.all([
+    getSiteData(),
+    getTypographyOverrides(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -25,6 +29,7 @@ export default async function AdminBrandingPage() {
           logoAlt: data.branding.logoAlt,
           footerLogo: data.branding.footerLogo ?? "",
           favicon: data.branding.favicon ?? "",
+          typography: overrides.branding,
         }}
       />
     </div>

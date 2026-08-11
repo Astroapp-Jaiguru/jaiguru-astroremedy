@@ -3,11 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/dal";
+import type {
+  TypographyOverride,
+  TypographyOverrideMap,
+} from "@/lib/typography-overrides";
 
 /**
  * Admin content actions (scope: Hero, Branding, Astrologer Profile).
  * Values are stored under SiteSetting keys read by getSiteData() and
  * applied instantly on the public site (every public page is dynamic).
+ * Each section JSON also carries a `typography` map of per-field local
+ * overrides (see src/lib/typography-overrides.ts).
  */
 
 export interface SettingsFormState {
@@ -48,6 +54,69 @@ async function upsertSetting(key: string, value: unknown): Promise<boolean> {
 }
 
 // -------------------------------------------------------------------------
+// Local typography overrides (per-field, see typography-overrides.ts)
+// -------------------------------------------------------------------------
+
+const num = (v: FormDataEntryValue | null): number | undefined => {
+  if (typeof v !== "string" || v === "") return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : undefined;
+};
+
+const txt = (v: FormDataEntryValue | null): string | undefined => {
+  return typeof v === "string" && v.trim() !== "" ? v.trim() : undefined;
+};
+
+/**
+ * Reads the per-field override inputs for a section from the submitted form
+ * (`typography[<field>][<prop>]`). Returns a map of active overrides only.
+ */
+function parseTypographyOverrides(
+  fd: FormData,
+  fields: string[]
+): TypographyOverrideMap {
+  const out: TypographyOverrideMap = {};
+  for (const field of fields) {
+    const o: TypographyOverride = {
+      fontFamily: txt(fd.get(`typography[${field}][fontFamily]`)),
+      fontWeight: txt(fd.get(`typography[${field}][fontWeight]`)),
+      textColor: txt(fd.get(`typography[${field}][textColor]`)),
+      gradientStart: txt(fd.get(`typography[${field}][gradientStart]`)),
+      gradientEnd: txt(fd.get(`typography[${field}][gradientEnd]`)),
+      fontSize: num(fd.get(`typography[${field}][fontSize]`)),
+      letterSpacing: num(fd.get(`typography[${field}][letterSpacing]`)),
+      lineHeight: num(fd.get(`typography[${field}][lineHeight]`)),
+    };
+    const active = Object.values(o).some((v) => v !== undefined);
+    if (active) out[field] = o;
+  }
+  return out;
+}
+
+/**
+ * Merges the parsed overrides into the persisted section JSON, dropping any
+ * field the form submitted without values (i.e. reset to global default).
+ */
+async function mergeTypography(
+  key: string,
+  fd: FormData,
+  fields: string[]
+): Promise<TypographyOverrideMap> {
+  const parsed = parseTypographyOverrides(fd, fields);
+  const row = await prisma.siteSetting.findUnique({ where: { key } });
+  const current = (row?.value ?? {}) as Record<string, unknown>;
+  const existing = (
+    (current.typography ?? {}) as Record<string, unknown>
+  );
+  const merged: Record<string, unknown> = { ...existing };
+  for (const field of fields) {
+    if (parsed[field]) merged[field] = parsed[field];
+    else delete merged[field];
+  }
+  return merged as TypographyOverrideMap;
+}
+
+// -------------------------------------------------------------------------
 // Hero section (SiteSetting "hero")
 // -------------------------------------------------------------------------
 
@@ -64,6 +133,7 @@ export interface HeroSettings {
   whatsappLabel: string;
   callLabel: string;
   productsLabel: string;
+  typography?: TypographyOverrideMap;
 }
 
 export async function saveHeroAction(
@@ -88,7 +158,8 @@ export async function saveHeroAction(
   if (!value.headlineLine2) {
     return { error: "Headline line 2 (gold highlight) is required." };
   }
-  return (await upsertSetting("hero", value))
+  const typography = await mergeTypography("hero", fd, ["badge", "headlineLine1", "headlineLine2", "headlineLine3", "subtext"]);
+  return (await upsertSetting("hero", { ...value, typography }))
     ? { success: true }
     : { error: "Could not save hero settings. Please try again." };
 }
@@ -104,6 +175,7 @@ export interface BrandingSettings {
   logoAlt: string;
   footerLogo: string;
   favicon: string;
+  typography?: TypographyOverrideMap;
 }
 
 export async function saveBrandingAction(
@@ -120,7 +192,8 @@ export async function saveBrandingAction(
     favicon: str(fd, "favicon"),
   };
   if (!value.siteName) return { error: "Site title is required." };
-  return (await upsertSetting("branding", value))
+  const typography = await mergeTypography("branding", fd, ["siteName", "tagline", "footerBrand"]);
+  return (await upsertSetting("branding", { ...value, typography }))
     ? { success: true }
     : { error: "Could not save branding settings. Please try again." };
 }
@@ -138,6 +211,7 @@ export interface AstrologerSettings {
   photoUrl: string;
   expertise: string[];
   specialties: string[];
+  typography?: TypographyOverrideMap;
 }
 
 export async function saveAstrologerAction(
@@ -156,7 +230,8 @@ export async function saveAstrologerAction(
     specialties: splitList(fd, "specialties"),
   };
   if (!value.name) return { error: "Full name is required." };
-  return (await upsertSetting("astrologer", value))
+  const typography = await mergeTypography("astrologer", fd, ["name", "title", "subtitle", "bio"]);
+  return (await upsertSetting("astrologer", { ...value, typography }))
     ? { success: true }
     : { error: "Could not save astrologer profile. Please try again." };
 }

@@ -52,7 +52,7 @@ export function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
                 >
                   ?
                 </span>
-                <span className="font-heading text-base font-semibold text-[var(--jaiguru-page-text)] sm:text-lg">
+                <span data-typo={`faq-${item.id}-question`} className="font-heading text-base font-semibold text-[var(--jaiguru-page-text)] sm:text-lg">
                   {item.question}
                 </span>
               </span>
@@ -84,7 +84,7 @@ export function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
                         {item.category}
                       </span>
                     ) : null}
-                    <p className="whitespace-pre-line text-sm leading-relaxed text-[var(--jaiguru-page-text-muted)] sm:text-base">
+                    <p data-typo={`faq-${item.id}-answer`} className="whitespace-pre-line text-sm leading-relaxed text-[var(--jaiguru-page-text-muted)] sm:text-base">
                       {item.answer}
                     </p>
                   </div>
