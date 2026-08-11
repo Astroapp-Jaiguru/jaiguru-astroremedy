@@ -162,6 +162,11 @@ small {
 h1 {
   font-size: calc(clamp(3rem, 1.6rem + 3.4vw, 3.75rem) * var(--jaiguru-h1-scale, 1)) !important;
 }
+/* Hero highlight line (gold gradient headline inside the hero H1) follows the
+   H2 "Hero Highlight / Section Titles" control. 1em = the hero's own size. */
+h1 .text-gold-gradient {
+  font-size: calc(1em * var(--jaiguru-h2-scale, 1)) !important;
+}
 h2 {
   font-size: calc(clamp(1.875rem, 1.2rem + 1.8vw, 2.75rem) * var(--jaiguru-h2-scale, 1)) !important;
 }

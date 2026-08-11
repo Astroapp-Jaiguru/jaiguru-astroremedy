@@ -239,7 +239,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
           </CardHeader>
           <CardContent className="space-y-5">
             <RangeControl
-              label="Body Text Size"
+              label="Body Text"
               name="bodyFontSize"
               value={initial.bodyFontSize}
               min={12}
@@ -248,7 +248,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
               format={(v) => `${v}px`}
             />
             <RangeControl
-              label="Small Text Size"
+              label="Caption / Footer Text"
               name="smallFontSize"
               value={initial.smallFontSize}
               min={11}
@@ -258,7 +258,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
             />
             <div className="grid gap-4 sm:grid-cols-2">
               <RangeControl
-                label="H1 Size"
+                label="Hero Main Headline"
                 name="h1FontSize"
                 value={initial.h1FontSize}
                 min={0.5}
@@ -267,7 +267,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
                 format={(v) => `${v.toFixed(2)}×`}
               />
               <RangeControl
-                label="H2 Size"
+                label="Hero Highlight / Section Titles"
                 name="h2FontSize"
                 value={initial.h2FontSize}
                 min={0.5}
@@ -276,7 +276,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
                 format={(v) => `${v.toFixed(2)}×`}
               />
               <RangeControl
-                label="H3 Size"
+                label="Card Titles"
                 name="h3FontSize"
                 value={initial.h3FontSize}
                 min={0.5}
@@ -285,7 +285,7 @@ export function TypographyForm({ initial }: { initial: ThemeSettings }) {
                 format={(v) => `${v.toFixed(2)}×`}
               />
               <RangeControl
-                label="H4 Size"
+                label="Subheadings"
                 name="h4FontSize"
                 value={initial.h4FontSize}
                 min={0.5}

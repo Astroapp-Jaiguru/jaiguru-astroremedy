@@ -191,7 +191,7 @@ export async function SiteFooter() {
             {[data.footer.copyright, data.footer.ownedBy, data.footer.registered]
               .filter((line) => line && line.trim())
               .map((line) => (
-                <p key={line}>{line}</p>
+                <small key={line} className="block">{line}</small>
               ))}
           </div>
           <div className="flex max-w-full flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
