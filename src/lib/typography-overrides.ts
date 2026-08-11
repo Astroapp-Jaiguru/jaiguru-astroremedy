@@ -1,104 +1,27 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
-import { BODY_FONTS, HEADING_FONTS, FONT_WEIGHTS } from "@/config/theme";
-import { ALL_FONT_INSTANCES } from "@/lib/fonts";
+import {
+  overrideActive,
+  type TypographyOverride,
+  type TypographyOverrideMap,
+  type FaqTypographyOverride,
+  type FaqTypographyMap,
+} from "@/config/typography-overrides";
 
 /**
- * Local typography overrides - per-field styling that wins over the global
- * Typography system ("master default"). Each editable text field can carry a
- * small override object. Overrides are persisted inside the section's
- * SiteSetting JSON under the `typography` key (FAQ overrides live in the
- * dedicated "faq-typography" row, keyed by FAQ id).
+ * Server-only loading of local typography overrides. Client-safe types and
+ * helpers live in src/config/typography-overrides.ts; this module adds the
+ * Prisma read used by the public CSS injector and the admin pages.
  */
 
-export interface TypographyOverride {
-  fontFamily?: string;
-  fontSize?: number;
-  fontWeight?: string;
-  textColor?: string;
-  gradientStart?: string;
-  gradientEnd?: string;
-  letterSpacing?: number;
-  lineHeight?: number;
-}
+export type {
+  TypographyOverride,
+  TypographyOverrideMap,
+  FaqTypographyOverride,
+  FaqTypographyMap,
+} from "@/config/typography-overrides";
 
-export type TypographyOverrideMap = Record<string, TypographyOverride>;
-
-export interface FaqTypographyOverride {
-  question?: TypographyOverride;
-  answer?: TypographyOverride;
-}
-
-export type FaqTypographyMap = Record<string, FaqTypographyOverride>;
-
-export const OVERRIDE_FONT_OPTIONS = [
-  ...BODY_FONTS,
-  ...HEADING_FONTS,
-].filter(
-  (f, i, arr) => arr.findIndex((g) => g.id === f.id) === i
-);
-
-export const OVERRIDE_FONT_WEIGHTS = FONT_WEIGHTS;
-
-/** True when at least one override property is set. */
-export function overrideActive(o?: TypographyOverride): boolean {
-  if (!o) return false;
-  return Object.values(o).some(
-    (v) => v !== undefined && v !== null && v !== ""
-  );
-}
-
-export function weightCss(id?: string): string | null {
-  const w = OVERRIDE_FONT_WEIGHTS.find((x) => x.id === id);
-  return w?.css ?? null;
-}
-
-export function fontCss(id?: string): string | null {
-  if (!id) return null;
-  return ALL_FONT_INSTANCES[id]?.style.fontFamily ?? null;
-}
-
-/**
- * Builds the CSS declaration block for one overridden element. Every rule is
- * `!important` so it beats the global theme rules in theme-styles.tsx.
- */
-export function buildOverrideCss(o: TypographyOverride): string {
-  const lines: string[] = [];
-
-  const fam = fontCss(o.fontFamily);
-  if (fam) lines.push(`font-family: ${fam} !important;`);
-
-  if (typeof o.fontSize === "number" && Number.isFinite(o.fontSize)) {
-    lines.push(`font-size: ${o.fontSize}px !important;`);
-  }
-
-  const weight = weightCss(o.fontWeight);
-  if (weight) lines.push(`font-weight: ${weight} !important;`);
-
-  if (o.gradientStart && o.gradientEnd) {
-    lines.push(
-      `background: linear-gradient(90deg, ${o.gradientStart} 0%, color-mix(in srgb, ${o.gradientStart} 50%, ${o.gradientEnd}) 50%, ${o.gradientEnd} 100%) !important;`
-    );
-    lines.push(
-      "-webkit-background-clip: text !important; background-clip: text !important; color: transparent !important;"
-    );
-  } else if (o.textColor) {
-    lines.push(
-      "background: none !important; -webkit-background-clip: initial !important; background-clip: initial !important;"
-    );
-    lines.push(`color: ${o.textColor} !important;`);
-  }
-
-  if (typeof o.letterSpacing === "number" && Number.isFinite(o.letterSpacing)) {
-    lines.push(`letter-spacing: ${o.letterSpacing}em !important;`);
-  }
-
-  if (typeof o.lineHeight === "number" && Number.isFinite(o.lineHeight)) {
-    lines.push(`line-height: ${o.lineHeight} !important;`);
-  }
-
-  return lines.join("\n");
-}
+export { buildOverrideCss, overrideActive } from "@/config/typography-overrides";
 
 export interface TypographyOverridesData {
   hero: TypographyOverrideMap;

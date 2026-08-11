@@ -11,7 +11,7 @@ import {
   OVERRIDE_FONT_WEIGHTS,
   overrideActive,
   type TypographyOverride,
-} from "@/lib/typography-overrides";
+} from "@/config/typography-overrides";
 
 interface PanelProps {
   /** Override map key, e.g. "headlineLine2". */

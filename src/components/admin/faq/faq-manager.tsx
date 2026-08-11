@@ -42,7 +42,7 @@ import { TypographyOverridePanel } from "@/components/admin/content/typography-o
 import type {
   TypographyOverride,
   FaqTypographyOverride,
-} from "@/lib/typography-overrides";
+} from "@/config/typography-overrides";
 
 export interface FaqRow {
   id: string;
