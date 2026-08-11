@@ -243,7 +243,7 @@ export function BookingModal({
                 href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-glow-whatsapp mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B]"
+                className="btn-glow-whatsapp mx-auto mt-5 inline-flex items-center gap-2 rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
               >
                 <WhatsappIcon className="h-4 w-4" />
                 Open WhatsApp Again
@@ -460,7 +460,7 @@ export function BookingModal({
                       type="button"
                       disabled={!detailsValid}
                       onClick={confirm}
-                      className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-sm font-bold text-white transition hover:bg-[#1EBE5B] disabled:opacity-40"
+                      className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-sm font-bold text-white transition hover:bg-[var(--jaiguru-whatsapp-hover)] disabled:opacity-40"
                     >
                       <WhatsappIcon className="h-4 w-4" />
                       Confirm Booking

@@ -239,10 +239,10 @@ export default async function ContactPage() {
  style={{ background: "var(--jaiguru-experience-bg)" }}
  >
  <Star className="h-5 w-5 shrink-0 text-[var(--jaiguru-experience-text)]" />
- <p className="text-sm font-bold text-[var(--jaiguru-experience-text)]">
- 20+ Years of Vedic Experience — trusted guidance for your
- life&apos;s journey.
- </p>
+  <p className="text-sm font-bold text-[var(--jaiguru-experience-text)]">
+  {data.astrologer.yearsExperience} Years of Vedic Experience — trusted
+  guidance for your life&apos;s journey.
+  </p>
  </div>
  </div>
  </div>

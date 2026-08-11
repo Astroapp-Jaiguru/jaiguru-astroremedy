@@ -26,6 +26,7 @@ export async function SiteHeaderShell() {
       <SiteHeader
         branding={{
           siteName: data.branding.siteName,
+          tagline: data.branding.tagline,
           logoAlt: data.branding.logoAlt,
           logo: data.branding.logo,
         }}

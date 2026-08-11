@@ -191,7 +191,7 @@ export async function Hero() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={hero.astrologerImage ?? "/astrologer.jpeg"}
-                  alt="Vedic Astrologer Arup Shastri (Jai Guru)"
+                  alt={`${data.astrologer.title} ${data.astrologer.name}`}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
               </div>
@@ -210,7 +210,7 @@ export async function Hero() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={hero.masterImage ?? "/master.jpeg"}
-                    alt="Guru Blessings"
+                    alt={`Guru Blessings - ${data.astrologer.name}`}
                     className="h-full w-full object-cover"
                   />
                 </div>

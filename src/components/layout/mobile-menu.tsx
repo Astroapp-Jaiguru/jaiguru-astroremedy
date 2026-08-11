@@ -23,6 +23,8 @@ export function MobileMenu({
   socials,
   whatsappHref,
   callNumber,
+  siteName,
+  tagline,
   logo,
   logoAlt,
 }: {
@@ -30,6 +32,8 @@ export function MobileMenu({
   socials: { platform: string; url: string }[];
   whatsappHref: string;
   callNumber: string;
+  siteName: string;
+  tagline: string;
   logo: string | null;
   logoAlt: string;
 }) {
@@ -68,11 +72,9 @@ export function MobileMenu({
           </div>
           <div className="flex-1">
             <SheetTitle className="font-heading text-lg font-bold text-royal-purple">
-              JAIGURU ASTROREMEDY
+              {siteName}
             </SheetTitle>
-            <SheetDescription className="text-xs">
-              Vedic Astrologer Arup Shastri (Jai Guru)
-            </SheetDescription>
+            <SheetDescription className="text-xs">{tagline}</SheetDescription>
           </div>
         </SheetHeader>
 

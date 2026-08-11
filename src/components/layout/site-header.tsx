@@ -18,6 +18,7 @@ export function SiteHeader({
 }: {
   branding: {
     siteName: string;
+    tagline: string;
     logoAlt: string;
     logo: string | null;
   };
@@ -48,7 +49,7 @@ export function SiteHeader({
                 {branding.siteName}
               </span>
               <span className="hidden truncate text-[11px] font-medium text-muted-foreground lg:block lg:text-xs">
-                Vedic Astrologer Arup Shastri (Jai Guru)
+                {branding.tagline}
               </span>
               <span className="hidden text-[11px] text-muted-foreground/80 lg:block">
                 Expert in Vastu, Numerology, Yoga
@@ -90,6 +91,8 @@ export function SiteHeader({
               socials={socials}
               whatsappHref={whatsappHref}
               callNumber={contact.callNumber}
+              siteName={branding.siteName}
+              tagline={branding.tagline}
               logo={branding.logo}
               logoAlt={branding.logoAlt}
             />

@@ -62,16 +62,18 @@ export async function SiteFooter() {
                 <p className="font-heading text-xl font-bold text-white">
                   {data.branding.siteName}
                 </p>
-                <p className="text-xs text-white/70">Vedic Astrologer Arup Shastri (Jai Guru)</p>
+                <p className="text-xs text-white/70">
+                  {data.astrologer.title} {data.astrologer.name}
+                </p>
               </div>
             </div>
             <p className="mt-5 text-sm leading-relaxed text-white/70">
               {data.footer.about}
             </p>
-            <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold text-golden">
-              <Star className="h-4 w-4" />
-              20+ Years of Vedic Experience
-            </p>
+              <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-4 py-1.5 text-[13px] font-semibold text-golden">
+                <Star className="h-4 w-4" />
+                {data.astrologer.yearsExperience} Years of Vedic Experience
+              </p>
             <SocialIconRow links={data.socials} className="mt-6" />
             {(() => {
               const g = data.socials.find(
