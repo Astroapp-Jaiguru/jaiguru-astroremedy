@@ -27,6 +27,8 @@ import {
   Mail,
   BarChart3,
   ServerCog,
+  Type,
+  CircleHelp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -105,6 +107,8 @@ export const adminNav: AdminNavGroup[] = [
       { title: "Legal Pages", href: "/admin/legal-pages", icon: FileText },
       { title: "SEO Settings", href: "/admin/seo", icon: Search },
       { title: "Theme Settings", href: "/admin/theme-settings", icon: SlidersHorizontal },
+      { title: "Typography", href: "/admin/typography", icon: Type },
+      { title: "FAQ", href: "/admin/faq", icon: CircleHelp },
     ],
   },
   {

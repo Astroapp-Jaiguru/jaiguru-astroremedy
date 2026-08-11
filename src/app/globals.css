@@ -370,9 +370,9 @@
   .text-gold-gradient {
     background: linear-gradient(
       90deg,
-      var(--jaiguru-gold-1, #facc15) 0%,
-      var(--jaiguru-gold-2, #d4af37) 50%,
-      var(--jaiguru-gold-3, #f97316) 100%
+      var(--jaiguru-gradient-text-1, #facc15) 0%,
+      var(--jaiguru-gradient-text-2, #d4af37) 50%,
+      var(--jaiguru-gradient-text-3, #f97316) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;

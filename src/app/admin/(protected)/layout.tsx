@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/dal";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminMobileNav } from "@/components/admin/admin-mobile-nav";
 import { SignOutButton } from "@/components/admin/signout-button";
+import { CacheBuster } from "@/components/admin/cache-buster";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default async function ProtectedAdminLayout({
@@ -24,6 +25,7 @@ export default async function ProtectedAdminLayout({
 
   return (
     <div className="flex min-h-screen bg-muted/40">
+      <CacheBuster />
       <AdminSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/90 px-4 backdrop-blur md:px-6">

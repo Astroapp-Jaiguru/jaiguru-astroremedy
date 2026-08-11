@@ -39,6 +39,16 @@ export async function ThemeStyles() {
   const headingFamily = headingFontFamily(theme.headingFont);
   const buttonRadius =
     theme.buttonRadius >= 9999 ? "9999px" : `${theme.buttonRadius}px`;
+  const weightCss = (id: string) =>
+    (
+      [
+        { id: "light", css: "300" },
+        { id: "normal", css: "400" },
+        { id: "medium", css: "500" },
+        { id: "semibold", css: "600" },
+        { id: "bold", css: "700" },
+      ] as const
+    ).find((w) => w.id === id)?.css ?? "400";
 
   /**
    * Contrasting text color for content that sits directly on the page
@@ -89,6 +99,19 @@ export async function ThemeStyles() {
   --jaiguru-heading-font: ${headingFamily};
   --jaiguru-body-font-size: ${theme.bodyFontSize}px;
   --jaiguru-heading-scale: ${theme.headingScale};
+  --jaiguru-h1-scale: ${theme.h1FontSize};
+  --jaiguru-h2-scale: ${theme.h2FontSize};
+  --jaiguru-h3-scale: ${theme.h3FontSize};
+  --jaiguru-h4-scale: ${theme.h4FontSize};
+  --jaiguru-small-font-size: ${theme.smallFontSize}px;
+  --jaiguru-body-weight: ${weightCss(theme.bodyFontWeight)};
+  --jaiguru-heading-weight: ${weightCss(theme.headingFontWeight)};
+  --jaiguru-letter-spacing: ${theme.letterSpacing}em;
+  --jaiguru-line-height: ${theme.lineHeight};
+  --jaiguru-heading-text: ${theme.headingTextColor};
+  --jaiguru-gradient-text-1: ${theme.gradientTextStart};
+  --jaiguru-gradient-text-3: ${theme.gradientTextEnd};
+  --jaiguru-gradient-text-2: color-mix(in srgb, ${theme.gradientTextStart} 50%, ${theme.gradientTextEnd});
   --jaiguru-legal-title-color: ${theme.legalTitleColor};
   --jaiguru-legal-breadcrumb-color: ${theme.legalBreadcrumbColor};
   --jaiguru-legal-card-background: ${theme.legalCardBackground};
@@ -119,6 +142,9 @@ body,
 }
 body {
   font-size: var(--jaiguru-body-font-size, 16px) !important;
+  font-weight: var(--jaiguru-body-weight, 400) !important;
+  letter-spacing: var(--jaiguru-letter-spacing, 0em) !important;
+  line-height: var(--jaiguru-line-height, 1.7) !important;
   color: var(--jaiguru-primary-text, #0f172a);
 }
 h1, h2, h3, h4, h5, h6,
@@ -126,26 +152,31 @@ h1, h2, h3, h4, h5, h6,
 .font-display {
   font-family: var(--jaiguru-heading-font, var(--font-playfair)) !important;
 }
-${theme.headingScale !== 1 ? `
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--jaiguru-heading-weight, 700) !important;
+  color: var(--jaiguru-heading-text, #ffffff);
+}
+small {
+  font-size: var(--jaiguru-small-font-size, 14px) !important;
+}
 h1 {
-  font-size: calc(clamp(3rem, 1.6rem + 3.4vw, 3.75rem) * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(clamp(3rem, 1.6rem + 3.4vw, 3.75rem) * var(--jaiguru-h1-scale, 1)) !important;
 }
 h2 {
-  font-size: calc(clamp(1.875rem, 1.2rem + 1.8vw, 2.75rem) * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(clamp(1.875rem, 1.2rem + 1.8vw, 2.75rem) * var(--jaiguru-h2-scale, 1)) !important;
 }
 h3 {
-  font-size: calc(clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem) * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem) * var(--jaiguru-h3-scale, 1)) !important;
 }
 h4 {
-  font-size: calc(clamp(1rem, 0.95rem + 0.3vw, 1.125rem) * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(clamp(1rem, 0.95rem + 0.3vw, 1.125rem) * var(--jaiguru-h4-scale, 1)) !important;
 }
 h5 {
-  font-size: calc(1rem * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(1rem * var(--jaiguru-h2-scale, 1)) !important;
 }
 h6 {
-  font-size: calc(0.875rem * var(--jaiguru-heading-scale, 1)) !important;
+  font-size: calc(0.875rem * var(--jaiguru-h2-scale, 1)) !important;
 }
-` : ""}
 main section:not(.bg-hero-gradient) {
   padding-top: var(--jaiguru-section-spacing) !important;
   padding-bottom: var(--jaiguru-section-spacing) !important;

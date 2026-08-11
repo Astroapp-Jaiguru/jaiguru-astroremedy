@@ -5,7 +5,19 @@ import { SESSION_COOKIE } from "@/lib/session";
  * Optimistic auth check (Next.js 16 "proxy", formerly middleware).
  * Full security checks happen in the admin layout / DAL - this only
  * pre-filters requests to /admin so unauthenticated users get redirected.
+ *
+ * Every /admin response also carries strict cache-busting headers so
+ * Chrome (and any other browser) always fetches the freshest dashboard
+ * JS/CSS/HTML instead of serving a stale cached copy.
  */
+const NO_STORE_HEADERS: Record<string, string> = {
+  "Cache-Control":
+    "private, no-store, no-cache, must-revalidate, max-age=0",
+  Pragma: "no-cache",
+  Expires: "0",
+  Vary: "*",
+};
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -21,7 +33,9 @@ export function proxy(request: NextRequest) {
   if (isAdminRoute && !hasSession) {
     const signinUrl = new URL("/admin/signin", request.url);
     signinUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(signinUrl);
+    const res = NextResponse.redirect(signinUrl);
+    for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
+    return res;
   }
 
   if (
@@ -31,10 +45,16 @@ export function proxy(request: NextRequest) {
       pathname.startsWith("/admin/reset-password")) &&
     hasSession
   ) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    const res = NextResponse.redirect(new URL("/admin", request.url));
+    for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
+    return res;
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  if (pathname.startsWith("/admin")) {
+    for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
+  }
+  return res;
 }
 
 export const config = {

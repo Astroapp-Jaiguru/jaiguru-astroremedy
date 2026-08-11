@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SigninForm } from "@/components/auth/signin-form";
+import { HardRefreshHint } from "@/components/auth/hard-refresh-hint";
 
 export default function AdminSigninPage() {
   return (
@@ -11,6 +12,7 @@ export default function AdminSigninPage() {
       <Suspense>
         <SigninForm />
       </Suspense>
+      <HardRefreshHint />
     </AuthShell>
   );
 }

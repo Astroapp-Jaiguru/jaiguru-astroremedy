@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { ImageUploader } from "@/components/admin/image-uploader";
 import {
   Card,
   CardContent,
@@ -24,6 +25,8 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(saveHeroAction, undefined);
   const handledRef = useRef(false);
+  const [astrologerImage, setAstrologerImage] = useState(initial.astrologerImage);
+  const [masterImage, setMasterImage] = useState(initial.masterImage);
 
   useEffect(() => {
     if (state?.success && !handledRef.current) {
@@ -118,39 +121,28 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
           <CardHeader>
             <CardTitle className="text-lg">Images & Buttons</CardTitle>
             <CardDescription>
-              Paste image URLs (upload to the Photo Gallery or use a CDN
-              link). Leave empty to keep the current image.
+              Upload images directly - no manual URLs needed. Leave empty to
+              keep the current image.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-5">
-            <div>
-              <Label>Astrologer Image URL</Label>
-              <Input
-                name="astrologerImage"
-                type="url"
-                defaultValue={initial.astrologerImage}
-                placeholder="https://..."
-                className="mt-2"
-              />
-              {initial.astrologerImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={initial.astrologerImage}
-                  alt=""
-                  className="mt-2 h-28 w-24 rounded-lg border object-cover"
-                />
-              ) : null}
-            </div>
-            <div>
-              <Label>Master Image URL (circular frame)</Label>
-              <Input
-                name="masterImage"
-                type="url"
-                defaultValue={initial.masterImage}
-                placeholder="https://..."
-                className="mt-2"
-              />
-            </div>
+          <CardContent className="space-y-6">
+            <ImageUploader
+              name="astrologerImage"
+              value={astrologerImage}
+              onChange={setAstrologerImage}
+              label="Astrologer Image"
+              aspect="portrait"
+              previewClassName="h-28 w-24"
+            />
+            <ImageUploader
+              name="masterImage"
+              value={masterImage}
+              onChange={setMasterImage}
+              label="Master Image (circular frame)"
+              hint="A square image that fills the golden circular frame in the hero."
+              aspect="circle"
+              previewClassName="size-24"
+            />
             <div className="space-y-2">
               <Label htmlFor="whatsappLabel">WhatsApp Button Label</Label>
               <Input

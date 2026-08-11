@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUploader } from "@/components/admin/image-uploader";
 import {
   Card,
   CardContent,
@@ -26,6 +27,7 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
     undefined
   );
   const handledRef = useRef(false);
+  const [photoUrl, setPhotoUrl] = useState(initial.photoUrl);
 
   useEffect(() => {
     if (state?.success && !handledRef.current) {
@@ -88,24 +90,15 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
                 Vedic Experience&quot;.
               </p>
             </div>
-            <div>
-              <Label>Profile Photo URL</Label>
-              <Input
-                name="photoUrl"
-                type="url"
-                defaultValue={initial.photoUrl}
-                placeholder="https://..."
-                className="mt-2"
-              />
-              {initial.photoUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={initial.photoUrl}
-                  alt=""
-                  className="mt-2 h-28 w-24 rounded-lg border object-cover"
-                />
-              ) : null}
-            </div>
+            <ImageUploader
+              name="photoUrl"
+              value={photoUrl}
+              onChange={setPhotoUrl}
+              label="Profile Photo"
+              hint="Square photo - rendered round in the header and hero."
+              aspect="circle"
+              previewClassName="size-24 rounded-full"
+            />
           </CardContent>
         </Card>
 

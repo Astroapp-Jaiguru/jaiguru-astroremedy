@@ -7,7 +7,6 @@ import {
   normalizeTheme,
   THEME_DEFAULTS,
   THEME_STORAGE_KEY,
-  type ThemeSettings,
 } from "@/config/theme";
 import { siteConfig } from "@/config/site";
 
@@ -47,7 +46,7 @@ export async function saveThemeAction(
 ): Promise<SettingsFormState> {
   await requireAdmin();
   const pill = str(fd, "pill") === "on";
-  const theme: ThemeSettings = {
+  const theme = {
     primary: hex(fd, "primary", THEME_DEFAULTS.primary),
     secondary: hex(fd, "secondary", THEME_DEFAULTS.secondary),
     accent: hex(fd, "accent", THEME_DEFAULTS.accent),
@@ -216,10 +215,23 @@ export async function saveThemeAction(
     ),
   };
   try {
+    let current: Record<string, unknown> = {};
+    const existing = await prisma.themeSetting.findUnique({
+      where: { key: THEME_STORAGE_KEY },
+    });
+    if (existing?.value && typeof existing.value === "object") {
+      current = existing.value as Record<string, unknown>;
+    }
+    // Typography controls live in a separate form - merge so saving colors
+    // never resets fonts/sizes/weights set in /admin/typography.
+    const merged = normalizeTheme({
+      ...current,
+      ...(theme as unknown as Record<string, unknown>),
+    });
     await prisma.themeSetting.upsert({
       where: { key: THEME_STORAGE_KEY },
-      update: { value: theme as never },
-      create: { key: THEME_STORAGE_KEY, value: theme as never },
+      update: { value: merged as never },
+      create: { key: THEME_STORAGE_KEY, value: merged as never },
     });
   } catch (e) {
     console.error("[admin] saveThemeAction failed:", e);

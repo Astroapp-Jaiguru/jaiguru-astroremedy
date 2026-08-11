@@ -414,6 +414,39 @@ model LegalPage {
 }
 
 // ---------------------------------------------------------------------------
+// FAQ (admin-managed accordion on the homepage)
+// ---------------------------------------------------------------------------
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+// ---------------------------------------------------------------------------
+// Uploaded images (served from the database; used by the admin image uploader
+// for logos, favicon, hero and astrologer photos - no manual URLs required)
+// ---------------------------------------------------------------------------
+
+model SiteImage {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
 // Contact / Enquiries
 // ---------------------------------------------------------------------------
 

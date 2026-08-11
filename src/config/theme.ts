@@ -31,6 +31,18 @@ export interface ThemeSettings {
   headingFont: string;
   bodyFontSize: number;
   headingScale: number;
+  h1FontSize: number;
+  h2FontSize: number;
+  h3FontSize: number;
+  h4FontSize: number;
+  smallFontSize: number;
+  bodyFontWeight: string;
+  headingFontWeight: string;
+  letterSpacing: number;
+  lineHeight: number;
+  headingTextColor: string;
+  gradientTextStart: string;
+  gradientTextEnd: string;
   cardRadius: number;
   buttonRadius: number;
   sectionSpacing: number;
@@ -88,6 +100,18 @@ export const THEME_DEFAULTS: ThemeSettings = {
   headingFont: "playfair-display",
   bodyFontSize: 16,
   headingScale: 1,
+  h1FontSize: 1,
+  h2FontSize: 1,
+  h3FontSize: 1,
+  h4FontSize: 1,
+  smallFontSize: 14,
+  bodyFontWeight: "normal",
+  headingFontWeight: "bold",
+  letterSpacing: 0,
+  lineHeight: 1.7,
+  headingTextColor: "#FFFFFF",
+  gradientTextStart: "#FACC15",
+  gradientTextEnd: "#F97316",
   cardRadius: 12,
   buttonRadius: 9999,
   sectionSpacing: 80,
@@ -174,6 +198,14 @@ export const HEADING_FONTS = [
   { id: "arial", label: "Arial" },
 ] as const;
 
+export const FONT_WEIGHTS = [
+  { id: "light", label: "Light", css: "300" },
+  { id: "normal", label: "Normal", css: "400" },
+  { id: "medium", label: "Medium", css: "500" },
+  { id: "semibold", label: "Semibold", css: "600" },
+  { id: "bold", label: "Bold", css: "700" },
+] as const;
+
 /** Validates and normalizes a raw JSON value from the database. */
 export function normalizeTheme(raw: unknown): ThemeSettings {
   const v =
@@ -207,6 +239,8 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
     const candidate = hex(v[key], fb);
     return contrastText(bg, candidate);
   };
+  const weight = (x: unknown, fb: string) =>
+    typeof x === "string" && FONT_WEIGHTS.some((w) => w.id === x) ? x : fb;
 
   return {
     primary: hex(v.primary, THEME_DEFAULTS.primary),
@@ -235,6 +269,28 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
     headingFont: font(v.headingFont, HEADING_FONTS, THEME_DEFAULTS.headingFont),
     bodyFontSize: num(v.bodyFontSize, THEME_DEFAULTS.bodyFontSize, 12, 20),
     headingScale: num(v.headingScale, THEME_DEFAULTS.headingScale, 0.8, 1.3),
+    h1FontSize: num(v.h1FontSize, THEME_DEFAULTS.h1FontSize, 0.5, 1.5),
+    h2FontSize: num(v.h2FontSize, THEME_DEFAULTS.h2FontSize, 0.5, 1.5),
+    h3FontSize: num(v.h3FontSize, THEME_DEFAULTS.h3FontSize, 0.5, 1.5),
+    h4FontSize: num(v.h4FontSize, THEME_DEFAULTS.h4FontSize, 0.5, 1.5),
+    smallFontSize: num(v.smallFontSize, THEME_DEFAULTS.smallFontSize, 11, 18),
+    bodyFontWeight: weight(v.bodyFontWeight, THEME_DEFAULTS.bodyFontWeight),
+    headingFontWeight: weight(
+      v.headingFontWeight,
+      THEME_DEFAULTS.headingFontWeight
+    ),
+    letterSpacing: num(v.letterSpacing, THEME_DEFAULTS.letterSpacing, 0, 0.2),
+    lineHeight: num(v.lineHeight, THEME_DEFAULTS.lineHeight, 1, 2.2),
+    headingTextColor: TEXT(
+      pageBackground,
+      "headingTextColor",
+      THEME_DEFAULTS.headingTextColor
+    ),
+    gradientTextStart: hex(
+      v.gradientTextStart,
+      THEME_DEFAULTS.gradientTextStart
+    ),
+    gradientTextEnd: hex(v.gradientTextEnd, THEME_DEFAULTS.gradientTextEnd),
     cardRadius: num(v.cardRadius, THEME_DEFAULTS.cardRadius, 0, 32),
     buttonRadius: num(v.buttonRadius, THEME_DEFAULTS.buttonRadius, 0, 9999),
     sectionSpacing: num(v.sectionSpacing, THEME_DEFAULTS.sectionSpacing, 32, 160),
