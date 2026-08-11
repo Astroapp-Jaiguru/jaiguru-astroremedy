@@ -10,6 +10,7 @@ import {
 import { getSiteData } from "@/lib/site-data";
 import { getLegalPages } from "@/lib/legal-data";
 import { whatsappLink } from "@/config/site";
+import { SubscribeForm } from "@/components/layout/subscribe-form";
 
 /**
  * Footer (scope UI spec §19).
@@ -49,10 +50,10 @@ export async function SiteFooter() {
             <div className="flex items-center gap-3">
               <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gold-gradient font-heading text-xl font-bold text-white shadow-[0_8px_24px_rgba(250,204,21,0.35)] ring-1 ring-white/20 sm:h-11 sm:w-11 sm:text-2xl xl:h-[52px] xl:w-[52px] xl:text-3xl">
                 <Image
-                  src={data.branding.logo ?? "/favicon.png"}
+                  src={data.branding.footerLogo ?? data.branding.logo ?? "/favicon.png"}
                   alt={data.branding.logoAlt}
                   fill
-                  unoptimized={!!data.branding.logo}
+                  unoptimized={!!(data.branding.footerLogo ?? data.branding.logo)}
                   sizes="52px"
                   className="h-full w-full object-cover"
                 />
@@ -88,6 +89,7 @@ export async function SiteFooter() {
                 </a>
               ) : null;
             })()}
+            <SubscribeForm />
           </div>
 
           {/* 2. Quick links */}

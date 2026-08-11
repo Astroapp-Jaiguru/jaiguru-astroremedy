@@ -64,6 +64,8 @@ export async function Hero() {
   const hero = data.hero;
   const contact = data.contact;
 
+  if (!hero.active) return null;
+
   const waMessage = whatsappLink(
     [
       `Hello ${data.branding.siteName},`,
@@ -122,7 +124,7 @@ export async function Hero() {
             <span className="inline-flex items-center gap-2 rounded-full border border-golden/35 bg-golden/10 px-5 py-2 backdrop-blur">
               <Star className="h-4 w-4 text-golden" />
               <span className="text-[15px] font-semibold text-golden">
-                20+ Years of Vedic Experience
+                {data.astrologer.yearsExperience} Years of Vedic Experience
               </span>
             </span>
           </div>
@@ -177,7 +179,7 @@ export async function Hero() {
           </div>
 
           {/* Astrologer main image (frame + master circle shifted down ~45px on desktop for visual balance) */}
-          <div className="relative mt-3 md:mt-[45px]">
+          <div className="relative mt-3 md:mt-[57px]">
             <div className="relative overflow-hidden rounded-[calc(var(--jaiguru-card-radius)*2)] border-2 border-golden/45 shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
               <div className="relative aspect-[4/5] w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -116,6 +116,43 @@ export const THEME_DEFAULTS: ThemeSettings = {
 
 export const THEME_STORAGE_KEY = "theme";
 
+// ---------------------------------------------------------------------------
+// WCAG contrast helpers (Theme Quality Audit)
+// Guards every editable text color so no theme can render illegible text:
+// preferred color is kept when it passes 4.5:1 on its background, otherwise
+// the closest of white / dark ink that does pass is chosen automatically.
+// ---------------------------------------------------------------------------
+
+function luminance(hex: string): number {
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(hex);
+  if (!m) return 0;
+  const n = Number.parseInt(m[1], 16);
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
+    const s = v / 255;
+    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+}
+
+function contrastRatio(a: string, b: string): number {
+  const l1 = luminance(a);
+  const l2 = luminance(b);
+  const [hi, lo] = l1 >= l2 ? [l1, l2] : [l2, l1];
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+/** Returns `preferred` when it is readable on `bg`, else a readable ink. */
+function readableText(bg: string, preferred: string): string {
+  if (contrastRatio(preferred, bg) >= 4.5) return preferred;
+  const WHITE = "#FFFFFF";
+  const INK = "#0F172A";
+  return contrastRatio(WHITE, bg) >= contrastRatio(INK, bg) ? WHITE : INK;
+}
+
+export function contrastText(bgHex: string, preferredHex: string): string {
+  return readableText(bgHex, preferredHex);
+}
+
 export const BODY_FONTS = [
   { id: "inter", label: "Inter" },
   { id: "poppins", label: "Poppins" },
@@ -151,6 +188,26 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
   };
   const font = (x: unknown, list: readonly { id: string }[], fb: string) =>
     typeof x === "string" && list.some((f) => f.id === x) ? x : fb;
+
+  // Backgrounds first - the text colors below are contrast-guarded against them.
+  const pageBackground = hex(v.pageBackground, THEME_DEFAULTS.pageBackground);
+  const cardBackground = hex(v.cardBackground, THEME_DEFAULTS.cardBackground);
+  const heroGradientStart = hex(v.heroGradientStart, THEME_DEFAULTS.heroGradientStart);
+  const heroGradientEnd = hex(v.heroGradientEnd, THEME_DEFAULTS.heroGradientEnd);
+  const topbarBackground = hex(v.topbarBackground, THEME_DEFAULTS.topbarBackground);
+  const footerBackground = hex(v.footerBackground, THEME_DEFAULTS.footerBackground);
+  const legalCardBackground = hex(v.legalCardBackground, THEME_DEFAULTS.legalCardBackground);
+  const contactFormSurface = hex(v.contactFormSurface, THEME_DEFAULTS.contactFormSurface);
+  const experienceBannerBackground = hex(v.experienceBannerBackground, THEME_DEFAULTS.experienceBannerBackground);
+  const announcementBar1Background = hex(v.announcementBar1Background, THEME_DEFAULTS.announcementBar1Background);
+  const announcementBar2Background = hex(v.announcementBar2Background, THEME_DEFAULTS.announcementBar2Background);
+
+  // TEXT = contrast-guarded against its own background surface.
+  const TEXT = (bg: string, key: string, fb: string) => {
+    const candidate = hex(v[key], fb);
+    return contrastText(bg, candidate);
+  };
+
   return {
     primary: hex(v.primary, THEME_DEFAULTS.primary),
     secondary: hex(v.secondary, THEME_DEFAULTS.secondary),
@@ -160,148 +217,47 @@ export function normalizeTheme(raw: unknown): ThemeSettings {
     whatsapp: hex(v.whatsapp, THEME_DEFAULTS.whatsapp),
     emerald: hex(v.emerald, THEME_DEFAULTS.emerald),
     deepNavy: hex(v.deepNavy, THEME_DEFAULTS.deepNavy),
-    pageBackground: hex(
-      v.pageBackground,
-      THEME_DEFAULTS.pageBackground
-    ),
-    primaryTextColor: hex(
-      v.primaryTextColor,
-      THEME_DEFAULTS.primaryTextColor
-    ),
-    secondaryTextColor: hex(
-      v.secondaryTextColor,
-      THEME_DEFAULTS.secondaryTextColor
-    ),
+    pageBackground,
+    primaryTextColor: TEXT(pageBackground, "primaryTextColor", THEME_DEFAULTS.primaryTextColor),
+    secondaryTextColor: TEXT(pageBackground, "secondaryTextColor", THEME_DEFAULTS.secondaryTextColor),
     ctaPrimary: hex(v.ctaPrimary, THEME_DEFAULTS.ctaPrimary),
-    cardBackground: hex(v.cardBackground, THEME_DEFAULTS.cardBackground),
+    cardBackground,
     cardBorder: hex(v.cardBorder, THEME_DEFAULTS.cardBorder),
-    heroGradientStart: hex(
-      v.heroGradientStart,
-      THEME_DEFAULTS.heroGradientStart
-    ),
-    heroGradientEnd: hex(
-      v.heroGradientEnd,
-      THEME_DEFAULTS.heroGradientEnd
-    ),
-    topbarGradientStart: hex(
-      v.topbarGradientStart,
-      THEME_DEFAULTS.topbarGradientStart
-    ),
-    topbarGradientEnd: hex(
-      v.topbarGradientEnd,
-      THEME_DEFAULTS.topbarGradientEnd
-    ),
-    footerGradientStart: hex(
-      v.footerGradientStart,
-      THEME_DEFAULTS.footerGradientStart
-    ),
-    footerGradientEnd: hex(
-      v.footerGradientEnd,
-      THEME_DEFAULTS.footerGradientEnd
-    ),
-    goldGradientStart: hex(
-      v.goldGradientStart,
-      THEME_DEFAULTS.goldGradientStart
-    ),
-    goldGradientEnd: hex(
-      v.goldGradientEnd,
-      THEME_DEFAULTS.goldGradientEnd
-    ),
+    heroGradientStart,
+    heroGradientEnd,
+    topbarGradientStart: hex(v.topbarGradientStart, THEME_DEFAULTS.topbarGradientStart),
+    topbarGradientEnd: hex(v.topbarGradientEnd, THEME_DEFAULTS.topbarGradientEnd),
+    footerGradientStart: hex(v.footerGradientStart, THEME_DEFAULTS.footerGradientStart),
+    footerGradientEnd: hex(v.footerGradientEnd, THEME_DEFAULTS.footerGradientEnd),
+    goldGradientStart: hex(v.goldGradientStart, THEME_DEFAULTS.goldGradientStart),
+    goldGradientEnd: hex(v.goldGradientEnd, THEME_DEFAULTS.goldGradientEnd),
     bodyFont: font(v.bodyFont, BODY_FONTS, THEME_DEFAULTS.bodyFont),
-    headingFont: font(
-      v.headingFont,
-      HEADING_FONTS,
-      THEME_DEFAULTS.headingFont
-    ),
+    headingFont: font(v.headingFont, HEADING_FONTS, THEME_DEFAULTS.headingFont),
     bodyFontSize: num(v.bodyFontSize, THEME_DEFAULTS.bodyFontSize, 12, 20),
-    headingScale: num(
-      v.headingScale,
-      THEME_DEFAULTS.headingScale,
-      0.8,
-      1.3
-    ),
+    headingScale: num(v.headingScale, THEME_DEFAULTS.headingScale, 0.8, 1.3),
     cardRadius: num(v.cardRadius, THEME_DEFAULTS.cardRadius, 0, 32),
-    buttonRadius: num(
-      v.buttonRadius,
-      THEME_DEFAULTS.buttonRadius,
-      0,
-      9999
-    ),
-    sectionSpacing: num(
-      v.sectionSpacing,
-      THEME_DEFAULTS.sectionSpacing,
-      32,
-      160
-    ),
-    productCardRadius: num(
-      v.productCardRadius,
-      THEME_DEFAULTS.productCardRadius,
-      0,
-      32
-    ),
-    serviceCardRadius: num(
-      v.serviceCardRadius,
-      THEME_DEFAULTS.serviceCardRadius,
-      0,
-      32
-    ),
-    legalTitleColor: hex(v.legalTitleColor, THEME_DEFAULTS.legalTitleColor),
-    legalBreadcrumbColor: hex(
-      v.legalBreadcrumbColor,
-      THEME_DEFAULTS.legalBreadcrumbColor
-    ),
-    legalCardBackground: hex(
-      v.legalCardBackground,
-      THEME_DEFAULTS.legalCardBackground
-    ),
+    buttonRadius: num(v.buttonRadius, THEME_DEFAULTS.buttonRadius, 0, 9999),
+    sectionSpacing: num(v.sectionSpacing, THEME_DEFAULTS.sectionSpacing, 32, 160),
+    productCardRadius: num(v.productCardRadius, THEME_DEFAULTS.productCardRadius, 0, 32),
+    serviceCardRadius: num(v.serviceCardRadius, THEME_DEFAULTS.serviceCardRadius, 0, 32),
+    legalTitleColor: TEXT(legalCardBackground, "legalTitleColor", THEME_DEFAULTS.legalTitleColor),
+    legalBreadcrumbColor: hex(v.legalBreadcrumbColor, THEME_DEFAULTS.legalBreadcrumbColor),
+    legalCardBackground,
     legalCardBorder: hex(v.legalCardBorder, THEME_DEFAULTS.legalCardBorder),
-    legalTextColor: hex(v.legalTextColor, THEME_DEFAULTS.legalTextColor),
-    legalHeadingColor: hex(
-      v.legalHeadingColor,
-      THEME_DEFAULTS.legalHeadingColor
-    ),
-    contactFormSurface: hex(
-      v.contactFormSurface,
-      THEME_DEFAULTS.contactFormSurface
-    ),
-    contactFormLabelColor: hex(
-      v.contactFormLabelColor,
-      THEME_DEFAULTS.contactFormLabelColor
-    ),
-    experienceBannerBackground: hex(
-      v.experienceBannerBackground,
-      THEME_DEFAULTS.experienceBannerBackground
-    ),
-    experienceBannerTextColor: hex(
-      v.experienceBannerTextColor,
-      THEME_DEFAULTS.experienceBannerTextColor
-    ),
-    experienceBannerBorder: hex(
-      v.experienceBannerBorder,
-      THEME_DEFAULTS.experienceBannerBorder
-    ),
-    topbarBackground: hex(v.topbarBackground, THEME_DEFAULTS.topbarBackground),
-    topbarTextColor: hex(v.topbarTextColor, THEME_DEFAULTS.topbarTextColor),
-    announcementBar1Background: hex(
-      v.announcementBar1Background,
-      THEME_DEFAULTS.announcementBar1Background
-    ),
-    announcementBar1TextColor: hex(
-      v.announcementBar1TextColor,
-      THEME_DEFAULTS.announcementBar1TextColor
-    ),
-    announcementBar2Background: hex(
-      v.announcementBar2Background,
-      THEME_DEFAULTS.announcementBar2Background
-    ),
-    announcementBar2TextColor: hex(
-      v.announcementBar2TextColor,
-      THEME_DEFAULTS.announcementBar2TextColor
-    ),
-    footerBackground: hex(v.footerBackground, THEME_DEFAULTS.footerBackground),
-    footerHeadingColor: hex(
-      v.footerHeadingColor,
-      THEME_DEFAULTS.footerHeadingColor
-    ),
+    legalTextColor: TEXT(legalCardBackground, "legalTextColor", THEME_DEFAULTS.legalTextColor),
+    legalHeadingColor: TEXT(legalCardBackground, "legalHeadingColor", THEME_DEFAULTS.legalHeadingColor),
+    contactFormSurface,
+    contactFormLabelColor: TEXT(contactFormSurface, "contactFormLabelColor", THEME_DEFAULTS.contactFormLabelColor),
+    experienceBannerBackground,
+    experienceBannerTextColor: TEXT(experienceBannerBackground, "experienceBannerTextColor", THEME_DEFAULTS.experienceBannerTextColor),
+    experienceBannerBorder: hex(v.experienceBannerBorder, THEME_DEFAULTS.experienceBannerBorder),
+    topbarBackground,
+    topbarTextColor: TEXT(topbarBackground, "topbarTextColor", THEME_DEFAULTS.topbarTextColor),
+    announcementBar1Background,
+    announcementBar1TextColor: TEXT(announcementBar1Background, "announcementBar1TextColor", THEME_DEFAULTS.announcementBar1TextColor),
+    announcementBar2Background,
+    announcementBar2TextColor: TEXT(announcementBar2Background, "announcementBar2TextColor", THEME_DEFAULTS.announcementBar2TextColor),
+    footerBackground,
+    footerHeadingColor: TEXT(footerBackground, "footerHeadingColor", THEME_DEFAULTS.footerHeadingColor),
   };
 }

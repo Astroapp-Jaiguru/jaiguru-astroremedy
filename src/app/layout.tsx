@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { FONT_VARIABLE_CLASSES } from "@/lib/fonts";
 import { getSeoDefaults } from "@/lib/seo-data";
+import { getSiteData } from "@/lib/site-data";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -13,6 +14,8 @@ const geistMono = Geist_Mono({
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoDefaults();
+  const siteData = await getSiteData();
+  const favicon = siteData.branding.favicon || "/favicon.png";
   return {
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
@@ -24,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: seo.description,
     keywords: seo.keywords,
     icons: {
-      icon: "/favicon.png",
+      icon: favicon,
     },
     openGraph: {
       type: "website",

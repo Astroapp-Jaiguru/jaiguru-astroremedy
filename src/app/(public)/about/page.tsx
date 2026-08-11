@@ -14,10 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
- const data = await getSiteData();
- const contact = data.contact;
- const business = siteConfig.business;
- const astrologer = siteConfig.astrologer;
+const data = await getSiteData();
+  const contact = data.contact;
+  const business = siteConfig.business;
+  const astrologer = data.astrologer;
 
  return (
  <>
@@ -37,9 +37,9 @@ export default async function AboutPage() {
  <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#FACC15]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#FACC15]">
  <Gem className="h-3.5 w-3.5" /> ASTRO GEMS — Founder & Registered Enterprise
  </span>
- <span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#FACC15]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#FACC15]">
- <Award className="h-3.5 w-3.5" /> 20+ Years of Vedic Experience
- </span>
+<span className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/40 bg-[#FACC15]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#FACC15]">
+  <Award className="h-3.5 w-3.5" /> {data.astrologer.yearsExperience} Years of Vedic Experience
+  </span>
  </div>
  <p className="mt-6 font-display text-2xl font-bold leading-snug text-white sm:text-3xl">
  {business.foundedLine}
@@ -65,8 +65,13 @@ export default async function AboutPage() {
  <p className="mt-1 text-sm font-semibold uppercase tracking-widest text-[#FACC15]">
  {astrologer.title} · {astrologer.subtitle}
  </p>
- <div className="mt-5 space-y-4 text-sm leading-relaxed text-slate-300">
- <p>
+<div className="mt-5 space-y-4 text-sm leading-relaxed text-slate-300">
+  {astrologer.bio ? (
+  <p className="rounded-xl border border-[#D4AF37]/25 bg-white/5 p-4 font-normal text-slate-200">
+  {astrologer.bio}
+  </p>
+  ) : null}
+  <p>
  Vedic Astrologer Arup Shastri (Jai Guru) is a spiritual master and true
  healer based in Kolkata, West Bengal. With deep knowledge of the ancient
  Vedic sciences, he has been guiding seekers on matters of astrology,

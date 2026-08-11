@@ -101,6 +101,7 @@ export const defaultSiteData = {
     logoAlt: `${siteConfig.name} Logo`,
     tagline: siteConfig.tagline,
     logo: null as string | null,
+    footerLogo: null as string | null,
     favicon: null as string | null,
   },
   hero: {
@@ -113,6 +114,7 @@ export const defaultSiteData = {
     subtext:
       "Consult Vedic Astrologer Arup Shastri (Jai Guru) for astrology, numerology, vastu, yoga and spiritual remedy guidance at Sovabazar, Kolkata.",
     feeText: "Consultation Fee: ₹700",
+    active: true,
     buttons: {
       whatsapp: { label: "Book Consultation", active: true },
       call: { label: "Call Now", active: true },
@@ -130,6 +132,16 @@ export const defaultSiteData = {
       { icon: "store", label: "Kolkata Chamber", value: "Sovabazar Metro" },
       { icon: "whatsapp", label: "WhatsApp Booking", value: "Fast Response" },
     ],
+  },
+  astrologer: {
+    name: siteConfig.astrologer.name,
+    title: siteConfig.astrologer.title,
+    subtitle: siteConfig.astrologer.subtitle,
+    bio: "",
+    yearsExperience: "20+",
+    photoUrl: null as string | null,
+    expertise: siteConfig.astrologer.expertise,
+    specialties: siteConfig.astrologer.specialties,
   },
   contact: {
     whatsappNumber: siteConfig.contact.whatsappNumber,
@@ -182,6 +194,7 @@ function deepMerge<T extends object>(base: T, override: DeepPartial<T>): T {
 export interface SiteData {
   branding: typeof defaultSiteData.branding;
   hero: typeof defaultSiteData.hero;
+  astrologer: typeof defaultSiteData.astrologer;
   contact: typeof defaultSiteData.contact;
   footer: typeof defaultSiteData.footer;
   socials: SocialLinkData[];
@@ -216,6 +229,11 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
   const hero = deepMerge(
     defaultSiteData.hero,
     (settingsMap.get("hero") as DeepPartial<typeof defaultSiteData.hero>) ?? {}
+  );
+  const astrologer = deepMerge(
+    defaultSiteData.astrologer,
+    (settingsMap.get("astrologer") as DeepPartial<typeof defaultSiteData.astrologer>) ??
+      {}
   );
   const contact = deepMerge(
     defaultSiteData.contact,
@@ -257,6 +275,7 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
   return {
     branding,
     hero,
+    astrologer,
     contact,
     footer,
     socials,

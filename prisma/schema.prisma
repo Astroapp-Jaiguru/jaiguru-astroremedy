@@ -75,17 +75,22 @@ model User {
 // ---------------------------------------------------------------------------
 
 model ProductCategory {
-  id          String    @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String           @unique
   description String?
   icon        String?
   imageUrl    String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  parentId    String?
+  parent      ProductCategory? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    ProductCategory[] @relation("CategoryTree")
+  sortOrder   Int              @default(0)
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   products    Product[]
+
+  @@index([parentId])
 }
 
 model Product {
@@ -148,17 +153,22 @@ model ProductImage {
 // ---------------------------------------------------------------------------
 
 model ServiceCategory {
-  id          String    @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
-  slug        String    @unique
+  slug        String           @unique
   description String?
   icon        String?
   imageUrl    String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  parentId    String?
+  parent      ServiceCategory? @relation("ServiceCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children    ServiceCategory[] @relation("ServiceCategoryTree")
+  sortOrder   Int              @default(0)
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   services    Service[]
+
+  @@index([parentId])
 }
 
 model Service {
@@ -372,6 +382,22 @@ model SocialLink {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Newsletter subscribers
+// ---------------------------------------------------------------------------
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  source    String   @default("footer")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
 }
 
 model LegalPage {

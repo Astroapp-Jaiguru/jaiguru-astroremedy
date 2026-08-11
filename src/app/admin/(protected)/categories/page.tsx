@@ -1,32 +1,36 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/dal";
+import { CategoryManager } from "@/components/admin/categories/category-manager";
 
-export default function AdminPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminCategoriesPage() {
+  await requireAdmin();
+  const [products, services] = await Promise.all([
+    prisma.productCategory.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
+    prisma.serviceCategory.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
+  ]);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-2xl font-bold">Categories</h1>
-        <p className="text-sm text-muted-foreground">Product category management.</p>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Coming in a later phase</CardTitle>
-          <CardDescription>
-            This module is scaffolded. Full CRUD UI will be implemented in its
-            dedicated phase.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            The route structure and navigation are ready.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
+    <CategoryManager
+      products={products.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: c.description,
+        parentId: c.parentId,
+        isActive: c.isActive,
+        sortOrder: c.sortOrder,
+      }))}
+      services={services.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        description: c.description,
+        parentId: c.parentId,
+        isActive: c.isActive,
+        sortOrder: c.sortOrder,
+      }))}
+    />
   );
 }
