@@ -94,7 +94,7 @@ export function AstrologerForm({ initial }: { initial: AstrologerSettings }) {
               name="photoUrl"
               value={photoUrl}
               onChange={setPhotoUrl}
-              label="Profile Photo"
+              label="Profile Photo Image"
               hint="Square photo - rendered round in the header and hero."
               aspect="circle"
               previewClassName="size-24 rounded-full"

@@ -93,7 +93,7 @@ export function BrandingSettingsForm({
               name="logo"
               value={logo}
               onChange={setLogo}
-              label="Header Logo"
+              label="Header Logo Image"
               hint="Recommended: transparent PNG, roughly 400x120."
               aspect="wide"
               previewClassName="h-14 w-auto"
@@ -102,7 +102,7 @@ export function BrandingSettingsForm({
               name="footerLogo"
               value={footerLogo}
               onChange={setFooterLogo}
-              label="Footer Logo (optional)"
+              label="Footer Logo Image (optional)"
               hint="Syncs with the header logo when left empty."
               aspect="wide"
               previewClassName="h-14 w-auto"

@@ -21,9 +21,9 @@ export default async function AdminHeroPage() {
       <HeroSettingsForm
         initial={{
           badge: hero.badge,
-          headlineBefore: hero.headlineBefore,
-          headlineHighlight: hero.headlineHighlight,
-          headlineAfter: hero.headlineAfter,
+          headlineLine1: hero.headlineLine1,
+          headlineLine2: hero.headlineLine2,
+          headlineLine3: hero.headlineLine3,
           subtext: hero.subtext,
           feeText: hero.feeText,
           astrologerImage: hero.astrologerImage ?? "",

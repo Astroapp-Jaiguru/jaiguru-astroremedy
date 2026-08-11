@@ -108,9 +108,9 @@ export const defaultSiteData = {
     badge: "Trusted Vedic Astrology, Vastu, Numerology & Yoga Guidance in Kolkata",
     astrologerImage: null as string | null,
     masterImage: null as string | null,
-    headlineBefore: "Personalized ",
-    headlineHighlight: "Astrology, Vastu, Numerology",
-    headlineAfter: " & Spiritual Guidance",
+    headlineLine1: "Personalized",
+    headlineLine2: "Astrology, Vastu, Numerology",
+    headlineLine3: "& Spiritual Guidance",
     subtext:
       "Consult Vedic Astrologer Arup Shastri (Jai Guru) for astrology, numerology, vastu, yoga and spiritual remedy guidance at Sovabazar, Kolkata.",
     feeText: "Consultation Fee: ₹700",
@@ -168,6 +168,35 @@ export const defaultSiteData = {
 type DeepPartial<T> = {
   [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
 };
+
+/** Maps legacy hero headline keys to the current Line 1/2/3 keys. */
+const LEGACY_HERO_KEYS: Record<string, string> = {
+  headlineBefore: "headlineLine1",
+  headlineHighlight: "headlineLine2",
+  headlineAfter: "headlineLine3",
+};
+
+/**
+ * Migrates hero rows saved with the old headlineBefore / headlineHighlight /
+ * headlineAfter keys so existing content survives the rename.
+ */
+function normalizeHeroSettings(
+  raw: DeepPartial<typeof defaultSiteData.hero> | undefined
+): DeepPartial<typeof defaultSiteData.hero> {
+  if (!raw) return {};
+  const out: Record<string, unknown> = { ...raw };
+  for (const [oldKey, newKey] of Object.entries(LEGACY_HERO_KEYS)) {
+    if (
+      out[newKey] === undefined &&
+      typeof out[oldKey] === "string" &&
+      (out[oldKey] as string).length > 0
+    ) {
+      out[newKey] = out[oldKey];
+    }
+    delete out[oldKey];
+  }
+  return out as DeepPartial<typeof defaultSiteData.hero>;
+}
 
 function deepMerge<T extends object>(base: T, override: DeepPartial<T>): T {
   const out: Record<string, unknown> = { ...(base as Record<string, unknown>) };
@@ -228,7 +257,9 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
   );
   const hero = deepMerge(
     defaultSiteData.hero,
-    (settingsMap.get("hero") as DeepPartial<typeof defaultSiteData.hero>) ?? {}
+    normalizeHeroSettings(
+      (settingsMap.get("hero") as DeepPartial<typeof defaultSiteData.hero>) ?? {}
+    )
   );
   const astrologer = deepMerge(
     defaultSiteData.astrologer,

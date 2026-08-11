@@ -104,9 +104,15 @@ export async function Hero() {
           </span>
 
           <h1 className="mt-6 font-heading text-[clamp(2.125rem,1rem+3.2vw,4.25rem)] font-bold leading-[1.08] text-white [text-shadow:0_2px_30px_rgba(250,204,21,0.25)]">
-            {hero.headlineBefore}
-            <span className="text-gold-gradient">{hero.headlineHighlight}</span>
-            {hero.headlineAfter}
+            {hero.headlineLine1 && (
+              <span className="block">{hero.headlineLine1}</span>
+            )}
+            <span className="block text-gold-gradient">
+              {hero.headlineLine2 || "Astrology, Vastu, Numerology"}
+            </span>
+            {hero.headlineLine3 && (
+              <span className="block">{hero.headlineLine3}</span>
+            )}
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg lg:mx-0">

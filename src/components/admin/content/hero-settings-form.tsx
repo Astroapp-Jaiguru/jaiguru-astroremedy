@@ -43,46 +43,49 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Headline & Trust Badge</CardTitle>
+            <CardTitle className="text-lg">Headline & Badge</CardTitle>
             <CardDescription>
-              The headline is split into three parts - the highlighted middle
-              part renders in gold.
+              The three headline lines render stacked; line 2 is the gold
+              gradient highlight.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="badge">Trust Badge Text</Label>
+              <Label htmlFor="badge">Badge Text</Label>
               <Input id="badge" name="badge" defaultValue={initial.badge} />
               <p className="text-xs text-muted-foreground">
                 Small pill above the headline.
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="headlineBefore">Headline (before highlight)</Label>
+              <Label htmlFor="headlineLine1">Headline Line 1</Label>
               <Input
-                id="headlineBefore"
-                name="headlineBefore"
-                defaultValue={initial.headlineBefore}
+                id="headlineLine1"
+                name="headlineLine1"
+                defaultValue={initial.headlineLine1}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="headlineHighlight">Headline (highlight)</Label>
+              <Label htmlFor="headlineLine2">Headline Line 2</Label>
               <Input
-                id="headlineHighlight"
-                name="headlineHighlight"
-                defaultValue={initial.headlineHighlight}
+                id="headlineLine2"
+                name="headlineLine2"
+                defaultValue={initial.headlineLine2}
+              />
+              <p className="text-xs text-muted-foreground">
+                Renders in gold gradient. Required.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="headlineLine3">Headline Line 3</Label>
+              <Input
+                id="headlineLine3"
+                name="headlineLine3"
+                defaultValue={initial.headlineLine3}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="headlineAfter">Headline (after highlight)</Label>
-              <Input
-                id="headlineAfter"
-                name="headlineAfter"
-                defaultValue={initial.headlineAfter}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="subtext">Subheading</Label>
+              <Label htmlFor="subtext">Subheading Text</Label>
               <Textarea
                 id="subtext"
                 name="subtext"
@@ -91,7 +94,7 @@ export function HeroSettingsForm({ initial }: { initial: HeroSettings }) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="feeText">Fee Label</Label>
+              <Label htmlFor="feeText">Fee Label Text</Label>
               <Input
                 id="feeText"
                 name="feeText"

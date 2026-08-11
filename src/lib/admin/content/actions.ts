@@ -53,9 +53,9 @@ async function upsertSetting(key: string, value: unknown): Promise<boolean> {
 
 export interface HeroSettings {
   badge: string;
-  headlineBefore: string;
-  headlineHighlight: string;
-  headlineAfter: string;
+  headlineLine1: string;
+  headlineLine2: string;
+  headlineLine3: string;
   subtext: string;
   feeText: string;
   astrologerImage: string;
@@ -73,9 +73,9 @@ export async function saveHeroAction(
   await requireAdmin();
   const value: HeroSettings = {
     badge: str(fd, "badge"),
-    headlineBefore: str(fd, "headlineBefore"),
-    headlineHighlight: str(fd, "headlineHighlight"),
-    headlineAfter: str(fd, "headlineAfter"),
+    headlineLine1: str(fd, "headlineLine1"),
+    headlineLine2: str(fd, "headlineLine2"),
+    headlineLine3: str(fd, "headlineLine3"),
     subtext: str(fd, "subtext"),
     feeText: str(fd, "feeText"),
     astrologerImage: str(fd, "astrologerImage"),
@@ -85,8 +85,8 @@ export async function saveHeroAction(
     callLabel: str(fd, "callLabel"),
     productsLabel: str(fd, "productsLabel"),
   };
-  if (!value.headlineHighlight) {
-    return { error: "Main headline highlight text is required." };
+  if (!value.headlineLine2) {
+    return { error: "Headline line 2 (gold highlight) is required." };
   }
   return (await upsertSetting("hero", value))
     ? { success: true }
