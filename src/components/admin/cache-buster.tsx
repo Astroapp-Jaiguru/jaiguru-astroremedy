@@ -2,51 +2,75 @@
 
 import { useEffect } from "react";
 
-const BUST_KEY = "jaiguru-admin-cache-bust-v1";
+const PURGE_KEY = "jaiguru-admin-cache-purged-v2";
 
 /**
- * Guarantees the admin dashboard never renders from a stale browser cache:
- *  1. Static Next.js assets (scripts / stylesheets / font links) get a fresh
- *     ?v=<timestamp> query parameter appended on every load, so Chrome is
- *     forced to treat them as brand-new URLs (changed stylesheet URLs are
- *     refetched immediately).
- *  2. Every /admin response already ships strict no-store headers from the
- *     proxy, so the next page load always receives fresh HTML with the
- *     newest hashed chunks.
+ * Aggressive cache busting for the admin dashboard. Runs on every full page
+ * load and guarantees the browser always fetches fresh files:
+ *
+ *  1. Every Next.js static script / stylesheet URL gets a unique
+ *     ?v=<timestamp> query parameter appended, forcing the browser to treat
+ *     each file as a brand-new URL (stylesheets are refetched immediately;
+ *     already-executed module scripts ignore the src change but the cache
+ *     purge below re-downloads them anyway).
+ *  2. One-time (per browser session): wipes every Cache Storage entry and
+ *     unregisters any service worker, then performs a forced reload so the
+ *     next page load re-downloads the entire dashboard from the server.
+ *  3. /admin responses additionally ship strict no-store headers, so the
+ *     reloaded HTML is always the newest version.
  */
 export function CacheBuster() {
   useEffect(() => {
     try {
-      if (typeof sessionStorage !== "undefined" && !sessionStorage.getItem(BUST_KEY)) {
-        sessionStorage.setItem(BUST_KEY, "1");
-      }
-
       const stamp = Date.now();
-      const bust = (el: Element) => {
-        const attr = el.getAttribute("src") ?? el.getAttribute("href");
-        if (!attr || !attr.includes("_next/static")) return;
-        const mark = el.getAttribute("data-cache-busted");
-        if (mark === stamp.toString()) return;
-        el.setAttribute("data-cache-busted", stamp.toString());
-        const url = new URL(attr, window.location.href);
-        url.searchParams.set("v", stamp.toString());
-        if (el.getAttribute("src")) {
-          el.setAttribute("src", url.toString());
-        } else {
-          el.setAttribute("href", url.toString());
-        }
-      };
-      document
-        .querySelectorAll('script[src*="_next/static"], link[rel="stylesheet"][href*="_next/static"]')
-        .forEach(bust);
 
-      const perf = performance.getEntriesByType("navigation")[0] as
-        | PerformanceNavigationTiming
-        | undefined;
-      const isFreshLoad =
-        !perf || perf.type === "navigate" || perf.type === "reload";
-      if (isFreshLoad) {
-        document.body.classList.add("cache-busted");
+      // 1. Bust all static asset URLs with ?v=<timestamp>.
+      document
+        .querySelectorAll(
+          'link[rel="stylesheet"][href*="_next/static"], script[src*="_next/static"]'
+        )
+        .forEach((el) => {
+          const attr = el.hasAttribute("src") ? "src" : "href";
+          const url = el.getAttribute(attr);
+          if (!url || url.includes("v=")) return;
+          try {
+            const parsed = new URL(url, window.location.href);
+            parsed.searchParams.set("v", stamp.toString());
+            el.setAttribute(attr, parsed.toString());
+          } catch {
+            // Ignore unparseable URLs.
+          }
+        });
+
+      // 2. One-time: purge browser/SW caches, then force a fresh reload.
+      if (!sessionStorage.getItem(PURGE_KEY)) {
+        sessionStorage.setItem(PURGE_KEY, "1");
+        let finished = false;
+        const reload = () => {
+          if (finished) return;
+          finished = true;
+          window.location.reload();
+        };
+        const purge = (async () => {
+          try {
+            if ("caches" in window) {
+              const keys = await window.caches.keys();
+              await Promise.all(keys.map((key) => window.caches.delete(key)));
+            }
+            if ("serviceWorker" in navigator) {
+              const registrations =
+                await navigator.serviceWorker.getRegistrations();
+              await Promise.all(
+                registrations.map((registration) => registration.unregister())
+              );
+            }
+          } finally {
+            reload();
+          }
+        })();
+        // Safety net in case cache clearing hangs.
+        setTimeout(reload, 2500);
+        void purge;
       }
     } catch {
       // Cache busting is best-effort - never block the dashboard.

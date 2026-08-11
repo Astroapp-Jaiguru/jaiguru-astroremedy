@@ -11,6 +11,9 @@ import { RefreshCcw } from "lucide-react";
  */
 export function HardRefreshHint() {
   useEffect(() => {
+    console.log(
+      "[Jaiguru Admin] If the dashboard fails to load, please press Ctrl+F5 (Windows) or Cmd+Shift+R (Mac) to perform a hard refresh and clear the cache permanently."
+    );
     const timer = setTimeout(() => {
       toast.info(
         "Dashboard not loading? Press Ctrl + Shift + R (Windows) or Cmd + Shift + R (Mac) to hard refresh.",
