@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
           { key: "Expires", value: "0" },
         ],
       },
+      {
+        // Same for the entire public site: every page is DB-driven and
+        // server-rendered per request, so the browser must never serve a
+        // cached HTML copy — typography, theme and content edits (H1-H4
+        // sizes etc.) apply instantly on the next visit.
+        source: "/:path*",
+        headers: [
+          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, private, max-age=0" },
+          { key: "Pragma", value: "no-cache" },
+          { key: "Expires", value: "0" },
+        ],
+      },
     ];
   },
   images: {
