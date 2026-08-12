@@ -38,6 +38,7 @@ export default async function EditProductPage({ params }: PageProps) {
     mainImage: product.mainImage ?? "",
     shortDescription: product.shortDescription ?? "",
     longDescription: product.longDescription ?? "",
+    returnPolicy: product.returnPolicy ?? "",
     benefits: product.benefits,
     tags: product.tags,
     material: product.material ?? "",

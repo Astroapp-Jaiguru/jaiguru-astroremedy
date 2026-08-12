@@ -109,6 +109,7 @@ model Product {
   quantity         Int            @default(0)
   shortDescription String?
   longDescription  String?
+  returnPolicy     String?
   benefits         String[]       @default([])
   usageMethod      String?
   material         String?

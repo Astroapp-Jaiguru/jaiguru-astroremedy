@@ -34,6 +34,7 @@ export interface ProductFormValues {
   mainImage: string;
   shortDescription: string;
   longDescription: string;
+  returnPolicy: string;
   benefits: string[];
   tags: string[];
   material: string;
@@ -159,6 +160,10 @@ export function ProductForm({
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="longDescription">Long Description</Label>
           <Textarea id="longDescription" name="longDescription" rows={4} defaultValue={product?.longDescription ?? ""} placeholder="Full description shown on the product page" />
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="returnPolicy">Return Policy</Label>
+          <Textarea id="returnPolicy" name="returnPolicy" rows={4} defaultValue={product?.returnPolicy ?? ""} placeholder="Authenticity, quality and return policy text" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="benefits">Benefits (one per line or comma)</Label>

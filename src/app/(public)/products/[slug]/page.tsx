@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
 import { formatPrice } from "@/lib/shop-data";
+import { Markdown } from "@/components/markdown";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
@@ -242,9 +243,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </p>
             ) : null}
             {product.longDescription ? (
-              <p className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
-                {product.longDescription}
-              </p>
+              <div className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
+                <Markdown content={product.longDescription} />
+              </div>
             ) : null}
 
             {product.benefits.length > 0 ? (
@@ -300,6 +301,16 @@ export default async function ProductDetailPage({ params }: PageProps) {
               variations in the material. Please consider this before placing
               your order.
             </p>
+            {product.returnPolicy ? (
+              <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-5 py-4">
+                <h3 className="font-display text-sm font-bold text-amber-400">
+                  Authenticity, Quality & Return Policy
+                </h3>
+                <div className="text-xs leading-relaxed text-slate-300">
+                  <Markdown content={product.returnPolicy} />
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 
