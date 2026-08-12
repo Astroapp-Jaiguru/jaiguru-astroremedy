@@ -20,6 +20,7 @@ export interface RecordOrderInput {
   amountLabel?: string | null;
   preferredDate?: string | null;
   preferredTime?: string | null;
+  deliveryAddress?: string | null;
   source?: string;
 }
 
@@ -51,6 +52,7 @@ export async function recordOrderAction(
         amountLabel: input.amountLabel?.trim().slice(0, 60) || null,
         preferredDate: input.preferredDate?.trim() || null,
         preferredTime: input.preferredTime?.trim() || null,
+        deliveryAddress: input.deliveryAddress?.trim().slice(0, 300) || null,
         source: input.source?.trim().slice(0, 40) || "website",
       },
     });

@@ -75,6 +75,9 @@ function PaymentModal(
   const am = extractAmount(props.price ?? priceLabel);
   const [qrUrl, setQrUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [custName, setCustName] = useState("");
+  const [custPhone, setCustPhone] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
 
   const upiUri = buildUpiUri({
     pa: upiId,
@@ -83,6 +86,19 @@ function PaymentModal(
     cu: "INR",
   });
   const waHref = whatsappLink(whatsappMessage, whatsappNumber);
+
+  const recordOrder = () => {
+    void recordOrderAction({
+      itemName,
+      itemType: "PRODUCT",
+      amount: am ?? priceLabel,
+      amountLabel: priceLabel,
+      customerName: custName.trim() || undefined,
+      phone: custPhone.trim() || undefined,
+      deliveryAddress: deliveryAddress.trim() || undefined,
+      source: "payment-modal",
+    }).catch(() => undefined);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -144,6 +160,7 @@ function PaymentModal(
             href={upiUri}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => recordOrder()}
             className="group btn-glow-gold flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-golden to-saffron px-4 py-3.5 text-sm font-bold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
           >
             <Wallet className="h-4 w-4" />
@@ -209,20 +226,42 @@ function PaymentModal(
             </div>
           </div>
 
+          {/* Delivery details (for the delivery slip) */}
+          <details className="rounded-2xl border border-dashed border-premium-gold/50 bg-[var(--jaiguru-dark-2)]/50 px-4 py-3">
+            <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              Delivery details for your slip (optional)
+            </summary>
+            <div className="mt-3 grid gap-2.5">
+              <input
+                type="text"
+                value={custName}
+                onChange={(e) => setCustName(e.target.value)}
+                placeholder="Your Name"
+                className="h-10 w-full rounded-xl border border-white/15 bg-[#0B1120] px-3 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+              />
+              <input
+                type="tel"
+                value={custPhone}
+                onChange={(e) => setCustPhone(e.target.value)}
+                placeholder="Phone Number"
+                className="h-10 w-full rounded-xl border border-white/15 bg-[#0B1120] px-3 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+              />
+              <textarea
+                rows={2}
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                placeholder="Delivery Address (house, street, city, PIN)"
+                className="w-full resize-none rounded-xl border border-white/15 bg-[#0B1120] px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+              />
+            </div>
+          </details>
+
           {/* WhatsApp fallback */}
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => {
-              void recordOrderAction({
-                itemName,
-                itemType: "PRODUCT",
-                amount: am ?? priceLabel,
-                amountLabel: priceLabel,
-                source: "payment-modal",
-              }).catch(() => undefined);
-            }}
+            onClick={() => recordOrder()}
             className="btn-glow-whatsapp flex items-center justify-center gap-2 rounded-2xl bg-whatsapp px-4 py-3.5 text-sm font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
           >
             <WhatsappIcon className="h-4 w-4" />

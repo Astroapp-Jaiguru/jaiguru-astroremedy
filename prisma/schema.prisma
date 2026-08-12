@@ -237,6 +237,7 @@ model Order {
   preferredDate   String?
   preferredTime   String?
   note            String?
+  deliveryAddress String?
   status          OrderStatus   @default(PENDING)
   source          String        @default("website")
   createdAt       DateTime      @default(now())

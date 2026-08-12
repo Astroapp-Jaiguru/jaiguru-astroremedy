@@ -44,6 +44,14 @@ export default async function LegalPageDetail({ params }: Props) {
         <h1 className="font-display text-3xl font-bold text-[var(--jaiguru-legal-title-color)] sm:text-4xl">
           {page.title}
         </h1>
+        <p className="mt-3 text-sm text-[var(--jaiguru-legal-breadcrumb-color)]">
+          Last Updated:{" "}
+          {new Intl.DateTimeFormat("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }).format(page.updatedAt)}
+        </p>
         <div className="mt-2 h-1 w-24 rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316]" />
 
         <div className="mt-6 rounded-[var(--jaiguru-card-radius)] border-2 border-[var(--jaiguru-legal-card-border)] bg-[var(--jaiguru-legal-card-background)] p-6 text-[var(--jaiguru-legal-text-color)] shadow-[0_8px_30px_rgba(0,0,0,0.1)] sm:p-10">

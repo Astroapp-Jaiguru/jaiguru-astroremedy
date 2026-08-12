@@ -15,6 +15,7 @@ export interface LegalPageData {
   seoTitle: string | null;
   seoDescription: string | null;
   sortOrder: number;
+  updatedAt: Date;
 }
 
 export const getLegalPages = cache(async (): Promise<LegalPageData[]> => {
@@ -31,6 +32,7 @@ export const getLegalPages = cache(async (): Promise<LegalPageData[]> => {
       seoTitle: r.seoTitle,
       seoDescription: r.seoDescription,
       sortOrder: r.sortOrder,
+      updatedAt: r.updatedAt,
     }));
   } catch (e) {
     console.error("[legal-data] getLegalPages failed:", e);
@@ -53,6 +55,7 @@ export const getLegalPageBySlug = cache(
         seoTitle: row.seoTitle,
         seoDescription: row.seoDescription,
         sortOrder: row.sortOrder,
+        updatedAt: row.updatedAt,
       };
     } catch (e) {
       console.error("[legal-data] getLegalPageBySlug failed:", e);

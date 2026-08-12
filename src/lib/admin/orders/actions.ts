@@ -70,3 +70,30 @@ export async function deleteOrderAction(
     return { ok: false };
   }
 }
+
+export async function saveSlipSettingsAction(
+  _state: OrderFormState | undefined,
+  fd: FormData
+): Promise<OrderFormState> {
+  await requireAdmin();
+  const id = String(fd.get("id") ?? "").trim();
+  const showTax = fd.get("showTax") === "on";
+  const gstin = String(fd.get("gstin") ?? "").trim().slice(0, 40);
+  const rateRaw = Number.parseFloat(String(fd.get("taxRate") ?? ""));
+  const taxRate =
+    Number.isFinite(rateRaw) && rateRaw > 0 ? Math.round(rateRaw * 100) / 100 : 0;
+
+  try {
+    await prisma.siteSetting.upsert({
+      where: { key: "delivery-slip" },
+      update: { value: { showTax, gstin, taxRate } as never },
+      create: { key: "delivery-slip", value: { showTax, gstin, taxRate } as never },
+    });
+  } catch (e) {
+    console.error("[admin] saveSlipSettings failed:", e);
+    return { error: "Could not save the delivery slip settings. Please try again." };
+  }
+
+  if (id) revalidatePath(`/admin/orders/${id}`);
+  return { success: true };
+}

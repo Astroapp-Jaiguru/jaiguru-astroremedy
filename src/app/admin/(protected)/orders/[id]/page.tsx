@@ -1,12 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Package, Sparkles, Phone, CalendarDays, Clock, MessageSquareText, BadgeInfo } from "lucide-react";
+import { ArrowLeft, Package, Sparkles, Phone, CalendarDays, Clock, MessageSquareText, BadgeInfo, FileDown, ReceiptText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/dal";
+import { getSlipSettings } from "@/lib/orders/slip-settings";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { OrderStatusForm } from "@/components/admin/orders/order-status-form";
+import { SlipDownloadButton } from "@/components/admin/orders/slip-download-button";
+import { SlipSettingsForm } from "@/components/admin/orders/slip-settings-form";
 import { deleteOrderAction } from "@/lib/admin/orders/actions";
 import {
   ORDER_STATUS_LABELS,
@@ -35,7 +38,10 @@ export default async function AdminOrderDetailPage({
 }) {
   await requireAdmin();
   const { id } = await params;
-  const order = await prisma.order.findUnique({ where: { id } });
+  const [order, slipSettings] = await Promise.all([
+    prisma.order.findUnique({ where: { id } }),
+    getSlipSettings(),
+  ]);
   if (!order) notFound();
 
   const status = order.status as OrderStatus;
@@ -57,6 +63,7 @@ export default async function AdminOrderDetailPage({
     { label: "Amount", value: order.amountLabel ?? amountText },
     { label: "Preferred Date", value: order.preferredDate ?? "—" },
     { label: "Preferred Time", value: order.preferredTime ?? "—" },
+    { label: "Delivery Address", value: order.deliveryAddress ?? "—" },
     { label: "Source", value: order.source },
     { label: "Received", value: formatDate(order.createdAt) },
   ];
@@ -137,6 +144,31 @@ export default async function AdminOrderDetailPage({
           </div>
 
           <OrderStatusForm id={order.id} status={order.status} />
+
+          <div className="grid gap-5 border-t pt-4 lg:grid-cols-2">
+            <div>
+              <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                <FileDown className="h-4 w-4 text-muted-foreground" />
+                Delivery Slip
+              </h2>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Generates a print-ready A4 PDF with the brand logo, customer
+                and delivery details, item and amount, and tax information if
+                enabled below.
+              </p>
+              <SlipDownloadButton
+                id={order.id}
+                reference={orderReference(order.id)}
+              />
+            </div>
+            <div>
+              <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">
+                <ReceiptText className="h-4 w-4 text-muted-foreground" />
+                Tax Settings
+              </h2>
+              <SlipSettingsForm id={order.id} settings={slipSettings} />
+            </div>
+          </div>
 
           <div className="border-t pt-4">
             <DeleteButton
