@@ -2,12 +2,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard } from "@/components/shop/product-card";
-import { SortSelect } from "@/components/shop/sort-select";
+import { ProductFilters } from "@/components/shop/product-filters";
 import { type FeaturedProduct } from "@/lib/shop-data";
 
 /**
  * Products catalogue (scope §7.6 / §15). All products with pagination,
- * category filters and sorting.
+ * category filters, search, price range, size/carat, quality tier and
+ * sorting. Every filter lives in the URL so views are shareable and
+ * server-rendered.
  */
 
 export const dynamic = "force-dynamic";
@@ -32,12 +34,35 @@ function param(searchParams: Awaited<PageProps["searchParams"]>, key: string): s
   return Array.isArray(v) ? (v[0] ?? "") : (v ?? "");
 }
 
+const SIZES = new Set([
+  "1", "2", "3", "3.5", "4.5", "5", "5.5", "6.5", "7.5", "8.5", "9", "10", "11", "12", "14", "15",
+]);
+const TIERS = new Set(["budget", "premium", "deluxe"]);
+
+function filterHref(sp: Awaited<PageProps["searchParams"]>, page: number): string {
+  const p = new URLSearchParams();
+  for (const key of ["category", "q", "sort", "min", "max", "size", "tier"] as const) {
+    const v = param(sp, key);
+    if (v) p.set(key, v);
+  }
+  if (page > 1) p.set("page", String(page));
+  const qs = p.toString();
+  return qs ? `/products?${qs}` : "/products";
+}
+
 export default async function ProductsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const page = Math.max(1, Number.parseInt(param(sp, "page"), 10) || 1);
   const categorySlug = param(sp, "category");
   const q = param(sp, "q").trim();
   const sort = param(sp, "sort") in SORTS ? param(sp, "sort") : "featured";
+
+  const minRaw = Number.parseInt(param(sp, "min"), 10);
+  const maxRaw = Number.parseInt(param(sp, "max"), 10);
+  const min = Number.isFinite(minRaw) && minRaw > 0 ? minRaw : null;
+  const max = Number.isFinite(maxRaw) && maxRaw > 0 ? maxRaw : null;
+  const size = SIZES.has(param(sp, "size")) ? param(sp, "size") : "";
+  const tier = TIERS.has(param(sp, "tier")) ? param(sp, "tier") : "";
 
   const categories = await prisma.productCategory.findMany({
     where: { isActive: true },
@@ -51,11 +76,26 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     orderBy: { sortOrder: "asc" },
   });
 
+  const categoryCounts: Record<string, number> = {};
+  for (const c of categories) categoryCounts[c.slug] = c._count.products;
+
   const isValidCategory = categories.some((c) => c.slug === categorySlug);
+  const priceFilter =
+    min != null || max != null
+      ? {
+          price: {
+            ...(min != null ? { gte: min } : {}),
+            ...(max != null ? { lte: max } : {}),
+          },
+        }
+      : {};
   const where = {
     isActive: true,
     ...(isValidCategory ? { category: { slug: categorySlug } } : {}),
     ...(q ? { OR: [{ name: { contains: q } }, { tags: { has: q } }] } : {}),
+    ...priceFilter,
+    ...(size ? { tags: { has: `${size}-carat` } } : {}),
+    ...(tier ? { tags: { has: `tier-${tier}` } } : {}),
   };
 
   const total = await prisma.product.count({ where });
@@ -101,57 +141,24 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           subtitle="Energised spiritual items, blessed gemstones, vastu corrections and yoga essentials. Every item available for home delivery."
         />
 
-        {/* Filter toolbar */}
-        <div className="mb-10 flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/products"
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                !isValidCategory
-                  ? "bg-[#4C1D95] text-white"
-                  : "border border-[#D4AF37]/40 text-[#FACC15] hover:bg-[#FACC15]/10"
-              }`}
-            >
-              All ({total})
-            </Link>
-            {categories.map((c) => (
-              <Link
-                key={c.slug}
-                href={`/products?category=${c.slug}`}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                  isValidCategory && categorySlug === c.slug
-                    ? "bg-[#4C1D95] text-white"
-                    : "border border-[#D4AF37]/40 text-[#FACC15] hover:bg-[#FACC15]/10"
-                }`}
-              >
-                {c.name} ({c._count.products})
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <form method="get" action="/products" className="flex w-full gap-2 sm:w-80">
-              {isValidCategory ? (
-                <input type="hidden" name="category" value={categorySlug} />
-              ) : null}
-              <input
-                type="search"
-                name="q"
-                defaultValue={q}
-                placeholder="Search products..."
-                className="w-full rounded-full border border-[#D4AF37]/40 bg-[#0F172A]/60 px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#FACC15]/50"
-              />
-              <button
-                type="submit"
-                className="whitespace-nowrap rounded-full bg-[#4C1D95] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#3B0F82]"
-              >
-                Search
-              </button>
-            </form>
-
-            <SortSelect defaultValue={sort} categorySlug={isValidCategory ? categorySlug : ""} q={q} />
-          </div>
-        </div>
+        {/* Premium filter bar */}
+        <ProductFilters
+          categories={categories.map((c) => ({
+            name: c.name,
+            slug: c.slug,
+            count: c._count.products,
+          }))}
+          total={total}
+          initial={{
+            category: isValidCategory ? categorySlug : "",
+            q,
+            sort,
+            min,
+            max,
+            size,
+            tier,
+          }}
+        />
 
         {products.length === 0 ? (
           <div className="rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center">
@@ -176,9 +183,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
               >
                 {current > 1 ? (
                   <Link
-                    href={`/products?page=${current - 1}${
-                      isValidCategory ? `&category=${categorySlug}` : ""
-                    }${q ? `&q=${encodeURIComponent(q)}` : ""}${sort !== "featured" ? `&sort=${sort}` : ""}`}
+                    href={filterHref(sp, current - 1)}
                     className="rounded-full border border-[#D4AF37]/40 px-4 py-2 text-sm text-[#FACC15] transition hover:bg-[#FACC15]/10"
                   >
                     Previous
@@ -190,9 +195,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   return (
                     <Link
                       key={n}
-                      href={`/products?page=${n}${
-                        isValidCategory ? `&category=${categorySlug}` : ""
-                      }${q ? `&q=${encodeURIComponent(q)}` : ""}${sort !== "featured" ? `&sort=${sort}` : ""}`}
+                      href={filterHref(sp, n)}
                       className={`rounded-full px-4 py-2 text-sm transition ${
                         isCurrent
                           ? "bg-[#4C1D95] font-semibold text-white"
@@ -205,9 +208,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 })}
                 {current < pages ? (
                   <Link
-                    href={`/products?page=${current + 1}${
-                      isValidCategory ? `&category=${categorySlug}` : ""
-                    }${q ? `&q=${encodeURIComponent(q)}` : ""}${sort !== "featured" ? `&sort=${sort}` : ""}`}
+                    href={filterHref(sp, current + 1)}
                     className="rounded-full border border-[#D4AF37]/40 px-4 py-2 text-sm text-[#FACC15] transition hover:bg-[#FACC15]/10"
                   >
                     Next
