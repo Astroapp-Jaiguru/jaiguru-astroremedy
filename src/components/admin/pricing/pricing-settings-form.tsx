@@ -258,9 +258,10 @@ export function JobRunners() {
         <CardTitle className="text-lg">Run Jobs Now</CardTitle>
       <CardDescription>
         One-click manual refresh — click the pricing button once a week (or
-        whenever you want). Runs the same fetch + formula + floor-protection
-        flow as the local script; full-catalog sweeps run best locally via
-        <code className="mx-1 rounded bg-muted px-1">npm run pricing:sweep</code>.
+        whenever you want). Each click refreshes a batch of ~8 seconds worth
+        of products; for a full-catalog sweep run
+        <code className="mx-1 rounded bg-muted px-1">npm run pricing:sweep</code>
+        locally.
       </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-3">

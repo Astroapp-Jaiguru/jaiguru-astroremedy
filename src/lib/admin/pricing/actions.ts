@@ -109,7 +109,10 @@ export async function runPricingJobAction(
   void _fd;
   try {
     await requireAdmin();
-    const summary = await runPriceUpdate({ source: "admin", timeBudgetMs: 20000 });
+    const summary = await runPriceUpdate({
+      source: "admin",
+      timeBudgetMs: 8000, // fits Vercel Free function limit (~10s)
+    });
     revalidatePath("/admin/pricing");
     return {
       success: true,
@@ -134,8 +137,8 @@ export async function runImageJobAction(
   try {
     await requireAdmin();
     const summary = await assignImagesForMissing({
-      timeBudgetMs: 20000,
-      limit: 40,
+      timeBudgetMs: 8000, // fits Vercel Free function limit (~10s)
+      limit: 15,
     });
     revalidatePath("/admin/pricing");
     return { success: true, message: JSON.stringify(summary) };
