@@ -105,6 +105,17 @@ model Product {
   gallery          ProductImage[]
   price            Decimal        @db.Decimal(12, 2)
   discountPrice    Decimal?       @db.Decimal(12, 2)
+  // Dynamic pricing engine (safe version): competitor reference price, the
+  // cost price used to derive the minimum floor (cost * 1.15), and an
+  // explicit floor override. priceSource tracks provenance for the audit log.
+  costPrice        Decimal?       @db.Decimal(12, 2)
+  competitorPrice  Decimal?       @db.Decimal(12, 2)
+  priceFloor       Decimal?       @db.Decimal(12, 2)
+  priceSource      String         @default("manual") // manual | competitor
+  priceReviewedAt  DateTime?
+  // Image pipeline provenance (manual | unsplash | ai) + optional credit.
+  imageSource      String         @default("manual")
+  imageCredit      String?
   stockStatus      StockStatus    @default(IN_STOCK)
   quantity         Int            @default(0)
   shortDescription String?
@@ -132,10 +143,12 @@ model Product {
   sortOrder        Int            @default(0)
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+  priceChanges     PriceChange[]
 
   @@index([categoryId])
   @@index([isActive, isFeatured])
   @@index([isActive, isPopular])
+  @@index([priceSource])
 }
 
 model ProductImage {
@@ -147,6 +160,29 @@ model ProductImage {
   sortOrder Int     @default(0)
 
   @@index([productId])
+}
+
+// ---------------------------------------------------------------------------
+// Price audit trail (dynamic pricing engine). Every automatic or manual
+// price change is recorded so pricing stays transparent and reversible.
+// ---------------------------------------------------------------------------
+
+model PriceChange {
+  id        String   @id @default(cuid())
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  field     String   @default("price") // price | discountPrice
+  oldValue  Decimal? @db.Decimal(12, 2)
+  newValue  Decimal? @db.Decimal(12, 2)
+  reason    String?
+  source    String   @default("manual") // cron | admin | manual
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([serviceId])
+  @@index([createdAt])
 }
 
 // ---------------------------------------------------------------------------
@@ -182,6 +218,12 @@ model Service {
   duration         String?
   price            Decimal?      @db.Decimal(12, 2)
   priceLabel       String?
+  // Dynamic pricing engine: competitor reference + explicit floor for digital
+  // services (consultations / courses). Digital formula: competitor * 1.05.
+  competitorPrice  Decimal?      @db.Decimal(12, 2)
+  priceFloor       Decimal?      @db.Decimal(12, 2)
+  priceSource      String        @default("manual") // manual | competitor
+  priceReviewedAt  DateTime?
   imageUrl         String?
   shortDescription String?
   longDescription  String?
@@ -199,9 +241,11 @@ model Service {
   sortOrder        Int           @default(0)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+  priceChanges     PriceChange[]
 
   @@index([categoryId])
   @@index([isActive, isFeatured])
+  @@index([priceSource])
 }
 
 // ---------------------------------------------------------------------------

@@ -85,11 +85,20 @@ function parseProductForm(fd: FormData) {
       ? discountPrice
       : null;
 
+  const costPrice = toNumber(str(fd, "costPrice"));
+  const competitorPrice = toNumber(str(fd, "competitorPrice"));
+  const priceFloor = toNumber(str(fd, "priceFloor"));
+  const priceSource = str(fd, "priceSource") || "manual";
+
   return {
     name,
     categoryId,
     price,
     finalDiscount,
+    costPrice,
+    competitorPrice,
+    priceFloor,
+    priceSource,
     quantity,
     sortOrder,
     stockStatus,
@@ -201,6 +210,10 @@ export async function updateProductAction(
         mainImage: data.mainImage,
         price: data.price,
         discountPrice: data.finalDiscount,
+        costPrice: data.costPrice,
+        competitorPrice: data.competitorPrice,
+        priceFloor: data.priceFloor,
+        priceSource: data.priceSource,
         stockStatus: data.stockStatus as never,
         quantity: data.quantity,
         shortDescription: data.shortDescription,

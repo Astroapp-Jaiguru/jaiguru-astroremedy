@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
 import { formatPrice } from "@/lib/shop-data";
+import { productPriceDisplay } from "@/lib/pricing/geo";
 import { Markdown } from "@/components/markdown";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
@@ -67,12 +68,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
       Number.parseFloat(product.price.toString());
   const price = product.discountPrice ?? product.price;
   const { contact } = await getSiteData();
+  const display = await productPriceDisplay(
+    price,
+    hasDiscount ? product.price : null
+  );
   const orderMessage = productOrderMessage(
     {
       name: product.name,
       category: product.category?.name ?? null,
       price: price.toString(),
       url: `/products/${product.slug}`,
+      displayPrice: display.effective?.label ?? null,
     },
     contact.upiId
   );
@@ -228,14 +234,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
             <div className="flex items-baseline gap-3">
               <span className="font-display text-3xl font-bold text-[#FACC15]">
-                {formatPrice(price)}
+                {display.effective?.label ?? formatPrice(price)}
               </span>
               {hasDiscount ? (
                 <span className="text-xl text-slate-500 line-through">
-                  {formatPrice(product.price)}
+                  {display.original?.label ?? formatPrice(product.price)}
                 </span>
               ) : null}
             </div>
+            {display.effective ? (
+              <p className="text-xs text-slate-500">{display.effective.note}</p>
+            ) : null}
 
             {product.shortDescription ? (
               <p className="leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
@@ -279,8 +288,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
               icon={<WhatsappIcon className="h-5 w-5" />}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
               itemName={product.name}
-              priceLabel={formatPrice(price)}
-              price={price.toString()}
+              priceLabel={display.effective?.label ?? formatPrice(price)}
+              price={display.effective?.amount ?? price.toString()}
               upiId={contact.upiId}
               whatsappNumber={contact.whatsappNumber}
               whatsappMessage={orderMessage}

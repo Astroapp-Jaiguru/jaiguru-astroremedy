@@ -54,6 +54,7 @@ export const adminNav: AdminNavGroup[] = [
       { title: "Products", href: "/admin/products", icon: Package },
       { title: "Services", href: "/admin/services", icon: Sparkles },
       { title: "Categories", href: "/admin/categories", icon: FolderTree },
+      { title: "Pricing & Images", href: "/admin/pricing", icon: SlidersHorizontal },
     ],
   },
   {

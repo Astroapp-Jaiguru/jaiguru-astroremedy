@@ -9,6 +9,7 @@ import {
  type ServiceMode,
 } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
+import { servicePriceDisplay, type ServicePriceDisplay } from "@/lib/pricing/geo";
 
 export const dynamic = "force-dynamic";
 
@@ -49,10 +50,21 @@ export default async function ServicesPage({
  const services = await getServices(mode);
  const modeCounts = await getServices();
 
- const countFor = (key: string) =>
- key === "all"
- ? modeCounts.length
- : modeCounts.filter((s) => s.mode === SERVICE_MODE_SLUGS[key]).length;
+  const countFor = (key: string) =>
+    key === "all"
+      ? modeCounts.length
+      : modeCounts.filter((s) => s.mode === SERVICE_MODE_SLUGS[key]).length;
+
+  const converted = new Map(
+    await Promise.all(
+      services.map(
+        async (s): Promise<[string, ServicePriceDisplay | null]> => [
+          s.id,
+          await servicePriceDisplay(s.price, s.priceLabel),
+        ]
+      )
+    )
+  );
 
  return (
  <section className="scroll-mt-24 py-16 sm:py-20">
@@ -133,10 +145,19 @@ export default async function ServicesPage({
  </span>
  ) : null}
  </div>
- <div className="mt-auto flex items-center justify-between gap-3 border-t border-white/10 pt-4">
- <span className="font-display text-lg font-bold text-[#FACC15]">
- {s.priceLabel ?? (s.price ? formatPrice(s.price) : "On Request")}
- </span>
+  <div className="mt-auto flex items-center justify-between gap-3 border-t border-white/10 pt-4">
+  <span className="flex flex-col">
+    <span className="font-display text-lg font-bold text-[#FACC15]">
+    {converted.get(s.id)?.label ??
+    s.priceLabel ??
+    (s.price ? formatPrice(s.price) : "On Request")}
+    </span>
+    {converted.get(s.id)?.note ? (
+    <span className="mt-0.5 text-[10px] text-slate-500">
+    {converted.get(s.id)?.note}
+    </span>
+    ) : null}
+  </span>
  <Link
  href={`/services/${s.slug}`}
  className="whitespace-nowrap rounded-full border-2 border-[#D4AF37] px-5 py-2 text-xs font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900"

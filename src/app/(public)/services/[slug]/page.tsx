@@ -15,6 +15,7 @@ import Image from "next/image";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getServiceBySlug, SERVICE_MODE_LABELS } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
+import { servicePriceDisplay, type ServicePriceDisplay } from "@/lib/pricing/geo";
 import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { BookingButton } from "@/components/shop/booking-modal";
@@ -61,19 +62,32 @@ export default async function ServiceDetailPage({ params }: Props) {
  if (!service) notFound();
 
   const { contact } = await getSiteData();
+  const converted = await servicePriceDisplay(service.price, service.priceLabel);
   const priceLabel =
+    converted?.label ??
     service.priceLabel ??
     (service.price ? formatPrice(service.price) : "On Request");
   const bookingMessage = serviceBookingMessage(
-  {
-  name: service.name,
-  mode: SERVICE_MODE_LABELS[service.mode],
-  price: priceLabel,
-  url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
-  },
-  contact.upiId
+    {
+      name: service.name,
+      mode: SERVICE_MODE_LABELS[service.mode],
+      price: priceLabel,
+      url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
+      displayPrice: converted?.label ?? null,
+    },
+    contact.upiId
   );
   const waChatHref = whatsappLink(bookingMessage, contact.whatsappNumber);
+  const relatedConverted = new Map(
+    await Promise.all(
+      service.related.map(
+        async (r): Promise<[string, ServicePriceDisplay | null]> => [
+          r.id,
+          await servicePriceDisplay(r.price, r.priceLabel),
+        ]
+      )
+    )
+  );
 
  return (
  <section className="scroll-mt-24 py-16 sm:py-20">
@@ -255,10 +269,11 @@ className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]"
  <span className="text-slate-300 transition group-hover:text-[#FACC15]">
  {r.name}
  </span>
- <span className="text-xs text-[#D4AF37]">
- {r.priceLabel ??
- (r.price ? formatPrice(r.price) : "On Request")}
- </span>
+  <span className="text-xs text-[#D4AF37]">
+  {relatedConverted.get(r.id)?.label ??
+  r.priceLabel ??
+  (r.price ? formatPrice(r.price) : "On Request")}
+  </span>
  </Link>
  </li>
  ))}

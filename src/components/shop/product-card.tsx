@@ -4,6 +4,7 @@ import { BadgeCheck, Flame, TrendingUp } from "lucide-react";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { formatPrice } from "@/lib/shop-data";
+import { productPriceDisplay } from "@/lib/pricing/geo";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
@@ -74,12 +75,17 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
     Number.parseFloat(product.discountPrice) < Number.parseFloat(product.price);
   const { contact } = await getSiteData();
   const orderPrice = product.discountPrice ?? product.price;
+  const display = await productPriceDisplay(
+    orderPrice,
+    hasDiscount ? product.price : null
+  );
   const message = productOrderMessage(
     {
       name: product.name,
       category: product.category?.name ?? null,
       price: orderPrice,
       url: `/products/${product.slug}`,
+      displayPrice: display.effective?.label ?? null,
     },
     contact.upiId
   );
@@ -131,22 +137,25 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
         ) : null}
         <div className="mt-1 flex items-baseline gap-2">
           <span className="text-lg font-bold text-royal-purple">
-            {formatPrice(product.discountPrice ?? product.price)}
+            {display.effective?.label ?? formatPrice(product.discountPrice ?? product.price)}
           </span>
           {hasDiscount ? (
             <span className="text-sm text-slate-400 line-through">
-              {formatPrice(product.price)}
+              {display.original?.label ?? formatPrice(product.price)}
             </span>
           ) : null}
         </div>
+        {display.effective ? (
+          <p className="text-[10px] leading-snug text-slate-500">{display.effective.note}</p>
+        ) : null}
         <div className="mt-auto flex gap-2 pt-2">
           <PaymentButton
             label="Order"
             icon={<WhatsappIcon className="h-3.5 w-3.5" />}
             className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-whatsapp px-3 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
             itemName={product.name}
-            priceLabel={formatPrice(orderPrice)}
-            price={orderPrice}
+            priceLabel={display.effective?.label ?? formatPrice(orderPrice)}
+            price={display.effective?.amount ?? orderPrice}
             upiId={contact.upiId}
             whatsappNumber={contact.whatsappNumber}
             whatsappMessage={message}

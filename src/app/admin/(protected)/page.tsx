@@ -12,6 +12,8 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/lib/dal";
 import { siteConfig } from "@/config/site";
+import { getPricingRunMeta } from "@/lib/pricing/settings";
+import { DashboardActions } from "@/components/admin/pricing/dashboard-actions";
 
 async function getStats() {
   try {
@@ -40,7 +42,11 @@ async function getStats() {
 }
 
 export default async function AdminDashboardPage() {
-  const [user, stats] = await Promise.all([getCurrentUser(), getStats()]);
+  const [user, stats, meta] = await Promise.all([
+    getCurrentUser(),
+    getStats(),
+    getPricingRunMeta(),
+  ]);
 
   const cards = [
     {
@@ -110,6 +116,19 @@ export default async function AdminDashboardPage() {
           </Link>
         ))}
       </div>
+
+      <DashboardActions
+        lastRunAt={meta.lastRunAt}
+        lastImageRunAt={meta.lastImageRunAt}
+        keysSet={{
+          serpapi: Boolean(process.env.SERPAPI_API_KEY),
+          images: Boolean(
+            process.env.UNSPLASH_ACCESS_KEY ||
+              process.env.OPENAI_API_KEY ||
+              process.env.REPLICATE_API_TOKEN
+          ),
+        }}
+      />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

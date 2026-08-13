@@ -51,6 +51,14 @@ export function proxy(request: NextRequest) {
   }
 
   const res = NextResponse.next();
+
+  // Geo-pricing: stamp the viewer country on every page request so the
+  // display layer can convert prices (Vercel provides x-vercel-ip-country;
+  // cf-ipcountry applies when the site sits behind Cloudflare).
+  const country =
+    request.headers.get("x-vercel-ip-country") ?? request.headers.get("cf-ipcountry");
+  if (country) res.headers.set("x-viewer-country", country.toUpperCase().slice(0, 2));
+
   if (pathname.startsWith("/admin")) {
     for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
   }
@@ -58,5 +66,8 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/((?!_next/static|_next/image|favicon.ico|api/site-images|robots.txt|sitemap.xml).*)",
+  ],
 };

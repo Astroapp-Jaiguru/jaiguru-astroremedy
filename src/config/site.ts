@@ -98,9 +98,14 @@ export function productOrderMessage(
     category?: string | null;
     price?: string | number;
     url: string;
+    displayPrice?: string | null;
   },
   upiId: string = siteConfig.contact.upiId
 ): string {
+  const priceLine =
+    product.displayPrice != null && product.displayPrice !== ""
+      ? `Price: ${product.displayPrice}`
+      : `Price: ₹${product.price ?? "-"}`;
   return [
     "Hello JAIGURU ASTROREMEDY,",
     "",
@@ -108,7 +113,7 @@ export function productOrderMessage(
     "",
     `Product Name: ${product.name}`,
     `Category: ${product.category ?? "-"}`,
-    `Price: ₹${product.price ?? "-"}`,
+    priceLine,
     `Product Link: ${product.url}`,
     "",
     "Please confirm availability.",
@@ -130,9 +135,14 @@ export function serviceBookingMessage(
     mode: string;
     price?: string | number;
     url: string;
+    displayPrice?: string | null;
   },
   upiId: string = siteConfig.contact.upiId
 ): string {
+  const priceLine =
+    service.displayPrice != null && service.displayPrice !== ""
+      ? `Price: ${service.displayPrice}`
+      : `Price: ₹${service.price ?? "-"}`;
   return [
     "Hello JAIGURU ASTROREMEDY,",
     "",
@@ -140,7 +150,7 @@ export function serviceBookingMessage(
     "",
     `Service Name: ${service.name}`,
     `Mode: ${service.mode}`,
-    `Price: ₹${service.price ?? "-"}`,
+    priceLine,
     `Service Link: ${service.url}`,
     "",
     "Please confirm available timing.",

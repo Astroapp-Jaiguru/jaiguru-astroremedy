@@ -9,6 +9,7 @@ import {
   type FeaturedService,
 } from "@/lib/shop-data";
 import { whatsappLink, serviceBookingMessage } from "@/config/site";
+import { displayPriceForViewer } from "@/lib/pricing/geo";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
@@ -27,7 +28,7 @@ function modeBadge(mode: string): { label: string; Icon: typeof Wifi } {
   return { label: "Home Service", Icon: Home };
 }
 
-function ServiceCard({
+async function ServiceCard({
   service,
   group,
   number,
@@ -39,7 +40,11 @@ function ServiceCard({
   upiId: string;
 }) {
   const { label, Icon } = modeBadge(service.mode);
-  const price = service.priceLabel ?? formatPrice(service.price);
+  const conv =
+    service.price && service.price !== "0" && !service.priceLabel
+      ? await displayPriceForViewer(service.price)
+      : null;
+  const price = conv?.label ?? service.priceLabel ?? formatPrice(service.price);
   const waMessage = whatsappLink(
     serviceBookingMessage(
       {
@@ -47,6 +52,7 @@ function ServiceCard({
         mode: label,
         price,
         url: `/services/${service.slug}`,
+        displayPrice: conv?.label ?? null,
       },
       upiId
     ),
@@ -85,7 +91,7 @@ function ServiceCard({
             className="btn-glow-whatsapp inline-flex items-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-whatsapp px-4 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
             itemName={service.name}
             priceLabel={price}
-            price={service.price}
+            price={conv?.amount ?? service.price}
             upiId={upiId}
             whatsappNumber={number}
             whatsappMessage={waMessage}

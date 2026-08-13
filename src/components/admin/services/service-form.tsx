@@ -19,6 +19,9 @@ export interface ServiceFormValues {
   slotDuration: string;
   price: string;
   priceLabel: string;
+  competitorPrice: string;
+  priceFloor: string;
+  priceSource: string;
   imageUrl: string;
   shortDescription: string;
   longDescription: string;
@@ -121,6 +124,26 @@ export function ServiceForm({
         <div className="space-y-2">
           <Label htmlFor="priceLabel">Price Label (override)</Label>
           <Input id="priceLabel" name="priceLabel" defaultValue={service?.priceLabel ?? ""} placeholder="e.g. ₹1,499/session" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="competitorPrice">Competitor Price (₹)</Label>
+          <Input id="competitorPrice" name="competitorPrice" type="number" step="0.01" min="0" defaultValue={service?.competitorPrice ?? ""} placeholder="Refreshed weekly by the engine" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="priceFloor">Price Floor (₹, optional)</Label>
+          <Input id="priceFloor" name="priceFloor" type="number" step="0.01" min="0" defaultValue={service?.priceFloor ?? ""} placeholder="Never sell below this" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="priceSource">Price Source</Label>
+          <select
+            id="priceSource"
+            name="priceSource"
+            defaultValue={service?.priceSource ?? "manual"}
+            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <option value="manual">Manual</option>
+            <option value="competitor">Competitor-priced</option>
+          </select>
         </div>
         <div className="space-y-2 sm:col-span-2">
           <Label htmlFor="imageUrl">Service Image URL</Label>
