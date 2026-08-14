@@ -12,15 +12,21 @@ import { Markdown } from "@/components/markdown";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
+import {
+  certificateTierForPrice,
+  withCertificateSuffix,
+  CERTIFICATE_TIER_LABEL,
+  CERTIFICATE_TIER_BADGE_CLASS,
+} from "@/lib/products/certificate";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { ShareButtons } from "@/components/social/share-buttons";
 import { absoluteUrl } from "@/lib/share";
 
 /**
- * Product detail page (scope §15.3). Image, title, category, price +
- * discount, description, benefits, meta and a WhatsApp "Order" button with
- * the auto-filled order message template.
+ * Product detail page (scope §15.3). Single-column layout: image on top,
+ * then title, price, description and the certificate / return policy
+ * flowing continuously underneath in one readable column.
  */
 
 export const dynamic = "force-dynamic";
@@ -76,9 +82,13 @@ export default async function ProductDetailPage({ params }: PageProps) {
     price,
     hasDiscount ? product.price : null
   );
+
+  const tier = certificateTierForPrice(product.price);
+  const displayName = withCertificateSuffix(product.name, tier);
+
   const orderMessage = productOrderMessage(
     {
-      name: product.name,
+      name: displayName,
       category: product.category?.name ?? null,
       price: price.toString(),
       url: `/products/${product.slug}`,
@@ -142,10 +152,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </>
           ) : null}
           <ChevronRight className="h-3.5 w-3.5" />
-          <span className="truncate text-[#FACC15]">{product.name}</span>
+          <span className="truncate text-[#FACC15]">{displayName}</span>
         </nav>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+        <div className="mx-auto max-w-3xl">
           {/* Image */}
           <div className="relative">
             <div
@@ -156,7 +166,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product.mainImage ? (
                 <Image
                   src={product.mainImage}
-                  alt={product.name}
+                  alt={displayName}
                   width={800}
                   height={600}
                   className="h-full w-full object-cover"
@@ -185,8 +195,8 @@ export default async function ProductDetailPage({ params }: PageProps) {
             ) : null}
           </div>
 
-          {/* Details */}
-          <div className="flex flex-col gap-5">
+          {/* Details — single flowing column */}
+          <div className="flex flex-col gap-5 pt-8">
             <div className="flex flex-wrap items-center gap-2">
               {product.category ? (
                 <Link
@@ -211,10 +221,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
                     ? "Pre Order"
                     : "Out of Stock"}
               </span>
-              {product.hasCertificate ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#059669] to-[#25D366] px-3 py-1 text-xs font-bold text-white shadow-[0_4px_14px_rgba(37,211,102,0.35)]">
+              {tier ? (
+                <span className={CERTIFICATE_TIER_BADGE_CLASS[tier]}>
                   <BadgeCheck className="h-3.5 w-3.5" />
-                  {product.certificateLabel ?? "Lab Certified"}
+                  {CERTIFICATE_TIER_LABEL[tier]}
                 </span>
               ) : null}
               {product.estimatedDeliveryTime ? (
@@ -226,7 +236,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
 
             <h1 className="font-display text-3xl font-bold leading-tight text-[var(--jaiguru-page-text)] sm:text-4xl">
-              {product.name}
+              {displayName}
             </h1>
 
             <div className="flex items-center gap-3">
@@ -295,7 +305,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               label="Order on WhatsApp"
               icon={<WhatsappIcon className="h-5 w-5" />}
               className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
-              itemName={product.name}
+              itemName={displayName}
               priceLabel={display.effective?.label ?? formatPrice(price)}
               price={display.effective?.amount ?? price.toString()}
               upiId={contact.upiId}
@@ -308,7 +318,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               availability, shipping and payment via UPI.
             </p>
             <ShareButtons
-              title={product.name}
+              title={displayName}
               description={product.shortDescription ?? undefined}
               path={`/products/${product.slug}`}
             />
@@ -319,20 +329,40 @@ export default async function ProductDetailPage({ params }: PageProps) {
               variations in the material. Please consider this before placing
               your order.
             </p>
-            {product.returnPolicy ? (
-              <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-5 py-4">
-                <h3 className="font-display text-sm font-bold text-amber-400">
-                  Authenticity, Quality & Return Policy
-                </h3>
-                <div className="text-xs leading-relaxed text-slate-300">
-                  <Markdown
-                    content={product.returnPolicy}
-                    textClass="text-slate-300"
-                    headingClass="text-amber-400"
-                  />
-                </div>
+
+            <div className="rounded-xl border border-amber-500/25 bg-amber-500/5 px-5 py-4">
+              <h3 className="font-display text-sm font-bold text-amber-400">
+                Authenticity, Quality & Return Policy
+              </h3>
+              <div className="mt-2 text-xs leading-relaxed text-slate-300">
+                <p>
+                  We are committed to providing 100% natural and authentic
+                  products.
+                </p>
+                <p className="mt-2 font-semibold text-slate-200">
+                  For all gemstone products:
+                </p>
+                <ul className="mt-2 list-disc space-y-1.5 pl-5">
+                  <li>
+                    Gemstones priced between ₹701 and ₹5,000 come with a{" "}
+                    <span className="font-semibold text-[#25D366]">
+                      Lab Tested Certificate
+                    </span>
+                    .
+                  </li>
+                  <li>
+                    Gemstones priced above ₹5,000 come with a{" "}
+                    <span className="font-semibold text-[#FACC15]">
+                      Lab Certified Certificate
+                    </span>{" "}
+                    with a detailed Mine/Origin Test report.
+                  </li>
+                </ul>
+                <p className="mt-2">
+                  All certificates are shipped along with the product.
+                </p>
               </div>
-            ) : null}
+            </div>
           </div>
         </div>
 

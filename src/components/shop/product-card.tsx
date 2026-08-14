@@ -7,6 +7,12 @@ import { formatPrice } from "@/lib/shop-data";
 import { productPriceDisplay } from "@/lib/pricing/geo";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import {
+  certificateTierForPrice,
+  withCertificateSuffix,
+  CERTIFICATE_TIER_LABEL,
+  CERTIFICATE_TIER_BADGE_CLASS,
+} from "@/lib/products/certificate";
 import { PaymentButton } from "@/components/shop/payment-button";
 
 /**
@@ -73,6 +79,8 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
   const hasDiscount =
     product.discountPrice &&
     Number.parseFloat(product.discountPrice) < Number.parseFloat(product.price);
+  const tier = certificateTierForPrice(product.price);
+  const displayName = withCertificateSuffix(product.name, tier);
   const { contact } = await getSiteData();
   const orderPrice = product.discountPrice ?? product.price;
   const display = await productPriceDisplay(
@@ -81,7 +89,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
   );
   const message = productOrderMessage(
     {
-      name: product.name,
+      name: displayName,
       category: product.category?.name ?? null,
       price: orderPrice,
       url: `/products/${product.slug}`,
@@ -96,7 +104,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
         {product.mainImage ? (
           <Image
             src={product.mainImage}
-            alt={product.name}
+            alt={displayName}
             width={400}
             height={300}
             className="aspect-[4/3] w-full object-cover"
@@ -107,6 +115,14 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
         <div className="absolute left-3 top-3">
           <FeatureBadge product={product} />
         </div>
+        {tier ? (
+          <span
+            className={`${CERTIFICATE_TIER_BADGE_CLASS[tier]} absolute bottom-3 right-3 px-2.5 py-1 text-[10px]`}
+          >
+            <BadgeCheck className="h-3 w-3" />
+            {CERTIFICATE_TIER_LABEL[tier]}
+          </span>
+        ) : null}
         {hasDiscount && product.discountPrice ? (
           <span className="absolute right-3 top-3 rounded-full bg-saffron px-2 py-1 text-[10px] font-bold text-white">
             -
@@ -128,7 +144,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
           <RatingStars rating={product.rating} />
         </div>
         <h3 className="font-display text-base font-bold leading-snug text-[var(--jaiguru-card-text)]">
-          {product.name}
+          {displayName}
         </h3>
         {product.shortDescription ? (
           <p className="line-clamp-2 text-xs leading-relaxed text-[var(--jaiguru-card-text-muted)]">
@@ -153,7 +169,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
             label="Order"
             icon={<WhatsappIcon className="h-3.5 w-3.5" />}
             className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-whatsapp px-3 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
-            itemName={product.name}
+            itemName={displayName}
             priceLabel={display.effective?.label ?? formatPrice(orderPrice)}
             price={display.effective?.amount ?? orderPrice}
             upiId={contact.upiId}
