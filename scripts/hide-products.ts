@@ -64,7 +64,7 @@ async function main() {
   if (hideSet.size !== 1100) console.warn(`WARN: expected 1100 based on the ranges given`);
 
   const products = await prisma.product.findMany({
-    orderBy: { slug: "asc" },
+    orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
     select: { id: true, slug: true },
   });
   console.log(`active products in slug order: ${products.length}`);

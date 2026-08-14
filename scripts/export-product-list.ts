@@ -16,7 +16,7 @@ const prisma = new PrismaClient({
 async function main() {
   const products = await prisma.product.findMany({
     select: { slug: true, name: true },
-    orderBy: { slug: "asc" },
+    orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
   });
 
   const lines: string[] = [];

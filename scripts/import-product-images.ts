@@ -43,7 +43,7 @@ async function main() {
 
   const products = await prisma.product.findMany({
     select: { id: true, slug: true, name: true, mainImage: true },
-    orderBy: { slug: "asc" },
+    orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
   });
   const byNumber = new Map(products.map((p, i) => [i + 1, p]));
   console.log(`catalog: ${products.length} products, reading ${dir}`);
