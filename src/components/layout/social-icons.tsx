@@ -104,7 +104,7 @@ export const SOCIAL_ICONS: Record<
 
 /**
  * Horizontal row of circular social icon buttons.
- * Gold on dark backgrounds; ink on light backgrounds.
+ * Gold on dark backgrounds; theme-primary ink on light backgrounds.
  */
 export function SocialIconRow({
   links,
@@ -113,7 +113,7 @@ export function SocialIconRow({
   className,
 }: {
   links: { platform: string; url: string }[];
-  variant?: "dark" | "light";
+  variant?: "dark" | "light" | "ink";
   size?: "sm" | "md";
   className?: string;
 }) {
@@ -135,7 +135,9 @@ export function SocialIconRow({
               size === "sm" ? "h-8 w-8" : "h-9 w-9",
               variant === "dark"
                 ? "border border-golden/40 text-golden hover:bg-golden hover:text-deep-navy"
-                : "border border-golden/60 text-golden hover:bg-golden hover:text-deep-navy"
+                : variant === "ink"
+                  ? "border border-royal-purple/40 text-royal-purple hover:bg-royal-purple hover:text-white"
+                  : "border border-golden/60 text-golden hover:bg-golden hover:text-deep-navy"
             )}
           >
             <Icon className={size === "sm" ? "h-4 w-4" : "h-[18px] w-[18px]"} />

@@ -150,7 +150,12 @@ export function MobileMenu({
             <WhatsAppButton href={whatsappHref} label="WhatsApp" size="sm" />
             <CallButton href={`tel:${callNumber}`} label="Call Now" size="sm" />
           </div>
-          <SocialIconRow links={socials} size="sm" className="justify-center" />
+          <SocialIconRow
+              links={socials}
+              size="sm"
+              variant="ink"
+              className="justify-center"
+            />
         </div>
       </SheetContent>
     </Sheet>
