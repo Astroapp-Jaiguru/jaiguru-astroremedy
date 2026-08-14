@@ -33,7 +33,7 @@ export function certificateTierForPrice(
       ? price
       : Number.parseFloat(String(price ?? ""));
   if (!Number.isFinite(n) || n <= 0) return null;
-  if (n >= 5000) return "certified";
+  if (n > 5000) return "certified";
   if (n >= 701) return "tested";
   return null;
 }
