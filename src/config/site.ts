@@ -52,6 +52,11 @@ export const siteConfig = {
       "https://www.google.com/maps/search/?api=1&query=51%2FA+Jatindra+Mohan+Avenue+Kolkata+700005",
     embedUrl: "",
   },
+  registeredOffice: {
+    address: "11/1B, Amar Bose Sarani, Kolkata-700007",
+    fullLine: "Registered Office: 11/1B, Amar Bose Sarani, Kolkata-700007",
+    googleMapsQuery: "11/1B Amar Bose Sarani Kolkata 700007",
+  },
   consultation: {
     astrologyFee: 700,
     numerologyFee: 700,

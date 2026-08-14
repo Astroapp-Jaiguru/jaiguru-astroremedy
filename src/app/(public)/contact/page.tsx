@@ -22,20 +22,18 @@ import { whatsappLink, telLink, siteConfig } from "@/config/site";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
- title: "Contact Us | JAIGURU ASTROREMEDY",
- description:
- "Contact Vedic Astrologer Arup Shastri (Jai Guru) in Kolkata. Book a consultation on WhatsApp or call. Chamber at Sovabazar Metro Crossing, 51/A Jatindra Mohan Avenue, Kolkata - 700005.",
+  title: "Contact Us | JAIGURU ASTROREMEDY",
+  description:
+    "Contact Vedic Astrologer Arup Shastri (Jai Guru) in Kolkata. Book a consultation on WhatsApp or call. Registered Office at 11/1B, Amar Bose Sarani, Kolkata - 700007.",
 };
 
 export default async function ContactPage() {
  const [data, services] = await Promise.all([getSiteData(), getServices()]);
  const contact = data.contact;
 
- const mapsQuery = encodeURIComponent(
- `${contact.address}, ${contact.landmark}`.trim()
- );
- const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
- const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
+const mapsQuery = encodeURIComponent(siteConfig.registeredOffice.address);
+  const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
+  const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
 
  const enquiryMessage = whatsappLink(
  [
@@ -168,21 +166,17 @@ export default async function ContactPage() {
 
  {/* Chamber + map */}
  <div className="space-y-6">
-  <div className="rounded-[var(--jaiguru-card-radius)] p-6 glass-card sm:p-8">
- <h3 className="font-display text-xl font-bold text-white">
- Visit Our Chamber
- </h3>
- <div className="mt-5 space-y-4 text-sm text-slate-300">
- <p className="flex items-start gap-3">
- <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
- <span>
- {contact.address}
- <br />
- <span className="font-semibold text-white">
- {contact.landmark}
- </span>
- </span>
- </p>
+<div className="rounded-[var(--jaiguru-card-radius)] p-6 glass-card sm:p-8">
+  <h3 className="font-display text-xl font-bold text-white">
+  Registered Office
+  </h3>
+  <div className="mt-5 space-y-4 text-sm text-slate-300">
+  <p className="flex items-start gap-3">
+  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
+  <span className="font-semibold text-white">
+  {siteConfig.registeredOffice.address}
+  </span>
+  </p>
  <p className="text-xs text-slate-400">
  ASTRO GEMS is a registered MSME enterprise under the
  Government of India.
@@ -215,9 +209,9 @@ export default async function ContactPage() {
 
  {/* Google map */}
   <div className="overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/30 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
- <iframe
- src={mapsEmbedUrl}
- title={`Google Map - ${siteConfig.astrologer.name} Chamber, ${contact.address}`}
+<iframe
+  src={mapsEmbedUrl}
+  title={`Google Map - ${siteConfig.astrologer.name}, ${siteConfig.registeredOffice.address}`}
  className="h-[300px] w-full border-0 sm:h-[340px]"
  loading="lazy"
  allowFullScreen

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Clock, Mail, Star } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, Star, Building2 } from "lucide-react";
 import {
   SocialIconRow,
   WhatsappIcon,
@@ -9,7 +9,7 @@ import {
 } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { getLegalPages } from "@/lib/legal-data";
-import { whatsappLink } from "@/config/site";
+import { whatsappLink, siteConfig } from "@/config/site";
 import { SubscribeForm } from "@/components/layout/subscribe-form";
 
 /**
@@ -140,6 +140,12 @@ export async function SiteFooter() {
                   <span className="font-medium text-white/85">
                     {contact.landmark}
                   </span>
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Building2 className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
+                <span className="text-white/85">
+                  {siteConfig.registeredOffice.fullLine}
                 </span>
               </li>
               <li className="flex items-center gap-3">
