@@ -210,7 +210,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               {product.hasCertificate ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#059669] to-[#25D366] px-3 py-1 text-xs font-bold text-white shadow-[0_4px_14px_rgba(37,211,102,0.35)]">
                   <BadgeCheck className="h-3.5 w-3.5" />
-                  Lab Certified
+                  {product.certificateLabel ?? "Lab Certified"}
                 </span>
               ) : null}
               {product.estimatedDeliveryTime ? (

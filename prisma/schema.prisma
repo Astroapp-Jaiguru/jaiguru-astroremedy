@@ -130,6 +130,7 @@ model Product {
   tags             String[]       @default([])
   estimatedDeliveryTime String?
   hasCertificate   Boolean        @default(false)
+  certificateLabel String?
   isFeatured       Boolean        @default(false)
   isPopular        Boolean        @default(false)
   isNewArrival     Boolean        @default(false)
