@@ -55,6 +55,9 @@ export default async function PricingAdminPage() {
   const withCost = await prisma.product.count({
     where: { costPrice: { not: null } },
   });
+  const manualOverridden = await prisma.product.count({
+    where: { priceSource: "manual" },
+  });
 
   const keys: Record<string, boolean> = {
     SERPAPI_API_KEY: Boolean(process.env.SERPAPI_API_KEY),
@@ -80,7 +83,7 @@ export default async function PricingAdminPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <PricingSettingsForm initial={settings} />
-          <JobRunners />
+          <JobRunners autoUpdateEnabled={settings.autoUpdateEnabled} />
         </div>
         <div className="space-y-6">
           <EngineStatus keys={keys} />
@@ -101,6 +104,10 @@ export default async function PricingAdminPage() {
               />
               <Row label="With price floor" value={`${withFloor} / ${products._count}`} />
               <Row label="With cost (auto floor)" value={`${withCost} / ${products._count}`} />
+              <Row
+                label="Manual price overrides (skipped by sweep)"
+                value={String(manualOverridden)}
+              />
               <div className="border-t border-border pt-3">
                 <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Image sources
@@ -199,7 +206,12 @@ function RunLine({
             </span>
             <span className="block text-[10px] text-muted-foreground">
               {summary
-                ? `changed ${summary.changed ?? "?"}, fetched ${summary.fetched ?? "?"}`
+                ? summary.frozen
+                  ? "frozen (auto-update OFF)"
+                  : `changed ${summary.changed ?? "?"}, fetched ${summary.fetched ?? "?"}, ` +
+                    `manual ${summary.manualSkipped ?? "?"}, errors ${summary.fetchedErrors ?? "?"}, ` +
+                    `skipped ${Number(summary.skippedNoFloor ?? 0) + Number(summary.skippedInactive ?? 0)}` +
+                    (summary.budgetExhausted ? " (budget hit)" : "")
                 : "no summary"}
             </span>
           </>

@@ -19,6 +19,7 @@ export interface PricingSettings {
   baseCountry: string; // country code that keeps the base INR price ("IN")
   currencies: Record<string, CurrencyConfig>;
   disclosure: string; // short note shown next to converted prices
+  autoUpdateEnabled: boolean; // ON = pricing sweep runs 1% / 5% rules automatically; OFF = prices frozen
 }
 
 export const DEFAULT_PRICING: PricingSettings = {
@@ -31,6 +32,7 @@ export const DEFAULT_PRICING: PricingSettings = {
     GBP: { rate: 0.0095, symbol: "Â£", locale: "en-GB", label: "British Pound" },
   },
   disclosure: "Approximate price for your region. Final payment is collected in INR.",
+  autoUpdateEnabled: false,
 };
 
 function isPricingSettings(v: unknown): v is PricingSettings {
@@ -54,6 +56,10 @@ function mergeSettings(raw: unknown): PricingSettings {
     baseCountry: raw.baseCountry,
     currencies: { ...DEFAULT_PRICING.currencies, ...raw.currencies },
     disclosure: typeof raw.disclosure === "string" ? raw.disclosure : DEFAULT_PRICING.disclosure,
+    autoUpdateEnabled:
+      typeof raw.autoUpdateEnabled === "boolean"
+        ? raw.autoUpdateEnabled
+        : DEFAULT_PRICING.autoUpdateEnabled,
   };
 }
 

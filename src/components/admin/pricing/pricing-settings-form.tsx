@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { toast } from "sonner";
-import { Loader2, Play } from "lucide-react";
+import { Loader2, Play, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,7 @@ import {
 import {
   savePricingSettingsAction,
   runPricingJobAction,
+  runPricingResetAction,
   runImageJobAction,
   type JobFormState,
 } from "@/lib/admin/pricing/actions";
@@ -40,6 +41,9 @@ export function PricingSettingsForm({ initial }: { initial: PricingSettings }) {
   const handledRef = useRef(false);
 
   const [enabled, setEnabled] = useState(initial.enabled);
+  const [autoUpdateEnabled, setAutoUpdateEnabled] = useState(
+    initial.autoUpdateEnabled
+  );
 
   useEffect(() => {
     if (state?.success && !handledRef.current) {
@@ -53,6 +57,43 @@ export function PricingSettingsForm({ initial }: { initial: PricingSettings }) {
 
   return (
     <form action={formAction} className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Pricing Automation Settings</CardTitle>
+          <CardDescription>
+            Master control for the automatic pricing sweep. When OFF, all
+            prices are frozen — the 1% undercut (physical) / 5% premium
+            (digital) rules never run. Manual prices are never overwritten
+            by the sweep; use the &quot;Reset All Prices to Auto-Update
+            Rules&quot; button to override them explicitly.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-3">
+            <div>
+              <p className="text-sm font-semibold">Enable Auto-Update Pricing</p>
+              <p className="text-xs text-muted-foreground">
+                {autoUpdateEnabled
+                  ? "ON — the sweep applies competitor ×0.99 (physical) / ×1.05 (digital) rules to auto-managed items."
+                  : "OFF (default) — prices are frozen. Only the reset button can change them."}
+              </p>
+            </div>
+            <Switch
+              checked={autoUpdateEnabled}
+              onCheckedChange={setAutoUpdateEnabled}
+              name="autoUpdateEnabled"
+              aria-label="Enable auto-update pricing"
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Manual overrides (products saved with price source &quot;manual&quot;
+            in the product form) are always skipped by the sweep — flip the
+            source back to &quot;competitor&quot; or use the reset button to
+            hand them back to the engine.
+          </p>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">Global Pricing Toggle</CardTitle>
@@ -233,10 +274,18 @@ function useJobForm(action: (p: JobFormState | undefined, d: FormData) => Promis
     if (state?.message) {
       try {
         const s = JSON.parse(state.message);
-        toast.success(
-          `Done — changed ${s.changed ?? 0}, fetched ${s.fetched ?? 0}, priced ${s.priced ?? 0}` +
-            (s.dormant ? " (dormant: keys missing)" : "")
-        );
+        const parts = [
+          `changed ${s.changed ?? 0}`,
+          `fetched ${s.fetched ?? 0}`,
+          `manual skipped ${s.manualSkipped ?? 0}`,
+        ];
+        let message = `Done — ${parts.join(", ")}`;
+        if (s.frozen) {
+          message = "Frozen — auto-update is OFF. Enable it or use Reset All Prices to Auto-Update Rules.";
+        } else if (s.budgetExhausted) {
+          message += " — time budget exhausted, run again to finish the rest";
+        }
+        toast.success(message);
       } catch {
         toast.info(state.message);
       }
@@ -248,8 +297,9 @@ function useJobForm(action: (p: JobFormState | undefined, d: FormData) => Promis
   return [formAction, pending] as const;
 }
 
-export function JobRunners() {
+export function JobRunners({ autoUpdateEnabled }: { autoUpdateEnabled: boolean }) {
   const [pricingAction, pricingPending] = useJobForm(runPricingJobAction);
+  const [resetAction, resetPending] = useJobForm(runPricingResetAction);
   const [imageAction, imagePending] = useJobForm(runImageJobAction);
 
   return (
@@ -257,9 +307,19 @@ export function JobRunners() {
       <CardHeader>
         <CardTitle className="text-lg">Run Jobs Now</CardTitle>
       <CardDescription>
-        One-click manual refresh — click the pricing button once a week (or
-        whenever you want). Each click refreshes a batch of ~8 seconds worth
-        of products; for a full-catalog sweep run
+        {autoUpdateEnabled ? (
+          <>
+            Auto-update is <span className="font-semibold text-emerald-600">ON</span> —
+            the sweep can run and updates auto-managed items only.
+          </>
+        ) : (
+          <>
+            Auto-update is <span className="font-semibold text-amber-600">OFF</span> —
+            prices are frozen; only &quot;Reset All Prices&quot; changes prices.
+          </>
+        )}
+        {" "}Each click refreshes a batch of ~8 seconds worth of products; for a
+        full-catalog sweep run
         <code className="mx-1 rounded bg-muted px-1">npm run pricing:sweep</code>
         locally.
       </CardDescription>
@@ -273,6 +333,32 @@ export function JobRunners() {
               <Play className="mr-2 h-4 w-4" />
             )}
             Run pricing update
+          </Button>
+        </form>
+        <form
+          action={resetAction}
+          onSubmit={(e) => {
+            if (
+              !window.confirm(
+                "Reset ALL prices to auto-update rules? Manual price overrides will be overwritten (competitor x0.99 / x1.05, floor-protected). This cannot be undone."
+              )
+            ) {
+              e.preventDefault();
+            }
+          }}
+        >
+          <Button
+            type="submit"
+            disabled={resetPending}
+            variant="destructive"
+            className="gap-2"
+          >
+            {resetPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RotateCcw className="h-4 w-4" />
+            )}
+            Reset All Prices to Auto-Update Rules
           </Button>
         </form>
         <form action={imageAction}>

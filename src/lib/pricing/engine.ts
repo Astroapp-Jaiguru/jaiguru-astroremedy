@@ -1,7 +1,7 @@
 ﻿import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { fetchCompetitorPrices, type CompetitorPriceResult } from "@/lib/pricing/competitors";
-import { getPricingRunMeta, savePricingRunMeta, type PricingRunMeta } from "@/lib/pricing/settings";
+import { getPricingRunMeta, savePricingRunMeta, getPricingSettings, type PricingRunMeta } from "@/lib/pricing/settings";
 
 /**
  * Dynamic pricing engine (safe version).
@@ -17,6 +17,13 @@ import { getPricingRunMeta, savePricingRunMeta, type PricingRunMeta } from "@/li
  * ever lowered below the floor, no inactive item is touched, and the run
  * stops when the time budget is exhausted. Runs are triggered manually
  * from the admin dashboard (one-click refresh) or via local scripts.
+ *
+ * Automation settings (SiteSetting "pricing"):
+ * - autoUpdateEnabled=false -> every non-forced run is frozen (no price
+ *   changes at all). Only the explicit "Reset All Prices to Auto-Update
+ *   Rules" button (force=true) can change prices while frozen.
+ * - priceSource="manual" -> the price is a manual override and is never
+ *   touched by the engine unless force=true (the reset button).
  */
 
 export type PricingKind = "physical" | "digital";
@@ -71,13 +78,14 @@ export function computeTargetPrice(input: ComputeInput): ComputeResult | null {
 
 export interface PriceUpdateSummary {
   source: string;
-  dormant: boolean;
+  frozen: boolean; // auto-update toggle is OFF -> no prices changed
   fetched: number;
   fetchedErrors: number;
   noResults: number;
   priced: number;
   changed: number;
   unchanged: number;
+  manualSkipped: number; // manual overrides left untouched
   skippedNoFloor: number;
   skippedInactive: number;
   budgetExhausted: boolean;
@@ -109,6 +117,7 @@ export interface RunOptions {
   timeBudgetMs?: number;
   fetchLimit?: number; // max items to query per run
   onlyIds?: string[]; // restrict to specific products (admin single-item run)
+  force?: boolean; // "Reset All Prices to Auto-Update Rules" - ignores manual overrides + toggle
 }
 
 const hour = 60 * 60 * 1000;
@@ -120,13 +129,18 @@ const week = 7 * 24 * hour;
  */
 async function applyFormulaAndAudit(
   kind: PricingKind,
-  item: { id: string; price: Prisma.Decimal | null; competitorPrice: Prisma.Decimal | null },
+  item: { id: string; price: Prisma.Decimal | null; competitorPrice: Prisma.Decimal | null; priceSource: string },
   costPrice: Prisma.Decimal | null,
   priceFloor: Prisma.Decimal | null,
   source: "cron" | "admin",
-  summary: PriceUpdateSummary
+  summary: PriceUpdateSummary,
+  force: boolean
 ): Promise<void> {
   if (item.price === null || item.competitorPrice === null) return;
+  if (item.priceSource === "manual" && !force) {
+    summary.manualSkipped += 1;
+    return;
+  }
   const computed = computeTargetPrice({ kind, competitorPrice: item.competitorPrice, costPrice, priceFloor });
   if (!computed) {
     summary.skippedNoFloor += 1;
@@ -173,16 +187,17 @@ function deadline(ms: number): { until: number; spent(): boolean } {
  * sweep script. Never throws - returns a summary.
  */
 export async function runPriceUpdate(options: RunOptions = {}): Promise<PriceUpdateSummary> {
-  const { source = "cron", timeBudgetMs = 8000, fetchLimit = 40, onlyIds } = options;
+  const { source = "cron", timeBudgetMs = 8000, fetchLimit = 40, onlyIds, force = false } = options;
   const summary: PriceUpdateSummary = {
     source,
-    dormant: !process.env.SERPAPI_API_KEY,
+    frozen: false,
     fetched: 0,
     fetchedErrors: 0,
     noResults: 0,
     priced: 0,
     changed: 0,
     unchanged: 0,
+    manualSkipped: 0,
     skippedNoFloor: 0,
     skippedInactive: 0,
     budgetExhausted: false,
@@ -191,9 +206,23 @@ export async function runPriceUpdate(options: RunOptions = {}): Promise<PriceUpd
   const t = deadline(timeBudgetMs);
 
   try {
+    // 0) Automation gate: when the "Enable Auto-Update Pricing" toggle is
+    //    OFF, every non-forced run is frozen. Only the admin "Reset All
+    //    Prices to Auto-Update Rules" button (force=true) may change prices.
+    const pricingSettings = await getPricingSettings();
+    if (!force && !pricingSettings.autoUpdateEnabled) {
+      summary.frozen = true;
+      summary.notes.push(
+        "Auto-update is OFF - prices frozen. Enable 'Enable Auto-Update Pricing' in Pricing Automation Settings, or use 'Reset All Prices to Auto-Update Rules' to force a sweep."
+      );
+      await saveRunMeta(source, summary);
+      return summary;
+    }
+
     // 1) Refresh competitor prices first (SerpApi) so the formula below
     //    runs against the freshest data. Skipped when the key is missing.
-    if (!summary.dormant && !t.spent()) {
+    const dormant = !process.env.SERPAPI_API_KEY;
+    if (!dormant && !t.spent()) {
       const staleCutoff = new Date(Date.now() - week);
       const toFetch = await prisma.product.findMany({
         where: {
@@ -247,7 +276,7 @@ export async function runPriceUpdate(options: RunOptions = {}): Promise<PriceUpd
         }
         if (updates.length > 0) await Promise.all(updates);
       }
-    } else if (summary.dormant) {
+    } else if (dormant) {
       summary.notes.push("SERPAPI_API_KEY not set - competitor refresh skipped (dormant).");
     }
 
@@ -261,7 +290,7 @@ export async function runPriceUpdate(options: RunOptions = {}): Promise<PriceUpd
     });
     for (const p of products) {
       if (t.spent()) { summary.budgetExhausted = true; break; }
-      await applyFormulaAndAudit("physical", p, p.costPrice, p.priceFloor, source, summary);
+      await applyFormulaAndAudit("physical", p, p.costPrice, p.priceFloor, source, summary, force);
     }
 
     const services: ServiceRow[] = await prisma.service.findMany({
@@ -277,22 +306,30 @@ export async function runPriceUpdate(options: RunOptions = {}): Promise<PriceUpd
         summary.unchanged += 1;
         continue;
       }
-      await applyFormulaAndAudit("digital", s, null, s.priceFloor, source, summary);
+      await applyFormulaAndAudit("digital", s, null, s.priceFloor, source, summary, force);
     }
 
     // 3) Persist run meta for the admin dashboard (keeps image-run fields).
-    const prevMeta = await getPricingRunMeta();
-    const meta: PricingRunMeta = {
-      lastRunAt: new Date().toISOString(),
-      lastRunSummary: { ...summary, notes: summary.notes } as unknown as Record<string, unknown>,
-      lastImageRunAt: prevMeta.lastImageRunAt,
-      lastImageRunSummary: prevMeta.lastImageRunSummary,
-    };
-    await savePricingRunMeta(meta);
+    await saveRunMeta(source, summary);
   } catch (e) {
     console.error("[pricing] runPriceUpdate failed:", e);
     summary.notes.push(`Error: ${e instanceof Error ? e.message : String(e)}`);
   }
 
   return summary;
+}
+
+/** Persist last-run meta, preserving the image-pipeline fields. */
+async function saveRunMeta(
+  source: "cron" | "admin",
+  summary: PriceUpdateSummary
+): Promise<void> {
+  const prevMeta = await getPricingRunMeta();
+  const meta: PricingRunMeta = {
+    lastRunAt: new Date().toISOString(),
+    lastRunSummary: { ...summary, notes: summary.notes } as unknown as Record<string, unknown>,
+    lastImageRunAt: prevMeta.lastImageRunAt,
+    lastImageRunSummary: prevMeta.lastImageRunSummary,
+  };
+  await savePricingRunMeta(meta);
 }

@@ -84,6 +84,7 @@ export async function savePricingSettingsAction(
       },
       disclosure:
         text(fd, "disclosure") || DEFAULT_PRICING.disclosure,
+      autoUpdateEnabled: fd.get("autoUpdateEnabled") === "on",
     };
 
     await savePricingSettings(settings);
@@ -121,6 +122,36 @@ export async function runPricingJobAction(
   } catch (e) {
     console.error("[admin] runPricingJobAction failed:", e);
     return { error: e instanceof Error ? e.message : "Pricing job failed" };
+  }
+}
+
+/**
+ * "Reset All Prices to Auto-Update Rules" - force a full sweep that also
+ * overrides manual prices (priceSource=manual -> competitor). Works while
+ * the auto-update toggle is OFF. May exhaust the function budget; click
+ * again to finish the remaining catalog (idempotent).
+ */
+export async function runPricingResetAction(
+  _prev: JobFormState | undefined,
+  _fd: FormData
+): Promise<JobFormState> {
+  void _prev;
+  void _fd;
+  try {
+    await requireAdmin();
+    const summary = await runPriceUpdate({
+      source: "admin",
+      timeBudgetMs: 9000, // fits Vercel Free function limit (~10s)
+      force: true,
+    });
+    revalidatePath("/admin/pricing");
+    return {
+      success: true,
+      message: JSON.stringify(summary),
+    };
+  } catch (e) {
+    console.error("[admin] runPricingResetAction failed:", e);
+    return { error: e instanceof Error ? e.message : "Pricing reset failed" };
   }
 }
 
