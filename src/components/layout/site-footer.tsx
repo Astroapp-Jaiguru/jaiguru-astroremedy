@@ -134,12 +134,8 @@ export async function SiteFooter() {
             <ul className="space-y-4 text-sm text-white/72">
               <li className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
-                <span>
-                  {contact.address}
-                  <br />
-                  <span className="font-medium text-white/85">
-                    {contact.landmark}
-                  </span>
+                <span className="text-white/85">
+                  Chamber: {contact.address}, {contact.landmark}
                 </span>
               </li>
               <li className="flex items-start gap-3">

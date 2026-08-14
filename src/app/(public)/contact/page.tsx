@@ -31,7 +31,9 @@ export default async function ContactPage() {
  const [data, services] = await Promise.all([getSiteData(), getServices()]);
  const contact = data.contact;
 
-const mapsQuery = encodeURIComponent(siteConfig.registeredOffice.address);
+const mapsQuery = encodeURIComponent(
+    `${contact.address}, ${contact.landmark}`.trim()
+  );
   const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
   const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
 
@@ -168,13 +170,24 @@ const mapsQuery = encodeURIComponent(siteConfig.registeredOffice.address);
  <div className="space-y-6">
 <div className="rounded-[var(--jaiguru-card-radius)] p-6 glass-card sm:p-8">
   <h3 className="font-display text-xl font-bold text-white">
-  Registered Office
+  Our Chamber
   </h3>
   <div className="mt-5 space-y-4 text-sm text-slate-300">
   <p className="flex items-start gap-3">
   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
   <span className="font-semibold text-white">
+  {contact.address}
+  <br />
+  {contact.landmark}
+  </span>
+  </p>
+  <p className="flex items-start gap-3 border-t border-white/10 pt-4 text-xs text-slate-400">
+  <Navigation className="mt-0.5 h-4 w-4 shrink-0 text-golden" />
+  <span>
+  Registered Office:{" "}
+  <span className="font-medium text-slate-200">
   {siteConfig.registeredOffice.address}
+  </span>
   </span>
   </p>
  <p className="text-xs text-slate-400">
@@ -211,7 +224,7 @@ const mapsQuery = encodeURIComponent(siteConfig.registeredOffice.address);
   <div className="overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/30 shadow-[0_8px_30px_rgba(0,0,0,0.35)]">
 <iframe
   src={mapsEmbedUrl}
-  title={`Google Map - ${siteConfig.astrologer.name}, ${siteConfig.registeredOffice.address}`}
+  title={`Google Map - ${siteConfig.astrologer.name} Chamber, ${contact.address}`}
  className="h-[300px] w-full border-0 sm:h-[340px]"
  loading="lazy"
  allowFullScreen
