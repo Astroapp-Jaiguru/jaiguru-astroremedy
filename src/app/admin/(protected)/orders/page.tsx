@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Package, Sparkles, CheckCircle2, Eye } from "lucide-react";
+import { Package, Sparkles, CheckCircle2, Eye, Send, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -13,6 +13,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/dal";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { CompleteOrderButton } from "@/components/admin/orders/complete-order-button";
+import { MarkShippedDialog } from "@/components/admin/orders/mark-shipped-dialog";
 import { deleteOrderAction } from "@/lib/admin/orders/actions";
 import {
   ORDER_STATUS_LABELS,
@@ -118,6 +119,22 @@ export default async function AdminOrdersPage() {
                       >
                         {ORDER_STATUS_LABELS[status]}
                       </span>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {o.paymentStatus === "PAID" ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-300">
+                            <BadgeCheck className="h-3 w-3" /> PAID
+                          </span>
+                        ) : o.paymentStatus === "FAILED" ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold text-red-500">
+                            Payment Failed
+                          </span>
+                        ) : null}
+                        {o.trackingSentAt ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/40 bg-sky-500/10 px-2 py-0.5 text-[10px] font-semibold text-sky-600 dark:text-sky-300">
+                            <Send className="h-3 w-3" /> Tracking Sent
+                          </span>
+                        ) : null}
+                      </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
                       {formatDate(o.createdAt)}
@@ -131,12 +148,27 @@ export default async function AdminOrdersPage() {
                           </Link>
                         </Button>
                         {status !== "COMPLETED" ? (
-                          <CompleteOrderButton
-                            id={o.id}
-                            label={
-                              status === "PENDING" ? "Mark Completed" : "Completed"
-                            }
-                          />
+                          <>
+                            {status !== "SHIPPED" && o.itemType === "PRODUCT" ? (
+                              <MarkShippedDialog
+                                order={{
+                                  id: o.id,
+                                  customerName: o.customerName,
+                                  itemName: o.itemName,
+                                  phone: o.phone,
+                                  whatsappNumber: o.whatsappNumber,
+                                }}
+                                defaultCourier={o.courierName}
+                                defaultTrackingNumber={o.trackingNumber}
+                              />
+                            ) : null}
+                            <CompleteOrderButton
+                              id={o.id}
+                              label={
+                                status === "PENDING" ? "Mark Completed" : "Completed"
+                              }
+                            />
+                          </>
                         ) : (
                           <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-300">
                             <CheckCircle2 className="h-3 w-3" /> Done

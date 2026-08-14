@@ -92,6 +92,10 @@ export function BookingModal({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -164,6 +168,10 @@ export function BookingModal({
       amountLabel: priceLabel,
       preferredDate: date ?? undefined,
       preferredTime: slot || undefined,
+      deliveryAddress: address.trim() || undefined,
+      city: city.trim() || undefined,
+      state: state.trim() || undefined,
+      pincode: pincode.trim() || undefined,
       source: "booking-modal",
     }).catch(() => undefined);
     window.open(waHref, "_blank", "noopener,noreferrer");
@@ -408,6 +416,59 @@ export function BookingModal({
                       Please enter a valid 10-digit phone number.
                     </p>
                   ) : null}
+                  <div className="space-y-1.5">
+                    <label htmlFor="bk-addr" className="text-xs font-semibold text-slate-300">
+                      Address (optional)
+                    </label>
+                    <textarea
+                      id="bk-addr"
+                      rows={2}
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      placeholder="House no, street, area"
+                      className="w-full resize-none rounded-xl border border-white/15 bg-[#0B1120] px-3 py-2 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="space-y-1.5">
+                      <label htmlFor="bk-city" className="text-xs font-semibold text-slate-300">
+                        City
+                      </label>
+                      <input
+                        id="bk-city"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Delhi"
+                        className="h-10 w-full rounded-xl border border-white/15 bg-[#0B1120] px-3 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="bk-state" className="text-xs font-semibold text-slate-300">
+                        State
+                      </label>
+                      <input
+                        id="bk-state"
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                        placeholder="Delhi"
+                        className="h-10 w-full rounded-xl border border-white/15 bg-[#0B1120] px-3 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="bk-pin" className="text-xs font-semibold text-slate-300">
+                        Pincode
+                      </label>
+                      <input
+                        id="bk-pin"
+                        type="tel"
+                        inputMode="numeric"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder="110001"
+                        className="h-10 w-full rounded-xl border border-white/15 bg-[#0B1120] px-3 text-sm text-white placeholder:text-slate-600 focus:border-[#FACC15] focus:outline-none"
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : null}
 

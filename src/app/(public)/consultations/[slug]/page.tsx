@@ -20,6 +20,7 @@ import {
 } from "@/lib/shop-data";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import { getRazorpayKeyId } from "@/lib/payments/settings";
 import { durationLabel } from "@/lib/booking";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { ShareButtons } from "@/components/social/share-buttons";
@@ -72,10 +73,11 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
   const topic = getConsultationTopic(slug);
   if (!topic) notFound();
 
-  const [{ contact }, featuredProducts, serviceGroups] = await Promise.all([
+  const [{ contact }, featuredProducts, serviceGroups, razorpayKeyId] = await Promise.all([
     getSiteData(),
     getFeaturedProducts(12),
     getFeaturedServices(),
+    getRazorpayKeyId(),
   ]);
 
   const number = contact.whatsappNumber;
@@ -256,6 +258,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                     service={service}
                     number={number}
                     upiId={contact.upiId}
+                    razorpayKeyId={razorpayKeyId}
                   />
                 </RevealItem>
               ))}
@@ -311,10 +314,12 @@ function RelatedServiceCard({
   service,
   number,
   upiId,
+  razorpayKeyId,
 }: {
   service: FeaturedService;
   number: string;
   upiId: string;
+  razorpayKeyId: string | null;
 }) {
   const price = service.priceLabel ?? formatPrice(service.price);
   const waMessage = whatsappLink(
@@ -354,6 +359,7 @@ function RelatedServiceCard({
           upiId={upiId}
           whatsappNumber={number}
           whatsappMessage={waMessage}
+          razorpayKeyId={razorpayKeyId}
         />
       </div>
     </div>

@@ -57,6 +57,40 @@ export async function markOrderCompletedAction(
   }
 }
 
+export async function updateOrderShippingAction(
+  _state: OrderFormState | undefined,
+  fd: FormData
+): Promise<OrderFormState> {
+  await requireAdmin();
+  const id = String(fd.get("id") ?? "").trim();
+  const courierName = String(fd.get("courierName") ?? "").trim();
+  const trackingNumber = String(fd.get("trackingNumber") ?? "").trim();
+  const trackingUrl = String(fd.get("trackingUrl") ?? "").trim();
+  if (!id) return { error: "Missing order id." };
+  if (!courierName) return { error: "Select a courier / postal service." };
+  if (!trackingNumber) return { error: "Enter the tracking number." };
+
+  try {
+    await prisma.order.update({
+      where: { id },
+      data: {
+        status: "SHIPPED",
+        courierName,
+        trackingNumber,
+        trackingUrl: trackingUrl || null,
+        trackingSentAt: new Date(),
+      },
+    });
+  } catch (e) {
+    console.error("[admin] updateOrderShipping failed:", e);
+    return { error: "Could not update the order. Please try again." };
+  }
+
+  revalidatePath("/admin/orders");
+  revalidatePath(`/admin/orders/${id}`);
+  return { success: true };
+}
+
 export async function deleteOrderAction(
   id: string
 ): Promise<{ ok: boolean }> {

@@ -41,6 +41,7 @@ enum RequestStatus {
 enum OrderStatus {
   PENDING
   CONFIRMED
+  SHIPPED
   COMPLETED
   CANCELLED
 }
@@ -284,6 +285,18 @@ model Order {
   preferredTime   String?
   note            String?
   deliveryAddress String?
+  city            String?
+  state           String?
+  pincode         String?
+  paymentMethod   String? // UPI | RAZORPAY | WHATSAPP | CASH
+  paymentStatus   String? // PENDING | PAID | FAILED
+  razorpayOrderId    String?
+  razorpayPaymentId  String?
+  razorpaySignature  String?
+  courierName     String?
+  trackingNumber  String?
+  trackingUrl     String?
+  trackingSentAt  DateTime?
   status          OrderStatus   @default(PENDING)
   source          String        @default("website")
   createdAt       DateTime      @default(now())
@@ -291,6 +304,7 @@ model Order {
 
   @@index([status])
   @@index([createdAt])
+  @@index([razorpayOrderId])
 }
 
 // ---------------------------------------------------------------------------

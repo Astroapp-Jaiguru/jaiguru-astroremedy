@@ -29,6 +29,7 @@ import {
   ServerCog,
   Type,
   CircleHelp,
+  CreditCard,
   type LucideIcon,
 } from "lucide-react";
 
@@ -69,6 +70,11 @@ export const adminNav: AdminNavGroup[] = [
         title: "Orders & Leads",
         href: "/admin/orders",
         icon: ShoppingBag,
+      },
+      {
+        title: "Payment Settings",
+        href: "/admin/payment-settings",
+        icon: CreditCard,
       },
     ],
   },

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Package, Sparkles, Phone, CalendarDays, Clock, MessageSquareText, BadgeInfo, FileDown, ReceiptText } from "lucide-react";
+import { ArrowLeft, Package, Sparkles, Phone, CalendarDays, Clock, MessageSquareText, BadgeInfo, FileDown, ReceiptText, Truck } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
@@ -8,6 +8,7 @@ import { requireAdmin } from "@/lib/dal";
 import { getSlipSettings } from "@/lib/orders/slip-settings";
 import { DeleteButton } from "@/components/admin/delete-button";
 import { OrderStatusForm } from "@/components/admin/orders/order-status-form";
+import { MarkShippedDialog } from "@/components/admin/orders/mark-shipped-dialog";
 import { SlipDownloadButton } from "@/components/admin/orders/slip-download-button";
 import { SlipSettingsForm } from "@/components/admin/orders/slip-settings-form";
 import { deleteOrderAction } from "@/lib/admin/orders/actions";
@@ -15,6 +16,7 @@ import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_COLORS,
   ORDER_TYPE_LABELS,
+  PAYMENT_STATUS_LABELS,
   orderReference,
   type OrderStatus,
 } from "@/lib/orders/status";
@@ -61,9 +63,29 @@ export default async function AdminOrderDetailPage({
     { label: "Item Type", value: ORDER_TYPE_LABELS[order.itemType] },
     { label: "Item", value: order.itemName },
     { label: "Amount", value: order.amountLabel ?? amountText },
+    { label: "Payment Method", value: order.paymentMethod ?? "—" },
+    {
+      label: "Payment Status",
+      value: order.paymentStatus
+        ? PAYMENT_STATUS_LABELS[order.paymentStatus] ?? order.paymentStatus
+        : "—",
+    },
     { label: "Preferred Date", value: order.preferredDate ?? "—" },
     { label: "Preferred Time", value: order.preferredTime ?? "—" },
     { label: "Delivery Address", value: order.deliveryAddress ?? "—" },
+    {
+      label: "City / State / Pincode",
+      value:
+        order.city || order.state || order.pincode
+          ? [order.city, order.state, order.pincode].filter(Boolean).join(", ")
+          : "—",
+    },
+    { label: "Courier", value: order.courierName ?? "—" },
+    { label: "Tracking Number", value: order.trackingNumber ?? "—" },
+    {
+      label: "Tracking Sent",
+      value: order.trackingSentAt ? formatDate(order.trackingSentAt) : "—",
+    },
     { label: "Source", value: order.source },
     { label: "Received", value: formatDate(order.createdAt) },
   ];
@@ -144,6 +166,45 @@ export default async function AdminOrderDetailPage({
           </div>
 
           <OrderStatusForm id={order.id} status={order.status} />
+
+          {order.itemType === "PRODUCT" && status !== "COMPLETED" ? (
+            <div className="flex flex-wrap items-center gap-3 border-t pt-4">
+              <div className="flex-1">
+                <h2 className="flex items-center gap-2 text-sm font-semibold">
+                  <Truck className="h-4 w-4 text-muted-foreground" />
+                  Shipping & Tracking
+                </h2>
+                {order.trackingUrl ? (
+                  <a
+                    href={order.trackingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-block text-xs font-medium text-sky-600 underline-offset-2 hover:underline dark:text-sky-300"
+                  >
+                    {order.courierName ?? "Courier"} · {order.trackingNumber} →
+                    track the shipment
+                  </a>
+                ) : (
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {order.trackingNumber
+                      ? `${order.courierName ?? "Courier"} · ${order.trackingNumber} (no link)`
+                      : "Not shipped yet — send the tracking details to the customer."}
+                  </p>
+                )}
+              </div>
+              <MarkShippedDialog
+                order={{
+                  id: order.id,
+                  customerName: order.customerName,
+                  itemName: order.itemName,
+                  phone: order.phone,
+                  whatsappNumber: order.whatsappNumber,
+                }}
+                defaultCourier={order.courierName}
+                defaultTrackingNumber={order.trackingNumber}
+              />
+            </div>
+          ) : null}
 
           <div className="grid gap-5 border-t pt-4 lg:grid-cols-2">
             <div>

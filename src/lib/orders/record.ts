@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 /**
  * Public order recorder.
- * Called (fire-and-forget) from the consultation booking modal and the
- * product payment popup so every WhatsApp order / consultation booking
- * shows up in Admin → Orders. Never throws — the booking flow must not
+ * Called (fire-and-forget) from the consultation booking modal, the 3-step
+ * checkout modal and the product payment popup so every order / booking
+ * shows up in Admin → Orders. Never throws — the checkout flow must not
  * break because a lead record fails.
  */
 
@@ -21,6 +21,11 @@ export interface RecordOrderInput {
   preferredDate?: string | null;
   preferredTime?: string | null;
   deliveryAddress?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+  paymentMethod?: string | null;
+  paymentStatus?: string | null;
   source?: string;
 }
 
@@ -53,6 +58,11 @@ export async function recordOrderAction(
         preferredDate: input.preferredDate?.trim() || null,
         preferredTime: input.preferredTime?.trim() || null,
         deliveryAddress: input.deliveryAddress?.trim().slice(0, 300) || null,
+        city: input.city?.trim().slice(0, 80) || null,
+        state: input.state?.trim().slice(0, 80) || null,
+        pincode: input.pincode?.trim().slice(0, 12) || null,
+        paymentMethod: input.paymentMethod?.trim().slice(0, 20) || null,
+        paymentStatus: input.paymentStatus?.trim().slice(0, 20) || null,
         source: input.source?.trim().slice(0, 40) || "website",
       },
     });

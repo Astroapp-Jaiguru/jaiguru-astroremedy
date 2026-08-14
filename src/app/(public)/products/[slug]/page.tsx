@@ -11,6 +11,7 @@ import { productPriceDisplay } from "@/lib/pricing/geo";
 import { Markdown } from "@/components/markdown";
 import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import { getRazorpayKeyId } from "@/lib/payments/settings";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { ShareButtons } from "@/components/social/share-buttons";
@@ -67,7 +68,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
     Number.parseFloat(product.discountPrice.toString()) <
       Number.parseFloat(product.price.toString());
   const price = product.discountPrice ?? product.price;
-  const { contact } = await getSiteData();
+  const [{ contact }, razorpayKeyId] = await Promise.all([
+    getSiteData(),
+    getRazorpayKeyId(),
+  ]);
   const display = await productPriceDisplay(
     price,
     hasDiscount ? product.price : null
@@ -297,6 +301,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               upiId={contact.upiId}
               whatsappNumber={contact.whatsappNumber}
               whatsappMessage={orderMessage}
+              razorpayKeyId={razorpayKeyId}
             />
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with
