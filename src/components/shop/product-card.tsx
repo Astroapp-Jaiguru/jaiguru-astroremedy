@@ -127,11 +127,11 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
           </span>
           <RatingStars rating={product.rating} />
         </div>
-        <h3 className="font-display text-base font-bold leading-snug text-[var(--jaiguru-primary-text)]">
+        <h3 className="font-display text-base font-bold leading-snug text-[var(--jaiguru-card-text)]">
           {product.name}
         </h3>
         {product.shortDescription ? (
-          <p className="line-clamp-2 text-xs leading-relaxed text-[var(--jaiguru-secondary-text)]">
+          <p className="line-clamp-2 text-xs leading-relaxed text-[var(--jaiguru-card-text-muted)]">
             {product.shortDescription}
           </p>
         ) : null}

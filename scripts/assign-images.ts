@@ -11,15 +11,22 @@ const prisma = new PrismaClient({
  * Local image pipeline run (no function time budget):
  *   npm run images:assign -- --limit 200
  *
- * Requires UNSPLASH_ACCESS_KEY (or OPENAI_API_KEY / REPLICATE_API_TOKEN).
+ * Requires UNSPLASH_ACCESS_KEY.
  * Only fills products with no main image; manual uploads are untouched.
  */
 async function main() {
   const args = process.argv.slice(2);
-  const limitArg = args.find((a) => a.startsWith("--limit="));
-  const limit = limitArg ? Number(limitArg.split("=")[1]) : 100;
+  let limit = 100;
+  const eq = args.find((a) => a.startsWith("--limit="));
+  if (eq) limit = Number(eq.split("=")[1]);
+  const i = args.indexOf("--limit");
+  if (i >= 0 && args[i + 1]) limit = Number(args[i + 1]);
+  if (!Number.isFinite(limit) || limit <= 0) limit = 100;
 
-  const summary = await assignImagesForMissing({ limit });
+  const summary = await assignImagesForMissing({
+    timeBudgetMs: 1000 * 60 * 60, // 1 hour wall clock
+    limit,
+  });
   console.log("Image assignment summary:", JSON.stringify(summary, null, 2));
 }
 

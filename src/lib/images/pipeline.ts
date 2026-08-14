@@ -1,7 +1,6 @@
 ﻿import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { fetchUnsplash, searchKeyword } from "./unsplash";
-import { buildPrompt, generateImage } from "./ai";
 import {
   getPricingRunMeta,
   savePricingRunMeta,
@@ -9,14 +8,14 @@ import {
 
 /**
  * Automated image pipeline: finds products without a main image and fills
- * them in with (1) an Unsplash fallback or (2) AI-generated imagery for
- * niche items Unsplash cannot match. Manual uploads are never overwritten â€”
- * the pipeline only touches products with no main image at all.
+ * them in with a free, royalty-free Unsplash photo (credited to the author).
+ * No paid AI generators (DALL-E / Flux / etc.) are used. Manual uploads are
+ * never overwritten â€” the pipeline only touches products with no main image.
  */
 
 export interface ImageRunSummary {
   fetched: number; // products scanned
-  assigned: number; // got an image (unsplash | ai)
+  assigned: number; // got an image (unsplash)
   failed: number; // no image could be produced
   dormant: boolean; // true when no provider keys are configured
   detail: string[]; // per-item notes (capped)
@@ -31,8 +30,7 @@ export async function assignImagesForMissing(options: {
   const started = Date.now();
 
   const hasUnsplash = Boolean(process.env.UNSPLASH_ACCESS_KEY);
-  const hasAi = Boolean(process.env.OPENAI_API_KEY || process.env.REPLICATE_API_TOKEN);
-  if (!hasUnsplash && !hasAi) {
+  if (!hasUnsplash) {
     return { fetched: 0, assigned: 0, failed: 0, dormant: true, detail: [] };
   }
 
@@ -58,8 +56,6 @@ export async function assignImagesForMissing(options: {
     }
 
     try {
-      let assigned = false;
-
       if (hasUnsplash) {
         const keyword = searchKeyword(product.name, product.category.name);
         const hit = await fetchUnsplash(keyword);
@@ -74,37 +70,10 @@ export async function assignImagesForMissing(options: {
           });
           summary.assigned++;
           summary.detail.push(`${product.name} â†’ unsplash (${hit.photoId})`);
-          assigned = true;
+          continue;
         }
       }
-
-      if (!assigned && hasAi) {
-        const prompt = buildPrompt(product.name);
-        const img = await generateImage(prompt);
-        if (img) {
-          const saved = await prisma.siteImage.create({
-            data: {
-              filename: `${product.slug}-ai.png`,
-              mimeType: img.mimeType,
-              size: img.bytes.length,
-              data: new Uint8Array(img.bytes),
-            },
-          });
-          await prisma.product.update({
-            where: { id: product.id },
-            data: {
-              mainImage: `/api/site-images/${saved.id}`,
-              imageSource: "ai",
-              imageCredit: "AI-generated",
-            },
-          });
-          summary.assigned++;
-          summary.detail.push(`${product.name} â†’ ai`);
-          assigned = true;
-        }
-      }
-
-      if (!assigned) summary.failed++;
+      summary.failed++;
     } catch (e) {
       console.error(`[images] pipeline failed for ${product.name}:`, e);
       summary.failed++;
@@ -120,8 +89,13 @@ export async function assignImagesForMissing(options: {
     console.error("[images] failed to persist run meta:", e);
   }
 
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/admin/pricing");
+  try {
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/admin/pricing");
+  } catch {
+    // Local sweep scripts run outside the Next.js runtime where
+    // revalidation is a no-op (the live site renders dynamically).
+  }
   return summary;
 }

@@ -16,13 +16,17 @@ const prisma = new PrismaClient({
  */
 async function main() {
   const args = process.argv.slice(2);
-  const limitArg = args.find((a) => a.startsWith("--limit="));
-  const limit = limitArg ? Number(limitArg.split("=")[1]) : undefined;
+  let limit: number | undefined;
+  const eq = args.find((a) => a.startsWith("--limit="));
+  if (eq) limit = Number(eq.split("=")[1]);
+  const i = args.indexOf("--limit");
+  if (i >= 0 && args[i + 1]) limit = Number(args[i + 1]);
+  if (limit === undefined || !Number.isFinite(limit) || limit <= 0) limit = 100;
 
   const summary = await runPriceUpdate({
     source: "cron",
     timeBudgetMs: 1000 * 60 * 60, // 1 hour wall clock
-    fetchLimit: limit ?? 100,
+    fetchLimit: limit,
   });
   console.log("Pricing sweep summary:", JSON.stringify(summary, null, 2));
   if (summary.skippedNoFloor > 0) {

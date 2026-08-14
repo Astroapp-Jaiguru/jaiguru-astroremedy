@@ -47,3 +47,12 @@ tsconfig.tsbuildinfo
 
 # local agent tooling
 /.agents/
+
+# local image batch staging (photos are stored in the DB, not git)
+/product_images/
+/product-list.txt
+
+# local dev server log + header audit screenshots
+/dev-server.log
+/header-*.png
+/UI_AUDIT.txt

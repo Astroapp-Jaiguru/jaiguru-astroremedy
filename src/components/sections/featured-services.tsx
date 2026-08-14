@@ -70,10 +70,10 @@ async function ServiceCard({
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-6">
-        <h3 className="font-display text-lg font-bold leading-snug text-[var(--jaiguru-primary-text)]">
+        <h3 className="font-display text-lg font-bold leading-snug text-[var(--jaiguru-card-text)]">
           {service.name}
         </h3>
-        <p className="line-clamp-2 text-sm leading-relaxed text-[var(--jaiguru-secondary-text)]">
+        <p className="line-clamp-2 text-sm leading-relaxed text-[var(--jaiguru-card-text-muted)]">
           {service.shortDescription}
         </p>
         <div className="mt-1 flex items-center gap-2 text-xs text-slate-500">

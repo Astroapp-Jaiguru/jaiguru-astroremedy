@@ -253,7 +253,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
             ) : null}
             {product.longDescription ? (
               <div className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
-                <Markdown content={product.longDescription} />
+                <Markdown
+                  content={product.longDescription}
+                  textClass="text-[color:var(--jaiguru-page-text-muted)]"
+                  headingClass="text-[var(--jaiguru-page-text)]"
+                />
               </div>
             ) : null}
 
@@ -316,7 +320,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
                   Authenticity, Quality & Return Policy
                 </h3>
                 <div className="text-xs leading-relaxed text-slate-300">
-                  <Markdown content={product.returnPolicy} />
+                  <Markdown
+                    content={product.returnPolicy}
+                    textClass="text-slate-300"
+                    headingClass="text-amber-400"
+                  />
                 </div>
               </div>
             ) : null}

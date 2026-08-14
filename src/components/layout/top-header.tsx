@@ -58,8 +58,14 @@ export function TopHeader({
           </a>
         </div>
 
-        {/* Right: social icons */}
-        <SocialIconRow links={socials} variant="dark" size="sm" />
+        {/* Right: social icons (hidden on mobile/tablet - they live in the
+            mobile menu drawer so the phone numbers never overlap) */}
+        <SocialIconRow
+          links={socials}
+          variant="dark"
+          size="sm"
+          className="hidden lg:flex"
+        />
       </div>
     </div>
   );

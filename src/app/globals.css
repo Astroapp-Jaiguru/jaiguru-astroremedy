@@ -127,6 +127,8 @@
   --jaiguru-page-bg: #0f172a;
   --jaiguru-primary-text: #0f172a;
   --jaiguru-secondary-text: #64748b;
+  --jaiguru-card-text: #0f172a;
+  --jaiguru-card-text-muted: #64748b;
   --jaiguru-cta-primary: var(--jaiguru-primary);
   --jaiguru-card-bg: #fff7ed;
   --jaiguru-card-border: #d4af37;

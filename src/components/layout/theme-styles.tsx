@@ -60,6 +60,18 @@ export async function ThemeStyles() {
     : "#FFFFFF";
   const pageTextMuted = `color-mix(in srgb, ${pageTextColor} 78%, var(--jaiguru-page-bg))`;
 
+  /**
+   * Contrasting text color for light "glass-card-light" surfaces (product /
+   * service cards): dark ink on cream cards, white on dark cards. Kept
+   * separate from --jaiguru-primary-text, which is the page body color.
+   */
+  const cardTextColor = isLightColor(theme.cardBackground)
+    ? "#0F172A"
+    : "#FFFFFF";
+  const cardTextMuted = isLightColor(theme.cardBackground)
+    ? "#64748B"
+    : "rgba(255, 255, 255, 0.72)";
+
   const css = `
 :root {
   --jaiguru-primary: ${theme.primary};
@@ -75,6 +87,8 @@ export async function ThemeStyles() {
   --jaiguru-page-text-muted: ${pageTextMuted};
   --jaiguru-primary-text: ${theme.primaryTextColor};
   --jaiguru-secondary-text: ${theme.secondaryTextColor};
+  --jaiguru-card-text: ${cardTextColor};
+  --jaiguru-card-text-muted: ${cardTextMuted};
   --jaiguru-cta-primary: ${theme.ctaPrimary};
   --jaiguru-card-bg: ${theme.cardBackground};
   --jaiguru-card-border: ${theme.cardBorder};
@@ -154,7 +168,11 @@ h1, h2, h3, h4, h5, h6,
 }
 h1, h2, h3, h4, h5, h6 {
   font-weight: var(--jaiguru-heading-weight, 700) !important;
-  color: var(--jaiguru-heading-text, #ffffff);
+}
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--jaiguru-heading-text, #ffffff);
+  }
 }
 small {
   font-size: var(--jaiguru-small-font-size, 14px) !important;
