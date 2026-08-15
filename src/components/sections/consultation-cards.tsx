@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
+import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { siteConfig } from "@/config/site";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
@@ -66,15 +67,13 @@ export async function ConsultationCards(): Promise<ReactElement> {
                   >
                     Know More →
                   </Link>
-                  <a
-                    href={waMessage}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <WhatsappNavTrigger
+                    whatsappNumber={number}
                     className="btn-glow-whatsapp inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-whatsapp px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
                   >
                     <WhatsappIcon className="h-4 w-4" />
                     Book Now
-                  </a>
+                  </WhatsappNavTrigger>
                 </div>
               </div>
               </RevealItem>

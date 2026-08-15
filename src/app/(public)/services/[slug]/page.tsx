@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { getServiceBySlug, SERVICE_MODE_LABELS } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
 import { servicePriceDisplay, type ServicePriceDisplay } from "@/lib/pricing/geo";
@@ -20,7 +21,6 @@ import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
-import { whatsappLink } from "@/config/site";
 import { ShareButtons } from "@/components/social/share-buttons";
 import { absoluteUrl } from "@/lib/share";
 
@@ -81,7 +81,6 @@ export default async function ServiceDetailPage({ params }: Props) {
     },
     contact.upiId
   );
-  const waChatHref = whatsappLink(bookingMessage, contact.whatsappNumber);
   const relatedConverted = new Map(
     await Promise.all(
       service.related.map(
@@ -254,15 +253,13 @@ className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]"
   defaultMode={service.mode}
   pageUrl={`/services/${service.slug}`}
   />
-  <a
-  href={waChatHref}
-  target="_blank"
-  rel="noopener noreferrer"
+  <WhatsappNavTrigger
+  whatsappNumber={contact.whatsappNumber}
   className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-[#25D366]/40 bg-[#25D366]/10 px-6 py-3 text-sm font-semibold text-[#25D366] transition hover:bg-[#25D366]/20"
   >
   <WhatsappIcon className="h-4 w-4" />
   Chat directly on WhatsApp
-  </a>
+  </WhatsappNavTrigger>
   </div>
 
  {service.related.length > 0 ? (

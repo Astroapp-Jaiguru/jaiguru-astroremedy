@@ -15,6 +15,7 @@ import {
  CallButton,
 } from "@/components/layout/cta-buttons";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { getSiteData } from "@/lib/site-data";
 import { getServices } from "@/lib/services-data";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
@@ -129,18 +130,29 @@ const mapsQuery = encodeURIComponent(
  </span>
  </>
  );
- return card.href ? (
- <a
- key={card.label}
- href={card.href}
- {...(card.external
- ? { target: "_blank", rel: "noopener noreferrer" }
- : {})}
- className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 glass-card transition-colors hover:border-golden/60"
- >
- {inner}
- </a>
- ) : (
+return card.href ? (
+  card.label === "WhatsApp" ? (
+  <WhatsappNavTrigger
+  key={card.label}
+  whatsappNumber={contact.whatsappNumber}
+  ariaLabel={card.label}
+  className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 text-left glass-card transition-colors hover:border-golden/60"
+  >
+  {inner}
+  </WhatsappNavTrigger>
+  ) : (
+  <a
+  key={card.label}
+  href={card.href}
+  {...(card.external
+  ? { target: "_blank", rel: "noopener noreferrer" }
+  : {})}
+  className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 glass-card transition-colors hover:border-golden/60"
+  >
+  {inner}
+  </a>
+  )
+  ) : (
  <div
  key={card.label}
  className="flex items-center gap-3 rounded-[var(--jaiguru-card-radius)] p-5 glass-card"

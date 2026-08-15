@@ -1,7 +1,9 @@
 import { Phone } from "lucide-react";
-import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
-import { whatsappLink } from "@/config/site";
+import {
+  FloatingWhatsappRound,
+  FloatingWhatsappBar,
+} from "@/components/layout/floating-whatsapp";
 
 /**
  * Floating CTAs (scope UI spec §20).
@@ -11,10 +13,6 @@ import { whatsappLink } from "@/config/site";
 export async function FloatingCta() {
   const data = await getSiteData();
   const contact = data.contact;
-  const waHref = whatsappLink(
-    `Hello ${data.branding.siteName}, I want to book a consultation.`,
-    contact.whatsappNumber
-  );
   const telHref = `tel:${contact.callNumber}`;
 
   return (
@@ -28,15 +26,7 @@ export async function FloatingCta() {
         >
           <Phone className="h-6 w-6" />
         </a>
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="WhatsApp"
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-white shadow-[0_12px_35px_rgba(37,211,102,0.4)] transition-transform hover:scale-105"
-        >
-          <WhatsappIcon className="h-7 w-7" />
-        </a>
+        <FloatingWhatsappRound whatsappNumber={contact.whatsappNumber} />
       </div>
 
       {/* Mobile: sticky bottom bar */}
@@ -48,15 +38,7 @@ export async function FloatingCta() {
           <Phone className="h-5 w-5" />
           Call Now
         </a>
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 bg-whatsapp text-[15px] font-semibold text-white"
-        >
-          <WhatsappIcon className="h-5 w-5" />
-          WhatsApp
-        </a>
+        <FloatingWhatsappBar whatsappNumber={contact.whatsappNumber} />
       </div>
     </>
   );

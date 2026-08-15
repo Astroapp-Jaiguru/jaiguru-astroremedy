@@ -1,8 +1,11 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { ServiceNavModal } from "@/components/layout/service-nav-modal";
 
 /**
  * Pill CTA buttons used across header / hero / footer (scope UI spec §5.2, §7).
@@ -28,6 +31,7 @@ export function WhatsAppButton({
   className,
   iconOnly,
   labelClassName,
+  openModal = true,
 }: {
   href: string;
   label?: string;
@@ -35,27 +39,60 @@ export function WhatsAppButton({
   className?: string;
   iconOnly?: boolean;
   labelClassName?: string;
+  openModal?: boolean;
 }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label ?? "WhatsApp"}
-      className={ctaBase(
-        cn(
-          "btn-glow-whatsapp bg-whatsapp text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[var(--jaiguru-whatsapp-hover)] hover:shadow-[0_12px_36px_rgba(37,211,102,0.5)]",
-          sizes[size],
-          iconOnly && "px-0",
-          className
-        )
-      )}
-    >
+  const [open, setOpen] = useState(false);
+  const number = href.match(/wa\.me\/(\d+)/)?.[1];
+  const opensModal = openModal && !!number;
+
+  const content = (
+    <>
       <WhatsappIcon className="h-5 w-5 shrink-0" />
       {!iconOnly && (
         <span className={cn("whitespace-nowrap", labelClassName)}>{label}</span>
       )}
-    </a>
+    </>
+  );
+
+  const cls = ctaBase(
+    cn(
+      "btn-glow-whatsapp bg-whatsapp text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] hover:bg-[var(--jaiguru-whatsapp-hover)] hover:shadow-[0_12px_36px_rgba(37,211,102,0.5)]",
+      sizes[size],
+      iconOnly && "px-0",
+      className
+    )
+  );
+
+  return (
+    <>
+      {opensModal ? (
+        <button
+          type="button"
+          aria-label={label ?? "WhatsApp"}
+          onClick={() => setOpen(true)}
+          className={cls}
+        >
+          {content}
+        </button>
+      ) : (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label ?? "WhatsApp"}
+          className={cls}
+        >
+          {content}
+        </a>
+      )}
+      {opensModal && (
+        <ServiceNavModal
+          open={open}
+          onOpenChange={setOpen}
+          whatsappNumber={number}
+        />
+      )}
+    </>
   );
 }
 

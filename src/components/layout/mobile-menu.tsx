@@ -106,7 +106,7 @@ export function MobileMenu({
                         <Link
                           href={item.href}
                           onClick={() => setOpen(false)}
-                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple"
+                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                         >
                           All Consultations
                         </Link>
@@ -116,8 +116,8 @@ export function MobileMenu({
                             href={child.href}
                             onClick={() => setOpen(false)}
                             className={cn(
-                              "flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
-                              isActive(child.href) && "bg-golden/10 font-semibold text-royal-purple"
+                              "flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground",
+                              isActive(child.href) && "bg-golden/10 font-semibold text-foreground"
                             )}
                           >
                             {child.label}

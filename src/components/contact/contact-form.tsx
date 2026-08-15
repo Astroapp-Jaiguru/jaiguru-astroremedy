@@ -52,7 +52,7 @@ export function ContactForm({
             WhatsApp.
           </p>
           <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <WhatsAppButton href={followUpLink} label="Chat on WhatsApp" />
+            <WhatsAppButton href={followUpLink} label="Chat on WhatsApp" openModal={false} />
             <a
               href="/contact"
               className="text-sm font-medium text-golden underline-offset-4 hover:underline"

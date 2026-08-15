@@ -96,8 +96,8 @@ export function NavMenu({ className }: { className?: string }) {
                         key={child.href}
                         href={child.href}
                         className={cn(
-                          "block rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
-                          childActive && "bg-golden/10 text-royal-purple"
+                          "block rounded-xl px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground",
+                          childActive && "bg-golden/10 font-semibold text-foreground"
                         )}
                       >
                         {child.label}
@@ -107,7 +107,7 @@ export function NavMenu({ className }: { className?: string }) {
                   <div className="mt-1 border-t border-golden/25 pt-1">
                     <Link
                       href={item.href}
-                      className="block rounded-xl px-4 py-2.5 text-sm font-bold text-royal-purple transition-colors hover:bg-golden/10"
+                      className="block rounded-xl px-4 py-2.5 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                     >
                       All Consultations →
                     </Link>
