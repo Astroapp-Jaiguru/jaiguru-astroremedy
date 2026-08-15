@@ -403,7 +403,7 @@ function UnifiedOrderModal(
       <DialogContent
         showCloseButton
         overlayClassName="bg-deep-navy/70 backdrop-blur-md"
-        className="max-w-md gap-0 overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)]"
+        className="max-w-[calc(100%-2rem)] gap-0 overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)] sm:max-w-md"
       >
         {/* Header */}
         <div className="bg-gradient-to-br from-royal-purple via-indigo-deep to-deep-navy px-6 pb-4 pt-6">
