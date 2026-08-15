@@ -95,6 +95,9 @@ async function ServiceCard({
             upiId={upiId}
             whatsappNumber={number}
             whatsappMessage={waMessage}
+            kind="course"
+            defaultMode={service.mode}
+            pageUrl={`/services/${service.slug}`}
           />
         </div>
       </div>

@@ -175,6 +175,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
             upiId={contact.upiId}
             whatsappNumber={contact.whatsappNumber}
             whatsappMessage={message}
+            pageUrl={`/products/${product.slug}`}
           />
           <Link
             href={`/products/${product.slug}`}

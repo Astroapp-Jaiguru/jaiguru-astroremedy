@@ -9,7 +9,6 @@ import {
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard, type ProductCardData } from "@/components/shop/product-card";
 import { PaymentButton } from "@/components/shop/payment-button";
-import { BookingButton } from "@/components/shop/booking-modal";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CallButton } from "@/components/layout/cta-buttons";
 import {
@@ -167,14 +166,20 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   </ul>
 
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                    <BookingButton
+                    <PaymentButton
                       label="Book This Consultation"
                       icon={<CalendarCheck className="h-5 w-5" />}
                       className="btn-glow-gold inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316] px-8 py-3.5 text-[15px] font-semibold text-slate-900 shadow-[0_10px_30px_rgba(250,204,21,0.4)] transition hover:brightness-105"
-                      serviceName={topic.title}
-                      durationMinutes={topic.durationMinutes}
+                      itemName={topic.title}
                       priceLabel={topic.fee}
+                      price={topic.fee}
+                      upiId={contact.upiId}
                       whatsappNumber={number}
+                      whatsappMessage={consultationMessage(topic.title)}
+                      razorpayKeyId={razorpayKeyId}
+                      kind="consultation"
+                      durationMinutes={topic.durationMinutes}
+                      pageUrl={`/consultations/${topic.slug}`}
                     />
                     <CallButton
                       href={`tel:${contact.callNumber}`}
@@ -360,6 +365,9 @@ function RelatedServiceCard({
           whatsappNumber={number}
           whatsappMessage={waMessage}
           razorpayKeyId={razorpayKeyId}
+          kind="course"
+          defaultMode={service.mode}
+          pageUrl={`/services/${service.slug}`}
         />
       </div>
     </div>

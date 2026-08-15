@@ -14,12 +14,17 @@ export interface RecordOrderInput {
   customerName?: string;
   phone?: string;
   whatsappNumber?: string;
+  email?: string;
   itemName: string;
   itemType: "SERVICE" | "PRODUCT";
   amount?: string | number | null;
   amountLabel?: string | null;
   preferredDate?: string | null;
   preferredTime?: string | null;
+  preferredMode?: string | null;
+  birthDate?: string | null;
+  birthTime?: string | null;
+  birthPlace?: string | null;
   deliveryAddress?: string | null;
   city?: string | null;
   state?: string | null;
@@ -51,12 +56,17 @@ export async function recordOrderAction(
         customerName,
         phone,
         whatsappNumber: input.whatsappNumber?.trim().slice(0, 30) || null,
+        email: input.email?.trim().slice(0, 120) || null,
         itemName,
         itemType: input.itemType === "PRODUCT" ? "PRODUCT" : "SERVICE",
         amount,
         amountLabel: input.amountLabel?.trim().slice(0, 60) || null,
         preferredDate: input.preferredDate?.trim() || null,
         preferredTime: input.preferredTime?.trim() || null,
+        preferredMode: input.preferredMode?.trim().slice(0, 30) || null,
+        birthDate: input.birthDate?.trim().slice(0, 20) || null,
+        birthTime: input.birthTime?.trim().slice(0, 20) || null,
+        birthPlace: input.birthPlace?.trim().slice(0, 120) || null,
         deliveryAddress: input.deliveryAddress?.trim().slice(0, 300) || null,
         city: input.city?.trim().slice(0, 80) || null,
         state: input.state?.trim().slice(0, 80) || null,

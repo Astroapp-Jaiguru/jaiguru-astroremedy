@@ -18,7 +18,8 @@ import { formatPrice } from "@/lib/shop-data";
 import { servicePriceDisplay, type ServicePriceDisplay } from "@/lib/pricing/geo";
 import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
-import { BookingButton } from "@/components/shop/booking-modal";
+import { PaymentButton } from "@/components/shop/payment-button";
+import { getRazorpayKeyId } from "@/lib/payments/settings";
 import { whatsappLink } from "@/config/site";
 import { ShareButtons } from "@/components/social/share-buttons";
 import { absoluteUrl } from "@/lib/share";
@@ -61,7 +62,10 @@ export default async function ServiceDetailPage({ params }: Props) {
  const service = await getServiceBySlug(slug);
  if (!service) notFound();
 
-  const { contact } = await getSiteData();
+  const [{ contact }, razorpayKeyId] = await Promise.all([
+    getSiteData(),
+    getRazorpayKeyId(),
+  ]);
   const converted = await servicePriceDisplay(service.price, service.priceLabel);
   const priceLabel =
     converted?.label ??
@@ -234,14 +238,21 @@ className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]"
   </div>
   ) : null}
   </dl>
-  <BookingButton
+  <PaymentButton
   label="Book Appointment"
   icon={<CalendarCheck className="h-4 w-4" />}
   className="mt-6 flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316] px-8 py-3.5 text-sm font-bold text-slate-900 shadow-lg shadow-[#FACC15]/25 transition hover:brightness-105"
-  serviceName={service.name}
-  durationMinutes={service.slotDuration ?? undefined}
+  itemName={service.name}
   priceLabel={priceLabel}
+  price={service.price}
+  upiId={contact.upiId}
   whatsappNumber={contact.whatsappNumber}
+  whatsappMessage={bookingMessage}
+  razorpayKeyId={razorpayKeyId}
+  kind={service.slotDuration ? "consultation" : "course"}
+  durationMinutes={service.slotDuration ?? undefined}
+  defaultMode={service.mode}
+  pageUrl={`/services/${service.slug}`}
   />
   <a
   href={waChatHref}

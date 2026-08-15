@@ -312,6 +312,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
               whatsappNumber={contact.whatsappNumber}
               whatsappMessage={orderMessage}
               razorpayKeyId={razorpayKeyId}
+              pageUrl={`/products/${product.slug}`}
             />
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with

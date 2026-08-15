@@ -277,12 +277,17 @@ model Order {
   customerName    String
   phone           String
   whatsappNumber  String?
+  email           String?
   itemName        String
   itemType        OrderItemType @default(SERVICE)
   amount          Decimal?      @db.Decimal(12, 2)
   amountLabel     String?
   preferredDate   String?
   preferredTime   String?
+  preferredMode   String?
+  birthDate       String?
+  birthTime       String?
+  birthPlace      String?
   note            String?
   deliveryAddress String?
   city            String?

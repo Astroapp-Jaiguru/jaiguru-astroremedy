@@ -60,6 +60,7 @@ export default async function AdminOrderDetailPage({
     { label: "Customer Name", value: order.customerName },
     { label: "Phone", value: order.phone },
     { label: "WhatsApp", value: order.whatsappNumber ?? "—" },
+    { label: "Email", value: order.email ?? "—" },
     { label: "Item Type", value: ORDER_TYPE_LABELS[order.itemType] },
     { label: "Item", value: order.itemName },
     { label: "Amount", value: order.amountLabel ?? amountText },
@@ -72,6 +73,10 @@ export default async function AdminOrderDetailPage({
     },
     { label: "Preferred Date", value: order.preferredDate ?? "—" },
     { label: "Preferred Time", value: order.preferredTime ?? "—" },
+    { label: "Preferred Mode", value: order.preferredMode ?? "—" },
+    { label: "Birth Date", value: order.birthDate ?? "—" },
+    { label: "Birth Time", value: order.birthTime ?? "—" },
+    { label: "Birth Place", value: order.birthPlace ?? "—" },
     { label: "Delivery Address", value: order.deliveryAddress ?? "—" },
     {
       label: "City / State / Pincode",
