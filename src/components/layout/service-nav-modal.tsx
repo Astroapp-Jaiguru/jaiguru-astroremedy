@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, CalendarCheck, Package, Sparkles, X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { cn } from "@/lib/utils";
 
 /**
  * Hero "Book a Service" button — opens a navigation dialog with the three
@@ -27,23 +28,23 @@ export function ServiceNavButton({
   const cards = [
     {
       href: "/consultations",
-      Icon: CalendarCheck,
-      title: "Consultation",
-      subtitle: "Personal astrology, numerology, vastu & more — ₹700",
+      title: "Book a Consultation",
+      subtitle: "Astrology, numerology, vastu & more — ₹700",
+      emoji: "📅",
       accent: "text-golden",
     },
     {
       href: "/services",
-      Icon: BookOpen,
-      title: "Course",
+      title: "Book a Course",
       subtitle: "Vedic astrology & yoga courses — online or in person",
+      emoji: "📚",
       accent: "text-saffron",
     },
     {
       href: "/products",
-      Icon: Package,
-      title: "Product",
+      title: "Buy a Product",
       subtitle: "Rudraksha, gemstones & spiritual remedies",
+      emoji: "🛍️",
       accent: "text-emerald-300",
     },
   ];
@@ -80,15 +81,15 @@ export function ServiceNavButton({
           </p>
 
           <div className="mt-5 grid gap-3">
-            {cards.map(({ href, Icon, title, subtitle, accent }) => (
+            {cards.map(({ href, title, subtitle, emoji, accent }) => (
               <Link
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
                 className="group flex items-center gap-4 rounded-2xl border border-premium-gold/40 bg-white/5 p-4 transition hover:border-premium-gold/80 hover:bg-white/10"
               >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-premium-gold/50 bg-golden/10">
-                  <Icon className={`h-6 w-6 ${accent}`} />
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-premium-gold/50 bg-golden/10 text-lg">
+                  {emoji}
                 </span>
                 <span className="flex-1">
                   <span className="block font-semibold text-white">{title}</span>
@@ -96,7 +97,7 @@ export function ServiceNavButton({
                     {subtitle}
                   </span>
                 </span>
-                <span className="text-golden transition group-hover:translate-x-1">
+                <span className={cn("transition group-hover:translate-x-1", accent)}>
                   →
                 </span>
               </Link>

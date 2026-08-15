@@ -43,6 +43,7 @@ import {
   formatSlot12h,
   fromDateKey,
   slotEnd12h,
+  toDateKey,
 } from "@/lib/booking";
 import { cn } from "@/lib/utils";
 
@@ -805,19 +806,17 @@ function UnifiedOrderModal(
                           </p>
                           <div className="grid grid-cols-2 gap-3">
                             <Field label="Date of Birth">
-                              <input
-                                type="date"
+                              <BirthDatePicker
                                 value={birthDate}
-                                onChange={(e) => setBirthDate(e.target.value)}
-                                className={inputCls}
+                                onChange={(iso) => setBirthDate(iso ?? "")}
+                                inputCls={inputCls}
                               />
                             </Field>
                             <Field label="Birth Time">
-                              <input
-                                type="time"
+                              <BirthTimePicker
                                 value={birthTime}
-                                onChange={(e) => setBirthTime(e.target.value)}
-                                className={inputCls}
+                                onChange={(hhmm) => setBirthTime(hhmm ?? "")}
+                                inputCls={inputCls}
                               />
                             </Field>
                           </div>
@@ -1216,6 +1215,314 @@ function Field({
       {children}
       {showError && valid === false ? (
         <p className="text-[11px] text-red-400">{invalidMsg}</p>
+      ) : null}
+    </div>
+  );
+}
+
+/* ————————————————————————————————————————————
+ * Birth Date & Birth Time pickers.
+ * Visual calendar / clock pickers with manual keyboard entry as a backup.
+ * ———————————————————————————————————————————— */
+
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+/** Accepts DD-MM-YYYY, DD/MM/YYYY or YYYY-MM-DD → ISO "YYYY-MM-DD" or null. */
+function normalizeBirthDate(text: string): string | null {
+  const t = text.trim();
+  if (!t) return null;
+  let d: number, mo: number, y: number;
+  let m = t.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+  if (m) {
+    d = Number(m[1]);
+    mo = Number(m[2]);
+    y = Number(m[3]);
+  } else {
+    m = t.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+    if (!m) return null;
+    y = Number(m[1]);
+    mo = Number(m[2]);
+    d = Number(m[3]);
+  }
+  if (y < 1900 || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  const date = new Date(y, mo - 1, d);
+  if (
+    date.getFullYear() !== y ||
+    date.getMonth() !== mo - 1 ||
+    date.getDate() !== d
+  ) {
+    return null;
+  }
+  return `${y}-${String(mo).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+/** Accepts HH:MM or HH:MM AM/PM → 24h "HH:MM" or null. */
+function normalizeBirthTime(text: string): string | null {
+  const t = text.trim().toUpperCase();
+  if (!t) return null;
+  const m = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/);
+  if (!m) return null;
+  let h = Number(m[1]);
+  const min = Number(m[2]);
+  const ap = m[3];
+  if (h > 23 || min > 59) return null;
+  if (ap === "PM" && h < 12) h += 12;
+  if (ap === "AM" && h === 12) h = 0;
+  return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+}
+
+function BirthDatePicker({
+  value,
+  onChange,
+  inputCls,
+}: {
+  value: string;
+  onChange: (iso: string | null) => void;
+  inputCls: string;
+}) {
+  const [text, setText] = useState(value);
+  const [open, setOpen] = useState(false);
+  const now = new Date();
+  const [view, setView] = useState({ y: now.getFullYear(), m: now.getMonth() });
+
+  useEffect(() => {
+    setText(value);
+  }, [value]);
+
+  const todayKey = toDateKey(new Date());
+  const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
+  const firstDow = new Date(view.y, view.m, 1).getDay();
+  const invalid = text.length > 0 && !normalizeBirthDate(text);
+
+  const pick = (y: number, m: number, d: number) => {
+    const iso = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    onChange(iso);
+    setText(iso);
+    setOpen(false);
+  };
+
+  const onText = (t: string) => {
+    setText(t);
+    const iso = normalizeBirthDate(t);
+    if (iso) onChange(iso);
+  };
+
+  return (
+    <div>
+      <div className="relative">
+        <input
+          value={text}
+          onChange={(e) => onText(e.target.value)}
+          onBlur={(e) => {
+            const t = e.target.value;
+            if (!t) return;
+            const iso = normalizeBirthDate(t);
+            if (iso) {
+              setText(iso);
+              onChange(iso);
+            }
+          }}
+          placeholder="YYYY-MM-DD or DD-MM-YYYY"
+          aria-label="Date of Birth"
+          className={cn(inputCls, "pr-10")}
+        />
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? "Close date picker" : "Open date picker"}
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-golden transition hover:bg-white/10"
+        >
+          <CalendarDays className="h-4 w-4" />
+        </button>
+      </div>
+
+      {open ? (
+        <div className="mt-2 rounded-xl border border-premium-gold/30 bg-white/[0.04] p-3">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() =>
+                setView((v) =>
+                  v.m === 0
+                    ? { y: v.y - 1, m: 11 }
+                    : { y: v.y, m: v.m - 1 }
+                )
+              }
+              aria-label="Previous month"
+              className="rounded-lg p-1 text-slate-300 transition hover:bg-white/10 hover:text-[#FACC15]"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className="text-xs font-bold text-white">
+              {MONTH_NAMES[view.m]} {view.y}
+            </span>
+            <button
+              type="button"
+              onClick={() =>
+                setView((v) =>
+                  v.m === 11
+                    ? { y: v.y + 1, m: 0 }
+                    : { y: v.y, m: v.m + 1 }
+                )
+              }
+              aria-label="Next month"
+              className="rounded-lg p-1 text-slate-300 transition hover:bg-white/10 hover:text-[#FACC15]"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-2 grid grid-cols-7 gap-1 text-center">
+            {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+              <span key={d} className="text-[10px] font-semibold text-slate-500">
+                {d}
+              </span>
+            ))}
+            {Array.from({ length: firstDow }).map((_, i) => (
+              <span key={`blank-${i}`} />
+            ))}
+            {Array.from({ length: daysInMonth }).map((_, i) => {
+              const day = i + 1;
+              const iso = `${view.y}-${String(view.m + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const isFuture = iso > todayKey;
+              const selected = iso === value;
+              return (
+                <button
+                  key={iso}
+                  type="button"
+                  disabled={isFuture}
+                  onClick={() => pick(view.y, view.m, day)}
+                  className={cn(
+                    "rounded-lg py-1.5 text-xs transition",
+                    selected
+                      ? "bg-[#FACC15] font-bold text-slate-900"
+                      : "text-slate-200 hover:bg-white/10",
+                    isFuture && "cursor-not-allowed opacity-30"
+                  )}
+                >
+                  {day}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {invalid ? (
+        <p className="mt-1 text-[11px] text-red-400">
+          Use YYYY-MM-DD or DD-MM-YYYY format.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function BirthTimePicker({
+  value,
+  onChange,
+  inputCls,
+}: {
+  value: string;
+  onChange: (hhmm: string | null) => void;
+  inputCls: string;
+}) {
+  const [text, setText] = useState(value);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setText(value);
+  }, [value]);
+
+  const invalid = text.length > 0 && !normalizeBirthTime(text);
+
+  const pick = (hhmm: string) => {
+    onChange(hhmm);
+    setText(hhmm);
+    setOpen(false);
+  };
+
+  const onText = (t: string) => {
+    setText(t);
+    const hhmm = normalizeBirthTime(t);
+    if (hhmm) onChange(hhmm);
+  };
+
+  const times = Array.from({ length: 48 }, (_, i) => {
+    const h = Math.floor(i / 2);
+    const min = (i % 2) * 30;
+    return `${String(h).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
+  });
+
+  return (
+    <div>
+      <div className="relative">
+        <input
+          value={text}
+          onChange={(e) => onText(e.target.value)}
+          onBlur={(e) => {
+            const t = e.target.value;
+            if (!t) return;
+            const hhmm = normalizeBirthTime(t);
+            if (hhmm) {
+              setText(hhmm);
+              onChange(hhmm);
+            }
+          }}
+          placeholder="HH:MM (e.g. 05:30 AM)"
+          aria-label="Birth Time"
+          className={cn(inputCls, "pr-10")}
+        />
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? "Close time picker" : "Open time picker"}
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-golden transition hover:bg-white/10"
+        >
+          <Clock className="h-4 w-4" />
+        </button>
+      </div>
+
+      {open ? (
+        <div className="mt-2 max-h-44 overflow-y-auto rounded-xl border border-premium-gold/30 bg-white/[0.04] p-2">
+          <div className="grid grid-cols-4 gap-1">
+            {times.map((t) => {
+              const selected = t === value;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => pick(t)}
+                  className={cn(
+                    "rounded-lg px-1 py-1.5 text-[11px] font-semibold transition",
+                    selected
+                      ? "bg-[#FACC15] text-slate-900"
+                      : "text-slate-200 hover:bg-white/10"
+                  )}
+                >
+                  {formatSlot12h(t)}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+
+      {invalid ? (
+        <p className="mt-1 text-[11px] text-red-400">
+          Use HH:MM or HH:MM AM/PM format.
+        </p>
       ) : null}
     </div>
   );

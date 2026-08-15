@@ -104,6 +104,14 @@ export function NavMenu({ className }: { className?: string }) {
                       </Link>
                     );
                   })}
+                  <div className="mt-1 border-t border-golden/25 pt-1">
+                    <Link
+                      href={item.href}
+                      className="block rounded-xl px-4 py-2.5 text-sm font-bold text-royal-purple transition-colors hover:bg-golden/10"
+                    >
+                      All Consultations →
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
