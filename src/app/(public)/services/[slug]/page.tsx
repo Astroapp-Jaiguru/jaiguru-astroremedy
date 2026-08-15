@@ -20,6 +20,7 @@ import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { whatsappLink } from "@/config/site";
 import { ShareButtons } from "@/components/social/share-buttons";
 import { absoluteUrl } from "@/lib/share";
@@ -62,9 +63,10 @@ export default async function ServiceDetailPage({ params }: Props) {
  const service = await getServiceBySlug(slug);
  if (!service) notFound();
 
-  const [{ contact }, razorpayKeyId] = await Promise.all([
+  const [{ contact }, razorpayKeyId, availableModes] = await Promise.all([
     getSiteData(),
     getRazorpayKeyId(),
+    getVisibleModes(),
   ]);
   const converted = await servicePriceDisplay(service.price, service.priceLabel);
   const priceLabel =
@@ -252,6 +254,7 @@ className="text-sm leading-relaxed text-[color:var(--jaiguru-page-text-muted)]"
   kind={service.categorySlug?.includes("course") ? "course" : "consultation"}
   durationMinutes={service.slotDuration ?? undefined}
   defaultMode={service.mode}
+  availableModes={availableModes}
   pageUrl={`/services/${service.slug}`}
   />
   <a

@@ -1,14 +1,19 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { CONSULTATION_TOPICS } from "@/lib/consultation-topics";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
+import { ConsultationPricing } from "@/components/shop/consultation-pricing";
 
 /**
  * Consultations landing page — lists all 9 consultation topics as premium
- * glass cards. Each links to its dedicated /consultations/<slug> page.
+ * glass cards with three pricing options (Online / Offline / Home Visit,
+ * filtered by the admin Service Mode Settings). Each links to its
+ * dedicated /consultations/<slug> page.
  */
-export default function ConsultationsPage() {
+export default async function ConsultationsPage() {
+  const availableModes = await getVisibleModes();
   return (
     <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -38,13 +43,16 @@ export default function ConsultationsPage() {
                     {topic.description}
                   </p>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="whitespace-nowrap rounded-full bg-[#FACC15]/15 px-3 py-1 text-xs font-semibold text-[#FACC15]">
-                    {topic.fee}
-                  </span>
-                  <span className="flex items-center gap-1 text-sm font-semibold text-[#FACC15] transition group-hover:gap-2 group-hover:text-[#F97316]">
-                    Know More <ChevronRight className="h-4 w-4" />
-                  </span>
+                <div className="space-y-3">
+                  <ConsultationPricing
+                    topic={topic}
+                    availableModes={availableModes}
+                  />
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-[#FACC15] transition group-hover:gap-2 group-hover:text-[#F97316]">
+                      Know More <ChevronRight className="h-4 w-4" />
+                    </span>
+                  </div>
                 </div>
               </Link>
             </RevealItem>

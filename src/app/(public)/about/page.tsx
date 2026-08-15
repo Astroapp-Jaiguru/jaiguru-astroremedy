@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { MapPin, Award, ShieldCheck, Building2, Gem, IndianRupee } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
+import { PaymentButton } from "@/components/shop/payment-button";
+import { CallButton } from "@/components/layout/cta-buttons";
 import { siteConfig, whatsappLink, telLink } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import { getRazorpayKeyId } from "@/lib/payments/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-const data = await getSiteData();
+  const [data, razorpayKeyId] = await Promise.all([
+    getSiteData(),
+    getRazorpayKeyId(),
+  ]);
   const contact = data.contact;
   const business = siteConfig.business;
   const astrologer = data.astrologer;
@@ -178,9 +183,18 @@ const data = await getSiteData();
  </p>
  </div>
  <div className="mt-6 flex flex-wrap gap-3">
- <WhatsAppButton
- href={whatsappLink("Hello JAIGURU ASTROREMEDY, I want to book a consultation.")}
+ <PaymentButton
  label="Book Consultation"
+ itemName="Consultation"
+ priceLabel={`₹${contact.consultationFee}`}
+ price={`${contact.consultationFee}`}
+ upiId={contact.upiId}
+ whatsappNumber={contact.whatsappNumber}
+ whatsappMessage={whatsappLink("Hello JAIGURU ASTROREMEDY, I want to book a consultation.")}
+ razorpayKeyId={razorpayKeyId}
+ kind="consultation"
+ durationMinutes={30}
+ pageUrl="/about"
  />
  <CallButton href={telLink(contact.callNumber)} label="Call Now" />
  </div>

@@ -6,15 +6,19 @@ import { whatsappLink, consultationMessage } from "@/config/site";
 import { siteConfig } from "@/config/site";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { CONSULTATION_TOPICS } from "@/lib/consultation-topics";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
+import { ConsultationPricing } from "@/components/shop/consultation-pricing";
 
 /**
  * Featured consultation cards (scope §7.5).
  * 9 cards on the celestial canvas with gold border, icon, title, short
- * description and a WhatsApp CTA (₹700 consultation fee). Each card links
- * to its dedicated /consultations/<slug> page.
+ * description, three pricing options (Online / Offline / Home Visit,
+ * filtered by the admin Service Mode Settings) and a WhatsApp CTA.
+ * Each card links to its dedicated /consultations/<slug> page.
  */
-export function ConsultationCards(): ReactElement {
+export async function ConsultationCards(): Promise<ReactElement> {
   const number = siteConfig.contact.whatsappNumber;
+  const availableModes = await getVisibleModes();
   return (
     <section
       id="consultations"
@@ -49,6 +53,12 @@ export function ConsultationCards(): ReactElement {
                 <p className="mb-5 flex-1 text-sm leading-relaxed text-slate-300/90">
                   {card.description}
                 </p>
+                <div className="mb-4">
+                  <ConsultationPricing
+                    topic={card}
+                    availableModes={availableModes}
+                  />
+                </div>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <Link
                     href={card.href}
@@ -63,7 +73,7 @@ export function ConsultationCards(): ReactElement {
                     className="btn-glow-whatsapp inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-whatsapp px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
                   >
                     <WhatsappIcon className="h-4 w-4" />
-                    Book @ {card.fee}
+                    Book Now
                   </a>
                 </div>
               </div>

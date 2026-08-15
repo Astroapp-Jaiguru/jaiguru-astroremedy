@@ -76,6 +76,11 @@ export const adminNav: AdminNavGroup[] = [
         href: "/admin/payment-settings",
         icon: CreditCard,
       },
+      {
+        title: "Service Mode Settings",
+        href: "/admin/service-modes",
+        icon: CalendarDays,
+      },
     ],
   },
   {

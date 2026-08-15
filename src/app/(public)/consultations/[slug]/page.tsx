@@ -19,6 +19,8 @@ import {
 } from "@/lib/shop-data";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
+import { ConsultationPricing } from "@/components/shop/consultation-pricing";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
 import { durationLabel } from "@/lib/booking";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
@@ -72,12 +74,14 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
   const topic = getConsultationTopic(slug);
   if (!topic) notFound();
 
-  const [{ contact }, featuredProducts, serviceGroups, razorpayKeyId] = await Promise.all([
-    getSiteData(),
-    getFeaturedProducts(12),
-    getFeaturedServices(),
-    getRazorpayKeyId(),
-  ]);
+  const [{ contact }, featuredProducts, serviceGroups, razorpayKeyId, availableModes] =
+    await Promise.all([
+      getSiteData(),
+      getFeaturedProducts(12),
+      getFeaturedServices(),
+      getRazorpayKeyId(),
+      getVisibleModes(),
+    ]);
 
   const number = contact.whatsappNumber;
   const waMessage = whatsappLink(consultationMessage(topic.title), number);
@@ -146,6 +150,12 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#D4AF37]">
                     {topic.fee} · {durationLabel(topic.durationMinutes)}
                   </p>
+                  <div className="mt-3 max-w-sm">
+                    <ConsultationPricing
+                      topic={topic}
+                      availableModes={availableModes}
+                    />
+                  </div>
                   <h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">
                     {topic.title}
                   </h1>
@@ -264,6 +274,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                     number={number}
                     upiId={contact.upiId}
                     razorpayKeyId={razorpayKeyId}
+                    availableModes={availableModes}
                   />
                 </RevealItem>
               ))}
@@ -320,11 +331,13 @@ function RelatedServiceCard({
   number,
   upiId,
   razorpayKeyId,
+  availableModes,
 }: {
   service: FeaturedService;
   number: string;
   upiId: string;
   razorpayKeyId: string | null;
+  availableModes: string[];
 }) {
   const price = service.priceLabel ?? formatPrice(service.price);
   const waMessage = whatsappLink(
@@ -367,6 +380,7 @@ function RelatedServiceCard({
           razorpayKeyId={razorpayKeyId}
           kind="course"
           defaultMode={service.mode}
+          availableModes={availableModes}
           pageUrl={`/services/${service.slug}`}
         />
       </div>

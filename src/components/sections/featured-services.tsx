@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { BookOpen, GraduationCap, Wifi, Building2, Home } from "lucide-react";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
@@ -11,6 +11,7 @@ import {
 import { whatsappLink, serviceBookingMessage } from "@/config/site";
 import { displayPriceForViewer } from "@/lib/pricing/geo";
 import { getSiteData } from "@/lib/site-data";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import type { ReactElement } from "react";
@@ -33,11 +34,13 @@ async function ServiceCard({
   group,
   number,
   upiId,
+  availableModes,
 }: {
   service: FeaturedService;
   group: ServiceGroup;
   number: string;
   upiId: string;
+  availableModes: string[];
 }) {
   const { label, Icon } = modeBadge(service.mode);
   const conv =
@@ -97,6 +100,7 @@ async function ServiceCard({
             whatsappMessage={waMessage}
             kind="course"
             defaultMode={service.mode}
+            availableModes={availableModes}
             pageUrl={`/services/${service.slug}`}
           />
         </div>
@@ -106,14 +110,16 @@ async function ServiceCard({
 }
 
 export async function FeaturedServices(): Promise<ReactElement> {
-  const [groups, { contact }] = await Promise.all([
+  const [groups, { contact }, modes] = await Promise.all([
     getFeaturedServices(),
     getSiteData(),
+    getVisibleModes(),
   ]);
   if (groups.length === 0) return <></>;
 
   const number = contact.whatsappNumber;
   const upiId = contact.upiId;
+  const availableModes = [...modes];
 
   return (
     <section
@@ -150,6 +156,7 @@ export async function FeaturedServices(): Promise<ReactElement> {
                       group={group}
                       number={number}
                       upiId={upiId}
+                      availableModes={availableModes}
                     />
                   </RevealItem>
                 ))}

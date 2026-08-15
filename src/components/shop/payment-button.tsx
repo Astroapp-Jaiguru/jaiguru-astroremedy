@@ -60,6 +60,7 @@ import { cn } from "@/lib/utils";
 
 export type OrderKind = "product" | "course" | "consultation";
 
+/** Display labels for the service modes (kept in sync with ModeId). */
 const MODE_OPTIONS = ["Online", "Offline", "Home Service"] as const;
 
 function modeLabel(m: string | null | undefined): string {
@@ -89,6 +90,8 @@ export interface PaymentButtonProps {
   defaultMode?: string;
   pageUrl?: string;
   siteName?: string;
+  /** Visible service modes from the admin "Service Mode Settings" (mode ids). */
+  availableModes?: string[];
 }
 
 type Step = "date" | "time" | "details" | "payment" | "confirm" | "done";
@@ -231,7 +234,19 @@ function UnifiedOrderModal(
   const nameValid = name.trim().length >= 2;
   const phoneValid = digits(phone).length >= 10;
   const waValid = digits(waNumber).length >= 10;
-  const modeValid = isCourse && MODE_OPTIONS.includes(preferredMode as (typeof MODE_OPTIONS)[number]);
+
+  const modeOptions = useMemo(() => {
+    const ids = props.availableModes?.length
+      ? props.availableModes
+      : ["online", "offline", "homeService"];
+    const labels: Record<string, string> = {
+      online: "Online",
+      offline: "Offline",
+      homeService: "Home Service",
+    };
+    return ids.map((m) => labels[m] ?? m);
+  }, [props.availableModes]);
+  const modeValid = isCourse && modeOptions.includes(preferredMode);
   const detailsValid = nameValid && phoneValid && waValid && (isCourse ? modeValid : true);
 
   const orderFields = {
@@ -719,7 +734,7 @@ function UnifiedOrderModal(
                             Preferred Mode *
                           </p>
                           <div className="grid grid-cols-3 gap-2">
-                            {MODE_OPTIONS.map((m) => (
+                            {modeOptions.map((m) => (
                               <button
                                 key={m}
                                 type="button"

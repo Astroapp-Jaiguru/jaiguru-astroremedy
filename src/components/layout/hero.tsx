@@ -1,10 +1,10 @@
 import { LucideIcon, Receipt, Store, Star } from "lucide-react";
 import {
-  WhatsAppButton,
   CallButton,
   OutlineButton,
 } from "@/components/layout/cta-buttons";
 import { WhatsappIcon } from "@/components/layout/social-icons";
+import { ServiceNavButton } from "@/components/layout/service-nav-modal";
 import { getSiteData } from "@/lib/site-data";
 import { whatsappLink } from "@/config/site";
 import { Starfield } from "@/components/motion/starfield";
@@ -147,11 +147,9 @@ export async function Hero() {
 
           {/* CTA buttons */}
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
-            <WhatsAppButton
-              href={waMessage}
-              label={hero.buttons.whatsapp.label}
-              size="lg"
-              className="w-full sm:w-auto"
+            <ServiceNavButton
+              whatsappNumber={contact.whatsappNumber}
+              waMessage={waMessage}
             />
             <CallButton
               href={`tel:${contact.callNumber}`}

@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { FONT_VARIABLE_CLASSES } from "@/lib/fonts";
 import { getSeoDefaults } from "@/lib/seo-data";
 import { getSiteData } from "@/lib/site-data";
+import { InstallBanner } from "@/components/layout/install-banner";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -28,7 +29,14 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords: seo.keywords,
     icons: {
       icon: favicon,
+      apple: "/apple-touch-icon.png",
     },
+    manifest: "/manifest.webmanifest",
+    appleWebApp: {
+      title: "Jaiguru Astroremedy",
+      statusBarStyle: "black-translucent",
+    },
+    themeColor: "#0B1120",
     openGraph: {
       type: "website",
       siteName: siteConfig.name,
@@ -54,6 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         {children}
         <Toaster position="top-right" richColors />
+        <InstallBanner />
       </body>
     </html>
   );

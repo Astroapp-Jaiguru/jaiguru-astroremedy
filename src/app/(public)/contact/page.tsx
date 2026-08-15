@@ -10,13 +10,14 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ContactForm } from "@/components/contact/contact-form";
+import { PaymentButton } from "@/components/shop/payment-button";
 import {
- WhatsAppButton,
  CallButton,
 } from "@/components/layout/cta-buttons";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { getServices } from "@/lib/services-data";
+import { getRazorpayKeyId } from "@/lib/payments/settings";
 import { whatsappLink, telLink, siteConfig } from "@/config/site";
 
 export const dynamic = "force-dynamic";
@@ -28,8 +29,12 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
- const [data, services] = await Promise.all([getSiteData(), getServices()]);
- const contact = data.contact;
+  const [data, services, razorpayKeyId] = await Promise.all([
+    getSiteData(),
+    getServices(),
+    getRazorpayKeyId(),
+  ]);
+  const contact = data.contact;
 
 const mapsQuery = encodeURIComponent(
     `${contact.address}, ${contact.landmark}`.trim()
@@ -209,9 +214,18 @@ const mapsQuery = encodeURIComponent(
  </p>
  </div>
  <div className="mt-6 flex flex-wrap gap-3">
- <WhatsAppButton
- href={enquiryMessage}
+ <PaymentButton
  label="Book Consultation"
+ itemName="Consultation"
+ priceLabel={`₹${contact.consultationFee}`}
+ price={`${contact.consultationFee}`}
+ upiId={contact.upiId}
+ whatsappNumber={contact.whatsappNumber}
+ whatsappMessage={enquiryMessage}
+ razorpayKeyId={razorpayKeyId}
+ kind="consultation"
+ durationMinutes={30}
+ pageUrl="/contact"
  />
  <CallButton
  href={telLink(contact.callNumber)}
