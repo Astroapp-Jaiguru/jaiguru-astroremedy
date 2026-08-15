@@ -24,21 +24,21 @@ const NAV_CARDS = [
     title: "Book a Consultation",
     subtitle: "Astrology, numerology, vastu & more — ₹700",
     icon: Calendar,
-    accent: "text-golden",
+    accent: "text-[#B8860B]",
   },
   {
     href: "/services",
     title: "Book a Course",
     subtitle: "Vedic astrology & yoga courses — online or in person",
     icon: GraduationCap,
-    accent: "text-saffron",
+    accent: "text-orange-600",
   },
   {
     href: "/products",
     title: "Buy a Product",
     subtitle: "Rudraksha, gemstones & spiritual remedies",
     icon: ShoppingBag,
-    accent: "text-emerald-300",
+    accent: "text-emerald-600",
   },
 ];
 
@@ -71,20 +71,20 @@ export function ServiceNavModal({
         overlayClassName="bg-deep-navy/70 backdrop-blur-md"
         className="max-w-[calc(100%-2rem)] sm:max-w-md"
       >
-        <button
-          type="button"
-          onClick={() => onOpenChange(false)}
-          aria-label="Close"
-          className="absolute right-4 top-4 z-10 rounded-full p-1.5 text-slate-300 transition hover:bg-white/10 hover:text-white"
-        >
-          <X className="h-5 w-5" />
-        </button>
-        <DialogTitle className="font-display text-xl font-bold text-white">
-          What would you like to book?
-        </DialogTitle>
-        <p className="mt-1 text-sm text-slate-300/80">
-          Choose a service to get started.
-        </p>
+<button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            aria-label="Close"
+            className="absolute right-4 top-4 z-10 rounded-full p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <DialogTitle className="font-display text-xl font-bold text-gray-900">
+            What would you like to book?
+          </DialogTitle>
+          <p className="mt-1 text-sm text-gray-500">
+            Choose a service to get started.
+          </p>
 
         <div className="mt-5 grid gap-3">
           {NAV_CARDS.map(({ href, title, subtitle, icon: Icon, accent }) => (
@@ -92,7 +92,7 @@ export function ServiceNavModal({
               key={href}
               href={href}
               onClick={() => onOpenChange(false)}
-              className="group flex items-center gap-4 rounded-2xl border border-premium-gold/40 bg-white/5 p-4 transition hover:border-premium-gold/80 hover:bg-white/10"
+              className="group flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-premium-gold hover:bg-golden/10 hover:shadow-[0_8px_30px_rgba(212,175,55,0.25)]"
             >
               <span
                 className={cn(
@@ -103,8 +103,8 @@ export function ServiceNavModal({
                 <Icon className="h-6 w-6" />
               </span>
               <span className="flex-1">
-                <span className="block font-semibold text-white">{title}</span>
-                <span className="mt-0.5 block text-xs leading-relaxed text-slate-300/80">
+                <span className="block text-lg font-bold text-gray-900">{title}</span>
+                <span className="mt-1 block text-sm font-medium leading-relaxed text-gray-700">
                   {subtitle}
                 </span>
               </span>
@@ -125,7 +125,7 @@ export function ServiceNavModal({
           <WhatsappIcon className="h-5 w-5" />
           Talk to Executive
         </a>
-        <p className="mt-2 text-center text-[11px] text-slate-400">
+        <p className="mt-2 text-center text-[11px] text-gray-500">
           WhatsApp: {whatsappNumber}
         </p>
       </DialogContent>
