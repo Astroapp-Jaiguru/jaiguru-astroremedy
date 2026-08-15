@@ -10,16 +10,11 @@ import {
 } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ContactForm } from "@/components/contact/contact-form";
-import { PaymentButton } from "@/components/shop/payment-button";
-import {
- CallButton,
-} from "@/components/layout/cta-buttons";
+import { CallButton } from "@/components/layout/cta-buttons";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { getSiteData } from "@/lib/site-data";
 import { getServices } from "@/lib/services-data";
-import { getRazorpayKeyId } from "@/lib/payments/settings";
-import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { whatsappLink, telLink, siteConfig } from "@/config/site";
 
 export const dynamic = "force-dynamic";
@@ -31,11 +26,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const [data, services, razorpayKeyId, availableModes] = await Promise.all([
+  const [data, services] = await Promise.all([
     getSiteData(),
     getServices(),
-    getRazorpayKeyId(),
-    getVisibleModes(),
   ]);
   const contact = data.contact;
 
@@ -44,20 +37,6 @@ const mapsQuery = encodeURIComponent(
   );
   const mapsEmbedUrl = `https://www.google.com/maps?q=${mapsQuery}&output=embed`;
   const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`;
-
- const enquiryMessage = whatsappLink(
- [
- "Hello JAIGURU ASTROREMEDY,",
- "",
- "I want to book a consultation.",
- "",
- "My Name:",
- "My Date of Birth:",
- "My Place of Birth:",
- "Preferred Date & Time:",
- ].join("\n"),
- contact.whatsappNumber
- );
 
  const contactCards = [
  {
@@ -228,25 +207,16 @@ return card.href ? (
  </p>
  </div>
  <div className="mt-6 flex flex-wrap gap-3">
- <PaymentButton
- label="Book Consultation"
- itemName="Consultation"
- priceLabel={`₹${contact.consultationFee}`}
- price={`${contact.consultationFee}`}
- homePriceLabel="₹1,500"
- upiId={contact.upiId}
- whatsappNumber={contact.whatsappNumber}
- whatsappMessage={enquiryMessage}
- razorpayKeyId={razorpayKeyId}
- kind="consultation"
- durationMinutes={30}
- availableModes={availableModes}
- pageUrl="/contact"
- />
- <CallButton
- href={telLink(contact.callNumber)}
- label="Call Now"
- />
+<WhatsappNavTrigger
+  whatsappNumber={contact.whatsappNumber}
+  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white shadow-lg shadow-whatsapp/25 transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
+  >
+  Book Consultation
+  </WhatsappNavTrigger>
+  <CallButton
+  href={telLink(contact.callNumber)}
+  label="Call Now"
+  />
  </div>
  </div>
 

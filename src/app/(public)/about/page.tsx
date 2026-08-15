@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { MapPin, Award, ShieldCheck, Building2, Gem, IndianRupee } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { PaymentButton } from "@/components/shop/payment-button";
 import { CallButton } from "@/components/layout/cta-buttons";
-import { siteConfig, whatsappLink, telLink } from "@/config/site";
+import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
+import { siteConfig, telLink } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
-import { getRazorpayKeyId } from "@/lib/payments/settings";
-import { getVisibleModes } from "@/lib/mode-visibility-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,11 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [data, razorpayKeyId, availableModes] = await Promise.all([
-    getSiteData(),
-    getRazorpayKeyId(),
-    getVisibleModes(),
-  ]);
+  const data = await getSiteData();
   const contact = data.contact;
   const business = siteConfig.business;
   const astrologer = data.astrologer;
@@ -185,22 +179,13 @@ export default async function AboutPage() {
  </p>
  </div>
  <div className="mt-6 flex flex-wrap gap-3">
- <PaymentButton
- label="Book Consultation"
- itemName="Consultation"
- priceLabel={`₹${contact.consultationFee}`}
- price={`${contact.consultationFee}`}
- homePriceLabel="₹1,500"
- upiId={contact.upiId}
- whatsappNumber={contact.whatsappNumber}
- whatsappMessage={whatsappLink("Hello JAIGURU ASTROREMEDY, I want to book a consultation.")}
- razorpayKeyId={razorpayKeyId}
- kind="consultation"
- durationMinutes={30}
- availableModes={availableModes}
- pageUrl="/about"
- />
- <CallButton href={telLink(contact.callNumber)} label="Call Now" />
+<WhatsappNavTrigger
+  whatsappNumber={contact.whatsappNumber}
+  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-whatsapp px-6 py-3 text-sm font-bold text-white shadow-lg shadow-whatsapp/25 transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
+  >
+  Book Consultation
+  </WhatsappNavTrigger>
+  <CallButton href={telLink(contact.callNumber)} label="Call Now" />
  </div>
  </div>
  </div>
