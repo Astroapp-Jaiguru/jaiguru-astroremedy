@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Sparkles, X } from "lucide-react";
+import {
+  Calendar,
+  GraduationCap,
+  ShoppingBag,
+  Sparkles,
+  X,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,21 +23,21 @@ const NAV_CARDS = [
     href: "/consultations",
     title: "Book a Consultation",
     subtitle: "Astrology, numerology, vastu & more — ₹700",
-    emoji: "📅",
+    icon: Calendar,
     accent: "text-golden",
   },
   {
     href: "/services",
     title: "Book a Course",
     subtitle: "Vedic astrology & yoga courses — online or in person",
-    emoji: "📚",
+    icon: GraduationCap,
     accent: "text-saffron",
   },
   {
     href: "/products",
     title: "Buy a Product",
     subtitle: "Rudraksha, gemstones & spiritual remedies",
-    emoji: "🛍️",
+    icon: ShoppingBag,
     accent: "text-emerald-300",
   },
 ];
@@ -81,15 +87,20 @@ export function ServiceNavModal({
         </p>
 
         <div className="mt-5 grid gap-3">
-          {NAV_CARDS.map(({ href, title, subtitle, emoji, accent }) => (
+          {NAV_CARDS.map(({ href, title, subtitle, icon: Icon, accent }) => (
             <Link
               key={href}
               href={href}
               onClick={() => onOpenChange(false)}
               className="group flex items-center gap-4 rounded-2xl border border-premium-gold/40 bg-white/5 p-4 transition hover:border-premium-gold/80 hover:bg-white/10"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-premium-gold/50 bg-golden/10 text-lg">
-                {emoji}
+              <span
+                className={cn(
+                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-premium-gold/50 bg-golden/10",
+                  accent
+                )}
+              >
+                <Icon className="h-6 w-6" />
               </span>
               <span className="flex-1">
                 <span className="block font-semibold text-white">{title}</span>
