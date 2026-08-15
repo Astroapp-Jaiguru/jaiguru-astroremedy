@@ -241,10 +241,10 @@ export async function Hero() {
                     className="glass-frost rounded-[18px] px-2 py-3 text-center shadow-[0_12px_30px_rgba(0,0,0,0.25)]"
                   >
                     <FloatingIcon name={card.icon} />
-                    <p className="mt-1.5 text-[10px] font-semibold text-white">
+                    <p className="mt-1.5 text-[10px] font-semibold text-deep-navy">
                       {card.label}
                     </p>
-                    <p className="text-[12px] font-bold text-golden">
+                    <p className="text-[12px] font-bold text-royal-purple">
                       {card.value}
                     </p>
                   </div>
@@ -272,7 +272,7 @@ function SparkleDot() {
 
 function FloatingIcon({ name }: { name: string }) {
   const Icon = FLOATING_ICONS[name] ?? Receipt;
-  return <Icon className="mx-auto h-6 w-6 text-golden" />;
+  return <Icon className="mx-auto h-6 w-6 text-royal-purple" />;
 }
 
 function FloatingCard({
@@ -286,7 +286,7 @@ function FloatingCard({
 }) {
   return (
     <div className="glass-frost flex items-center gap-2.5 rounded-[18px] px-4 py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-golden/20">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-royal-purple/15">
         <FloatingIcon name={icon} />
       </span>
       <span>
