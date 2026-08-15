@@ -18,6 +18,7 @@ import { WhatsappIcon } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { getServices } from "@/lib/services-data";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { whatsappLink, telLink, siteConfig } from "@/config/site";
 
 export const dynamic = "force-dynamic";
@@ -29,10 +30,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const [data, services, razorpayKeyId] = await Promise.all([
+  const [data, services, razorpayKeyId, availableModes] = await Promise.all([
     getSiteData(),
     getServices(),
     getRazorpayKeyId(),
+    getVisibleModes(),
   ]);
   const contact = data.contact;
 
@@ -219,12 +221,14 @@ const mapsQuery = encodeURIComponent(
  itemName="Consultation"
  priceLabel={`₹${contact.consultationFee}`}
  price={`${contact.consultationFee}`}
+ homePriceLabel="₹1,500"
  upiId={contact.upiId}
  whatsappNumber={contact.whatsappNumber}
  whatsappMessage={enquiryMessage}
  razorpayKeyId={razorpayKeyId}
  kind="consultation"
  durationMinutes={30}
+ availableModes={availableModes}
  pageUrl="/contact"
  />
  <CallButton

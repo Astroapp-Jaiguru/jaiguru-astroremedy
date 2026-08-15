@@ -6,6 +6,7 @@ import { CallButton } from "@/components/layout/cta-buttons";
 import { siteConfig, whatsappLink, telLink } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
+import { getVisibleModes } from "@/lib/mode-visibility-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [data, razorpayKeyId] = await Promise.all([
+  const [data, razorpayKeyId, availableModes] = await Promise.all([
     getSiteData(),
     getRazorpayKeyId(),
+    getVisibleModes(),
   ]);
   const contact = data.contact;
   const business = siteConfig.business;
@@ -188,12 +190,14 @@ export default async function AboutPage() {
  itemName="Consultation"
  priceLabel={`₹${contact.consultationFee}`}
  price={`${contact.consultationFee}`}
+ homePriceLabel="₹1,500"
  upiId={contact.upiId}
  whatsappNumber={contact.whatsappNumber}
  whatsappMessage={whatsappLink("Hello JAIGURU ASTROREMEDY, I want to book a consultation.")}
  razorpayKeyId={razorpayKeyId}
  kind="consultation"
  durationMinutes={30}
+ availableModes={availableModes}
  pageUrl="/about"
  />
  <CallButton href={telLink(contact.callNumber)} label="Call Now" />

@@ -183,12 +183,14 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                       itemName={topic.title}
                       priceLabel={topic.fee}
                       price={topic.fee}
+                      homePriceLabel={topic.homeFee}
                       upiId={contact.upiId}
                       whatsappNumber={number}
                       whatsappMessage={consultationMessage(topic.title)}
                       razorpayKeyId={razorpayKeyId}
                       kind="consultation"
                       durationMinutes={topic.durationMinutes}
+                      availableModes={availableModes}
                       pageUrl={`/consultations/${topic.slug}`}
                     />
                     <CallButton
@@ -274,7 +276,6 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                     number={number}
                     upiId={contact.upiId}
                     razorpayKeyId={razorpayKeyId}
-                    availableModes={availableModes}
                   />
                 </RevealItem>
               ))}
@@ -331,13 +332,11 @@ function RelatedServiceCard({
   number,
   upiId,
   razorpayKeyId,
-  availableModes,
 }: {
   service: FeaturedService;
   number: string;
   upiId: string;
   razorpayKeyId: string | null;
-  availableModes: string[];
 }) {
   const price = service.priceLabel ?? formatPrice(service.price);
   const waMessage = whatsappLink(
@@ -380,7 +379,6 @@ function RelatedServiceCard({
           razorpayKeyId={razorpayKeyId}
           kind="course"
           defaultMode={service.mode}
-          availableModes={availableModes}
           pageUrl={`/services/${service.slug}`}
         />
       </div>

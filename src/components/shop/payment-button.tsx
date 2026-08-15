@@ -49,19 +49,18 @@ import { cn } from "@/lib/utils";
 /**
  * Unified order modal (products, courses & consultations).
  * Two tabs:
- *   💬 Enquire First  -> professional message + big WhatsApp CTA
+ *   💬 Enquire First  -> professional message + big WhatsApp CTA (top of modal)
  *   📦 Order / Book Now -> steps per kind:
- *      - consultations:  Date & Slot (validated against the admin booking
- *        calendar) -> Your Details (incl. optional birth details) -> Payment
- *      - courses:        Your Details (preferred mode) -> Payment
+ *      - consultations:  Preferred Mode (Online / Offline / Home Visit,
+ *        filtered by admin Service Mode Settings) -> Date & Slot (validated
+ *        against the admin booking calendar) -> Your Details (incl. optional
+ *        birth details) -> Payment
+ *      - courses:        Your Details (mode is fixed on the card) -> Payment
  *      - products:       Your Details (delivery address) -> Payment
  *   Payment step reuses the existing UPI (PhonePe/QR/manual) + Razorpay flow.
  */
 
 export type OrderKind = "product" | "course" | "consultation";
-
-/** Display labels for the service modes (kept in sync with ModeId). */
-const MODE_OPTIONS = ["Online", "Offline", "Home Service"] as const;
 
 function modeLabel(m: string | null | undefined): string {
   if (!m) return "";
@@ -80,6 +79,8 @@ export interface PaymentButtonProps {
   itemName: string;
   priceLabel: string;
   price?: string | number | null;
+  /** Shown instead of priceLabel when a Home Visit consultation is selected. */
+  homePriceLabel?: string;
   upiId: string;
   whatsappNumber: string;
   whatsappMessage: string;
@@ -94,7 +95,7 @@ export interface PaymentButtonProps {
   availableModes?: string[];
 }
 
-type Step = "date" | "time" | "details" | "payment" | "confirm" | "done";
+type Step = "mode" | "date" | "time" | "details" | "payment" | "confirm" | "done";
 
 interface RazorpayOptions {
   key: string;
@@ -169,7 +170,7 @@ function UnifiedOrderModal(
   }, [pageUrl]);
 
   const [tab, setTab] = useState<"enquire" | "order">("order");
-  const [step, setStep] = useState<Step>(isConsultation ? "date" : "details");
+  const [step, setStep] = useState<Step>(isConsultation ? "mode" : "details");
 
   // Date & slot (consultations only)
   const [dates, setDates] = useState<string[]>([]);
@@ -242,25 +243,32 @@ function UnifiedOrderModal(
     const labels: Record<string, string> = {
       online: "Online",
       offline: "Offline",
-      homeService: "Home Service",
+      homeService: isConsultation ? "Home Visit" : "Home Service",
     };
     return ids.map((m) => labels[m] ?? m);
-  }, [props.availableModes]);
-  const modeValid = isCourse && modeOptions.includes(preferredMode);
-  const detailsValid = nameValid && phoneValid && waValid && (isCourse ? modeValid : true);
+  }, [props.availableModes, isConsultation]);
+
+  const homeAmount = extractAmount(props.homePriceLabel ?? "");
+  const isHomeVisit =
+    isConsultation && preferredMode === "Home Visit" && Boolean(props.homePriceLabel);
+  const effectiveAm = isHomeVisit && homeAmount ? homeAmount : am;
+  const effectivePriceLabel =
+    isHomeVisit && props.homePriceLabel ? props.homePriceLabel : priceLabel;
+
+  const detailsValid = nameValid && phoneValid && waValid;
 
   const orderFields = {
     itemName,
     itemType,
-    amount: am ?? priceLabel,
-    amountLabel: priceLabel,
+    amount: effectiveAm ?? effectivePriceLabel,
+    amountLabel: effectivePriceLabel,
     customerName: name.trim(),
     phone: phone.trim(),
     whatsappNumber: waNumber || undefined,
     email: email.trim() || undefined,
     preferredDate: date ?? undefined,
     preferredTime: slot || undefined,
-    preferredMode: isCourse ? preferredMode : undefined,
+    preferredMode: preferredMode || undefined,
     birthDate: isConsultation && birthDate ? birthDate : undefined,
     birthTime: isConsultation && birthTime ? birthTime : undefined,
     birthPlace: isConsultation && birthPlace.trim() ? birthPlace.trim() : undefined,
@@ -284,11 +292,11 @@ function UnifiedOrderModal(
     () =>
       buildUpiUri({
         pa: upiId,
-        am,
+        am: effectiveAm,
         tn: itemName,
         cu: "INR",
       }),
-    [upiId, am, itemName]
+    [upiId, effectiveAm, itemName]
   );
 
   // Load Razorpay checkout.js once (only when a Key ID is configured).
@@ -356,7 +364,7 @@ function UnifiedOrderModal(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...orderFields,
-          amount: am ?? Number.parseFloat(String(props.price ?? "0").replace(/[^\d.]/g, "")),
+          amount: effectiveAm ?? Number.parseFloat(String(props.price ?? "0").replace(/[^\d.]/g, "")),
           source: "order-modal-razorpay",
         }),
       });
@@ -395,6 +403,7 @@ function UnifiedOrderModal(
 
   const steps: { key: Step; label: string }[] = isConsultation
     ? [
+        { key: "mode", label: "Mode" },
         { key: "date", label: "Date" },
         { key: "time", label: "Time" },
         { key: "details", label: "Details" },
@@ -432,7 +441,7 @@ function UnifiedOrderModal(
             </DialogTitle>
             <div className="flex items-center gap-3">
               <span className="font-display text-2xl font-bold text-golden">
-                {priceLabel}
+                {effectivePriceLabel}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-whatsapp/15 px-2.5 py-1 text-[10px] font-semibold text-whatsapp">
                 <BadgeCheck className="h-3 w-3" /> Pay securely
@@ -561,7 +570,62 @@ function UnifiedOrderModal(
                 </div>
               ) : (
                 <>
-                  {/* STEP 1 — Date (consultations only) */}
+                  {/* STEP 1 — Preferred Mode (consultations only) */}
+                  {step === "mode" ? (
+                    <div key="step-mode" className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
+                      <p className="text-sm font-semibold text-white">
+                        Choose your preferred mode
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        How would you like the consultation to happen?
+                      </p>
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        {modeOptions.map((m) => {
+                          const Icon =
+                            m === "Home Visit"
+                              ? MapPin
+                              : m === "Offline"
+                                ? Clock
+                                : Smartphone;
+                          const selected = preferredMode === m;
+                          return (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => setPreferredMode(m)}
+                              className={cn(
+                                "flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-xs font-semibold transition",
+                                selected
+                                  ? "border-[#FACC15] bg-[#FACC15]/15 text-[#FACC15]"
+                                  : "border-premium-gold/30 bg-white/5 text-slate-200 hover:border-[#D4AF37]/60 hover:bg-white/10"
+                              )}
+                            >
+                              <Icon className="h-4 w-4" />
+                              {m}
+                              {isHomeVisit && selected ? (
+                                <span className="text-[10px] font-bold text-golden">
+                                  {props.homePriceLabel ?? ""}
+                                </span>
+                              ) : null}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {props.homePriceLabel ? (
+                        <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                          {modeOptions
+                            .map((m) =>
+                              m === "Home Visit"
+                                ? `${m} — ${props.homePriceLabel}`
+                                : `${m} — ₹${am}`
+                            )
+                            .join(" · ")}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  {/* STEP 2 — Date (consultations only) */}
                   {step === "date" ? (
                     <div key="step-date" className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
                       <p className="text-sm font-semibold text-white">Select a date</p>
@@ -611,7 +675,7 @@ function UnifiedOrderModal(
                     </div>
                   ) : null}
 
-                  {/* STEP 2 — Time (consultations only) */}
+                  {/* STEP 3 — Time (consultations only) */}
                   {step === "time" ? (
                     <div key="step-time" className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300">
                       <div className="flex items-center justify-between">
@@ -688,6 +752,11 @@ function UnifiedOrderModal(
                           <CalendarDays className="h-3.5 w-3.5 shrink-0" />
                           {formatDateKeyLong(date)} · {formatSlot12h(slot)} -{" "}
                           {slotEnd12h(slot, duration)}
+                          {preferredMode ? (
+                            <span className="ml-1 rounded-full bg-[#FACC15]/20 px-2 py-0.5 font-bold">
+                              {preferredMode}
+                            </span>
+                          ) : null}
                         </p>
                       ) : null}
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -727,31 +796,6 @@ function UnifiedOrderModal(
                           />
                         </Field>
                       </div>
-
-                      {isCourse ? (
-                        <div className="space-y-1.5">
-                          <p className="text-xs font-semibold text-slate-300">
-                            Preferred Mode *
-                          </p>
-                          <div className="grid grid-cols-3 gap-2">
-                            {modeOptions.map((m) => (
-                              <button
-                                key={m}
-                                type="button"
-                                onClick={() => setPreferredMode(m)}
-                                className={cn(
-                                  "rounded-xl border px-2 py-2.5 text-xs font-semibold transition",
-                                  preferredMode === m
-                                    ? "border-[#FACC15] bg-[#FACC15]/15 text-[#FACC15]"
-                                    : "border-premium-gold/30 bg-white/5 text-slate-200 hover:border-[#D4AF37]/60 hover:bg-white/10"
-                                )}
-                              >
-                                {m}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      ) : null}
 
                       {isConsultation ? (
                         <div className="space-y-1.5 rounded-2xl border border-premium-gold/30 bg-white/[0.03] p-3.5">
@@ -948,7 +992,7 @@ function UnifiedOrderModal(
                       <div className="rounded-2xl border border-premium-gold/40 bg-white/5 p-4 text-sm">
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-slate-300">{itemName}</span>
-                          <span className="shrink-0 font-display font-bold text-golden">{priceLabel}</span>
+                          <span className="shrink-0 font-display font-bold text-golden">{effectivePriceLabel}</span>
                         </div>
                         {isConsultation && date && slot ? (
                           <div className="mt-3 border-t border-white/10 pt-3">
@@ -961,7 +1005,7 @@ function UnifiedOrderModal(
                             </p>
                           </div>
                         ) : null}
-                        {isCourse && preferredMode ? (
+                        {(isCourse || isConsultation) && preferredMode ? (
                           <div className="mt-3 border-t border-white/10 pt-3">
                             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                               Preferred Mode
@@ -1042,6 +1086,27 @@ function UnifiedOrderModal(
                       >
                         <ChevronLeft className="h-4 w-4" />
                         Back
+                      </button>
+                    ) : null}
+{step === "date" && isConsultation ? (
+                      <button
+                        type="button"
+                        onClick={() => setStep("mode")}
+                        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-white/20 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:bg-white/5"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Back
+                      </button>
+                    ) : null}
+                    {step === "mode" ? (
+                      <button
+                        type="button"
+                        disabled={!preferredMode}
+                        onClick={() => setStep("date")}
+                        className="btn-glow-gold inline-flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316] px-4 py-3 text-sm font-bold text-slate-900 transition hover:brightness-105 disabled:opacity-40"
+                      >
+                        Continue
+                        <ChevronRight className="h-4 w-4" />
                       </button>
                     ) : null}
                     {step === "date" ? (
