@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
   if (!product) return { title: "Product not found" };
   const url = absoluteUrl(`/products/${product.slug}`);
+  const ogImage = absoluteUrl(`/api/og/products/${product.slug}`);
   return {
     title: `${product.name} | JAIGURU ASTROREMEDY`,
     description: product.shortDescription ?? product.longDescription ?? undefined,
@@ -52,12 +53,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: product.name,
       description:
         product.shortDescription ?? product.longDescription ?? undefined,
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: product.name,
       description:
         product.shortDescription ?? product.longDescription ?? undefined,
+      images: [ogImage],
     },
   };
 }

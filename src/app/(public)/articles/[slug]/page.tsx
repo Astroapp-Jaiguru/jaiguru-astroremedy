@@ -34,6 +34,7 @@ export async function generateMetadata({
   const description =
     article.metaDescription ||
     `Read "${article.title}" by ${article.authorName} — ${article.category} insights from JAIGURU ASTROREMEDY.`;
+  const ogImage = absoluteUrl(`/api/og/articles/${article.slug}`);
   return {
     title,
     description,
@@ -44,16 +45,14 @@ export async function generateMetadata({
       siteName: "JAIGURU ASTROREMEDY",
       title: article.metaTitle || article.title,
       description,
-      images: article.featuredImage
-        ? [{ url: article.featuredImage }]
-        : undefined,
+      images: [ogImage],
       publishedTime: article.publishDate.toISOString(),
     },
     twitter: {
       card: "summary_large_image",
       title: article.metaTitle || article.title,
       description,
-      images: article.featuredImage ? [article.featuredImage] : undefined,
+      images: [ogImage],
     },
   };
 }

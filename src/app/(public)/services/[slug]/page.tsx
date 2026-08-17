@@ -34,25 +34,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  const service = await getServiceBySlug(slug);
  if (!service) return {};
  const url = absoluteUrl(`/services/${service.slug}`);
+ const ogImage = absoluteUrl(`/api/og/services/${service.slug}`);
  const description =
   service.shortDescription ??
   `${service.name} — ${SERVICE_MODE_LABELS[service.mode]} service by Vedic Astrologer Arup Shastri (Jai Guru), Kolkata.`;
  return {
- title: `${service.name} | JAIGURU ASTROREMEDY`,
- description,
- alternates: { canonical: url },
- openGraph: {
-  type: "website",
-  url,
-  siteName: "JAIGURU ASTROREMEDY",
-  title: service.name,
+  title: `${service.name} | JAIGURU ASTROREMEDY`,
   description,
- },
- twitter: {
-  card: "summary_large_image",
-  title: service.name,
-  description,
- },
+  alternates: { canonical: url },
+  openGraph: {
+   type: "website",
+   url,
+   siteName: "JAIGURU ASTROREMEDY",
+   title: service.name,
+   description,
+   images: [ogImage],
+  },
+  twitter: {
+   card: "summary_large_image",
+   title: service.name,
+   description,
+   images: [ogImage],
+  },
  };
 }
 

@@ -45,6 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const topic = await getConsultationTopic(slug);
   if (!topic) return { title: "Consultation not found" };
   const url = absoluteUrl(`/consultations/${topic.slug}`);
+  const ogImage = absoluteUrl(`/api/og/consultations/${topic.slug}`);
   return {
     title: `${topic.title} | JAIGURU ASTROREMEDY`,
     description: topic.longDescription.slice(0, 160),
@@ -55,11 +56,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       siteName: "JAIGURU ASTROREMEDY",
       title: topic.title,
       description: topic.longDescription.slice(0, 160),
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: topic.title,
       description: topic.longDescription.slice(0, 160),
+      images: [ogImage],
     },
   };
 }
