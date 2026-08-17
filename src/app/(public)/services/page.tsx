@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, Sparkles } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
+import { IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import {
  getServices,
  SERVICE_MODE_LABELS,
@@ -111,16 +113,34 @@ export default async function ServicesPage({
  ) : (
  <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
  {services.map((s) => (
- <article
- key={s.id}
- className="group relative flex flex-col gap-4 overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-6 glass-card transition duration-300 hover:-translate-y-1 hover:border-premium-gold/60"
- >
- <div className="flex items-center justify-between gap-3">
- <ModeBadge mode={s.mode} />
- <span className="text-xs font-medium uppercase tracking-wider text-[#D4AF37]">
- {s.categoryName}
- </span>
- </div>
+<article
+  key={s.id}
+  className="group relative flex flex-col overflow-hidden rounded-[var(--jaiguru-service-card-radius)] glass-card transition duration-300 hover:-translate-y-1 hover:border-premium-gold/60"
+  >
+  <div className="relative aspect-[16/9] overflow-hidden bg-deep-navy">
+  {s.imageUrl ? (
+  <Image
+  src={s.imageUrl}
+  alt={s.name}
+  width={640}
+  height={360}
+  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+  />
+  ) : (
+  <div className={`flex h-full items-center justify-center ${IMAGE_FALLBACK_STYLES}`}>
+  <Sparkles className="h-12 w-12 text-golden/60" />
+  </div>
+  )}
+  <span className="absolute left-3 top-3 z-10 rounded-full bg-deep-navy/85 p-1 backdrop-blur">
+  <ModeBadge mode={s.mode} />
+  </span>
+  </div>
+  <div className="flex flex-1 flex-col gap-4 p-6">
+  <div className="flex items-center justify-between gap-3">
+  <span className="text-xs font-medium uppercase tracking-wider text-[#D4AF37]">
+  {s.categoryName}
+  </span>
+  </div>
  <div>
  <h3 className="font-display text-xl font-bold text-white">
  <Link href={`/services/${s.slug}`} className="hover:text-[#FACC15]">
@@ -162,11 +182,12 @@ export default async function ServicesPage({
  href={`/services/${s.slug}`}
  className="whitespace-nowrap rounded-full border-2 border-[#D4AF37] px-5 py-2 text-xs font-semibold text-[#FACC15] transition hover:bg-[#FACC15] hover:text-slate-900"
  >
- View Details
- </Link>
- </div>
- </article>
- ))}
+View Details
+  </Link>
+  </div>
+  </div>
+  </article>
+  ))}
  </div>
  )}
  </div>

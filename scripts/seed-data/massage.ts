@@ -6,7 +6,7 @@ export const massageArticles: ArticleSeed[] = [
     slug: "the-art-of-indian-head-massage-and-its-benefits",
     category: "Massage Therapy",
     tags: ["indian head massage", "champi", "stress relief", "ayurvedic massage"],
-    featuredImage: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Massage_on_shoulder.jpg/1280px-Massage_on_shoulder.jpg",
     metaTitle: "The Art of Indian Head Massage and Its Benefits",
     metaDescription:
       "Indian head massage (Champi) — the ancient Ayurvedic ritual that relieves stress, improves sleep and hair health. Techniques and benefits explained.",
@@ -17,7 +17,7 @@ export const massageArticles: ArticleSeed[] = [
     slug: "how-to-use-essential-oils-for-massage-therapy",
     category: "Massage Therapy",
     tags: ["essential oils", "aromatherapy", "massage oil", "blends"],
-    featuredImage: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Rosemary_Oil_in_a_bottle_and_rosemary_herb.jpg/1280px-Rosemary_Oil_in_a_bottle_and_rosemary_herb.jpg",
     metaTitle: "How to Use Essential Oils for Massage Therapy",
     metaDescription:
       "Essential oils for massage — choosing carrier oils, blending techniques, safe dilution and the best oils for relaxation, pain and energy.",
@@ -28,7 +28,7 @@ export const massageArticles: ArticleSeed[] = [
     slug: "massage-therapy-for-stress-and-anxiety-relief",
     category: "Massage Therapy",
     tags: ["massage for stress", "anxiety relief", "relaxation", "cortisol"],
-    featuredImage: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Classic_Massage_in_Fort_Worth%2C_Texas.jpg/1280px-Classic_Massage_in_Fort_Worth%2C_Texas.jpg",
     metaTitle: "Massage Therapy for Stress and Anxiety Relief",
     metaDescription:
       "How massage therapy lowers stress hormones and anxiety — the science of touch, the best massage styles and a simple self-massage routine.",
@@ -39,7 +39,7 @@ export const massageArticles: ArticleSeed[] = [
     slug: "the-benefits-of-deep-tissue-massage-for-busy-professionals",
     category: "Massage Therapy",
     tags: ["deep tissue massage", "professionals", "muscle pain", "desk work"],
-    featuredImage: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Back_Rub_massage_at_a_spa.jpg/1280px-Back_Rub_massage_at_a_spa.jpg",
     metaTitle: "The Benefits of Deep Tissue Massage for Busy Professionals",
     metaDescription:
       "Deep tissue massage for professionals — releasing desk-work tension, back and neck pain, improving posture, energy and productivity.",
@@ -50,7 +50,7 @@ export const massageArticles: ArticleSeed[] = [
     slug: "what-is-abhyanga-the-ayurvedic-self-massage-ritual",
     category: "Massage Therapy",
     tags: ["abhyanga", "ayurvedic massage", "self massage", "oil massage"],
-    featuredImage: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Ennappathy_ayurveda_%E0%B4%8E%E0%B4%A3%E0%B5%8D%E0%B4%A3%E0%B4%AA%E0%B5%8D%E0%B4%AA%E0%B4%BE%E0%B4%A4%E0%B5%8D%E0%B4%A4%E0%B4%BF.jpg/1280px-Ennappathy_ayurveda_%E0%B4%8E%E0%B4%A3%E0%B5%8D%E0%B4%A3%E0%B4%AA%E0%B5%8D%E0%B4%AA%E0%B4%BE%E0%B4%A4%E0%B5%8D%E0%B4%A4%E0%B4%BF.jpg",
     metaTitle: "What Is Abhyanga? The Ayurvedic Self-Massage Ritual",
     metaDescription:
       "Abhyanga — the Ayurvedic full-body oil self-massage. Learn the traditional method, oil selection by dosha, benefits and the complete ritual.",

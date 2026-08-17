@@ -6,7 +6,7 @@ export const rudrakshaArticles: ArticleSeed[] = [
     slug: "the-spiritual-power-of-5-mukhi-rudraksha",
     category: "Rudraksha",
     tags: ["5 mukhi rudraksha", "rudraksha benefits", "shiva", "japa"],
-    featuredImage: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/RudrakshaBeads.jpg/1280px-RudrakshaBeads.jpg",
     metaTitle: "The Spiritual Power of 5 Mukhi Rudraksha",
     metaDescription:
       "The 5 Mukhi Rudraksha is the most widely worn bead — learn its planetary power, spiritual benefits and correct way to wear it for peace and progress.",
@@ -18,7 +18,7 @@ export const rudrakshaArticles: ArticleSeed[] = [
     slug: "how-to-choose-the-right-rudraksha-for-your-needs",
     category: "Rudraksha",
     tags: ["rudraksha selection", "mukhi", "planets", "wearing"],
-    featuredImage: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Rudraksha_mala.jpg/1280px-Rudraksha_mala.jpg",
     metaTitle: "How to Choose the Right Rudraksha for Your Needs",
     metaDescription:
       "From 1 Mukhi to 14 Mukhi — how to choose the right Rudraksha bead for your goals, planet and spiritual path. A practical guide with wearing tips.",
@@ -30,7 +30,7 @@ export const rudrakshaArticles: ArticleSeed[] = [
     slug: "rudraksha-in-meditation-and-spiritual-growth",
     category: "Rudraksha",
     tags: ["rudraksha meditation", "japa mala", "spiritual growth", "dhyana"],
-    featuredImage: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Different_types_of_Japa_mala_%28prayer_beads%29_selling_in_Varanasi%2C_India.jpg/1280px-Different_types_of_Japa_mala_%28prayer_beads%29_selling_in_Varanasi%2C_India.jpg",
     metaTitle: "Rudraksha in Meditation and Spiritual Growth",
     metaDescription:
       "How to use Rudraksha in meditation and japa for deeper focus, inner peace and spiritual growth — mala basics, mantra practice and daily routine.",
@@ -42,7 +42,7 @@ export const rudrakshaArticles: ArticleSeed[] = [
     slug: "the-science-and-spirituality-behind-rudraksha-beads",
     category: "Rudraksha",
     tags: ["rudraksha science", "electromagnetic", "elyocarpus ganitrus", "energy"],
-    featuredImage: "https://images.unsplash.com/photo-1615634260167-c8cdede054de?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/4/45/Elaeocarpus_ganitrus_fruit_or_Rudraksha_fruit.jpg",
     metaTitle: "The Science and Spirituality Behind Rudraksha Beads",
     metaDescription:
       "Rudraksha is both scientific marvel and spiritual tool — explore the electromagnetic, medicinal and energetic evidence behind the sacred bead.",
@@ -53,7 +53,7 @@ export const rudrakshaArticles: ArticleSeed[] = [
     slug: "rudraksha-mala-a-guide-for-beginners",
     category: "Rudraksha",
     tags: ["rudraksha mala", "beginner guide", "japa", "108 beads"],
-    featuredImage: "https://images.unsplash.com/photo-1563720223185-11003d516935?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Japa_mala.jpg/1280px-Japa_mala.jpg",
     metaTitle: "Rudraksha Mala: A Guide for Beginners",
     metaDescription:
       "A beginner's guide to the Rudraksha mala — how to choose, energise, wear and use a 108-bead mala for japa, protection and daily spiritual practice.",

@@ -6,7 +6,7 @@ export const acupressureArticles: ArticleSeed[] = [
     slug: "what-is-acupressure-and-how-does-it-work",
     category: "Acupressure Therapy",
     tags: ["acupressure", "pressure points", "energy meridians", "natural therapy"],
-    featuredImage: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Acupuncture1-1.jpg",
     metaTitle: "What Is Acupressure and How Does It Work?",
     metaDescription:
       "Acupressure explained — pressure points, energy meridians and the science of touch therapy. How this needle-free healing art works and who it helps.",
@@ -17,7 +17,7 @@ export const acupressureArticles: ArticleSeed[] = [
     slug: "top-5-acupressure-points-for-relieving-stress",
     category: "Acupressure Therapy",
     tags: ["stress relief", "acupressure points", "self care", "anxiety"],
-    featuredImage: "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Reflexology_of_the_Hand.JPG/1280px-Reflexology_of_the_Hand.JPG",
     metaTitle: "Top 5 Acupressure Points for Relieving Stress",
     metaDescription:
       "The 5 best acupressure points for instant stress relief — Large Intestine 4, Pericardium 6, Yin Tang and more — with easy self-care instructions.",
@@ -28,7 +28,7 @@ export const acupressureArticles: ArticleSeed[] = [
     slug: "acupressure-for-back-pain-relief",
     category: "Acupressure Therapy",
     tags: ["back pain", "acupressure", "lower back", "natural pain relief"],
-    featuredImage: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/2/23/Man_lets_himself_massaging_in_Thailand_by_masseuse.jpg",
     metaTitle: "Acupressure for Back Pain Relief",
     metaDescription:
       "Acupressure points for back pain — Bladder 23, Governing Vessel 26 and more — a practical protocol for lower, upper and sciatic back pain.",
@@ -39,7 +39,7 @@ export const acupressureArticles: ArticleSeed[] = [
     slug: "how-to-use-acupressure-for-better-sleep",
     category: "Acupressure Therapy",
     tags: ["acupressure sleep", "insomnia", "better sleep", "evening routine"],
-    featuredImage: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Foot_massage_at_a_spa.jpg/1280px-Foot_massage_at_a_spa.jpg",
     metaTitle: "How to Use Acupressure for Better Sleep",
     metaDescription:
       "Acupressure for better sleep — the evening point sequence that calms the mind, releases body tension and prepares you for deep, restful sleep.",
@@ -50,7 +50,7 @@ export const acupressureArticles: ArticleSeed[] = [
     slug: "the-science-behind-acupressure-therapy",
     category: "Acupressure Therapy",
     tags: ["acupressure science", "meridians research", "endorphins", "therapy evidence"],
-    featuredImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/4/45/Reflexology_chart.png",
     metaTitle: "The Science Behind Acupressure Therapy",
     metaDescription:
       "The science of acupressure — meridians, nervous system response, endorphin release and clinical evidence behind this ancient pressure-point therapy.",

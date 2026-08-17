@@ -6,7 +6,7 @@ export const gemstonesArticles: ArticleSeed[] = [
     slug: "the-complete-guide-to-natural-gemstones-and-their-benefits",
     category: "Gemstones",
     tags: ["natural gemstones", "benefits", "vedic astrology", "ratna"],
-    featuredImage: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Gem.pebbles.800pix.jpg",
     metaTitle: "The Complete Guide to Natural Gemstones and Their Benefits",
     metaDescription:
       "A complete guide to natural gemstones — ruby, pearl, emerald, yellow sapphire, blue sapphire and more — their planetary powers and everyday benefits.",
@@ -18,7 +18,7 @@ export const gemstonesArticles: ArticleSeed[] = [
     slug: "why-lab-certified-gemstones-are-important",
     category: "Gemstones",
     tags: ["lab certificate", "gemstone quality", "natural stones", "buying guide"],
-    featuredImage: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/5/56/Magari_Gems%2C_Sri_Lanka%27s_Precious_Gemstone_Hub.png",
     metaTitle: "Why Lab-Certified Gemstones Are Important",
     metaDescription:
       "Lab-certified gemstones guarantee purity, origin and planetary energy. Learn how certificates protect your investment and your remedy results.",
@@ -42,7 +42,7 @@ export const gemstonesArticles: ArticleSeed[] = [
     slug: "the-difference-between-natural-and-synthetic-gemstones",
     category: "Gemstones",
     tags: ["synthetic vs natural", "lab grown", "gemstone education"],
-    featuredImage: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Amethyst._Magaliesburg%2C_South_Africa.jpg/1280px-Amethyst._Magaliesburg%2C_South_Africa.jpg",
     metaTitle: "The Difference Between Natural and Synthetic Gemstones",
     metaDescription:
       "Natural vs synthetic gemstones explained — chemistry, price, durability and astrological energy. Know exactly what you are buying before you pay.",
@@ -53,7 +53,7 @@ export const gemstonesArticles: ArticleSeed[] = [
     slug: "gemstone-therapy-for-health-and-wellness",
     category: "Gemstones",
     tags: ["gemstone therapy", "health", "wellness", "healing stones"],
-    featuredImage: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Heilsteine_2004-12-12.jpg",
     metaTitle: "Gemstone Therapy for Health and Wellness",
     metaDescription:
       "How gemstone therapy supports health and wellness — energy balancing for sleep, stress, immunity and vitality, guided by Vedic principles.",

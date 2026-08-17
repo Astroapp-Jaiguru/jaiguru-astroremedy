@@ -18,7 +18,7 @@ export const vastuArticles: ArticleSeed[] = [
     slug: "the-importance-of-directions-in-vastu-shastra",
     category: "Vastu",
     tags: ["vastu directions", "north east south west", "vaastu basics"],
-    featuredImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Navigational_compass.jpg/1280px-Navigational_compass.jpg",
     metaTitle: "The Importance of Directions in Vastu Shastra",
     metaDescription:
       "The eight directions of Vastu Shastra and what each rules — north, south, east, west and corners — with simple ways to activate the best energy.",

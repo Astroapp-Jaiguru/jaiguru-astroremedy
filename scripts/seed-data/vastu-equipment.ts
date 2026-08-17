@@ -6,7 +6,7 @@ export const vastuEquipmentArticles: ArticleSeed[] = [
     slug: "using-copper-pyramids-for-vastu-correction",
     category: "Vastu Equipment",
     tags: ["copper pyramid", "vastu correction", "pyramid energy", "cures"],
-    featuredImage: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/All_Gizah_Pyramids.jpg/1280px-All_Gizah_Pyramids.jpg",
     metaTitle: "Using Copper Pyramids for Vastu Correction",
     metaDescription:
       "Copper pyramids in Vastu — how pyramid energy neutralises defects, improves focus and harmony, and where to place them in home and office.",
@@ -17,7 +17,7 @@ export const vastuEquipmentArticles: ArticleSeed[] = [
     slug: "the-power-of-vastu-yantras-in-home-harmony",
     category: "Vastu Equipment",
     tags: ["vastu yantra", "shree yantra", "sri yantra", "home harmony"],
-    featuredImage: "https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Sri_Yantra_copper.jpg/1280px-Sri_Yantra_copper.jpg",
     metaTitle: "The Power of Vastu Yantras in Home Harmony",
     metaDescription:
       "Vastu yantras explained — the Shree Yantra, Vaastu Purush Yantra and planetary yantras — how geometric energy symbols restore home harmony.",
@@ -28,7 +28,7 @@ export const vastuEquipmentArticles: ArticleSeed[] = [
     slug: "feng-shui-and-vastu-a-guide-to-modern-living",
     category: "Vastu Equipment",
     tags: ["feng shui", "vastu vs feng shui", "modern living", "energy design"],
-    featuredImage: "https://images.unsplash.com/photo-1554995207-c18c203602cb?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Small_Feng_Shui_Compass%2C_c._1800-1894.jpg/1280px-Small_Feng_Shui_Compass%2C_c._1800-1894.jpg",
     metaTitle: "Feng Shui and Vastu: A Guide to Modern Living",
     metaDescription:
       "Feng Shui and Vastu compared — where the two ancient sciences agree, how they differ, and how to blend both for a balanced modern home.",
@@ -39,7 +39,7 @@ export const vastuEquipmentArticles: ArticleSeed[] = [
     slug: "how-to-choose-the-right-vastu-equipment-for-your-home",
     category: "Vastu Equipment",
     tags: ["vastu equipment", "pyramids", "crystals", "yantras", "choosing guide"],
-    featuredImage: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Wind_chime.jpg/1280px-Wind_chime.jpg",
     metaTitle: "How to Choose the Right Vastu Equipment for Your Home",
     metaDescription:
       "A practical guide to Vastu equipment — pyramids, yantras, crystals, wind chimes and more — and how to match each tool to your home's defect.",
@@ -50,7 +50,7 @@ export const vastuEquipmentArticles: ArticleSeed[] = [
     slug: "vastu-remedies-using-crystals-and-stones",
     category: "Vastu Equipment",
     tags: ["crystals", "vastu remedies", "healing stones", "home energy"],
-    featuredImage: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Crystals_002.jpg/1280px-Crystals_002.jpg",
     metaTitle: "Vastu Remedies Using Crystals and Stones",
     metaDescription:
       "Crystal remedies for Vastu — quartz, amethyst, citrine, tourmaline and more — where to place each stone to balance the energy of your home.",

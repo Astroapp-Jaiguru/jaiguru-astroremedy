@@ -6,7 +6,7 @@ export const astrologyArticles: ArticleSeed[] = [
     slug: "how-to-choose-the-right-gemstone-based-on-your-birth-chart",
     category: "Astrology",
     tags: ["gemstones", "birth chart", "vedic astrology", "remedies"],
-    featuredImage: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/b/b9/Natal_Chart_--_Adam.jpg",
     metaTitle: "How to Choose the Right Gemstone Based on Your Birth Chart",
     metaDescription:
       "Learn how to choose the right gemstone using your Vedic birth chart — planet mapping, eligibility, and lab-certified quality tips from Vedic astrologer Arup Shastri.",
@@ -28,7 +28,7 @@ export const astrologyArticles: ArticleSeed[] = [
     slug: "the-power-of-vedic-astrology-in-modern-life",
     category: "Astrology",
     tags: ["vedic astrology", "jyotish", "karma", "modern life"],
-    featuredImage: "https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Astro3.png",
     metaTitle: "The Power of Vedic Astrology in Modern Life",
     metaDescription:
       "Why Vedic astrology is more relevant than ever — career timing, relationships, health and direction in a fast world. Insights by astrologer Arup Shastri.",
@@ -50,7 +50,7 @@ export const astrologyArticles: ArticleSeed[] = [
     slug: "planetary-transits-and-their-impact-on-your-career",
     category: "Astrology",
     tags: ["transits", "career", "saturn", "jupiter", "dasha"],
-    featuredImage: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Solar_System_true_color.jpg/1280px-Solar_System_true_color.jpg",
     metaTitle: "Planetary Transits and Their Impact on Your Career",
     metaDescription:
       "How Saturn, Jupiter and Rahu-Ketu transits shape your career. Learn to time promotions, job changes and business decisions with Vedic transit analysis.",
@@ -72,7 +72,7 @@ export const astrologyArticles: ArticleSeed[] = [
     slug: "understanding-the-9-planets-in-vedic-astrology",
     category: "Astrology",
     tags: ["nine planets", "navagraha", "grahas", "jyotish basics"],
-    featuredImage: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Navgrah_idols_at_Maa_Durga_Sai_Baba_Temple_in_Orlando.jpg/1280px-Navgrah_idols_at_Maa_Durga_Sai_Baba_Temple_in_Orlando.jpg",
     metaTitle: "Understanding the 9 Planets in Vedic Astrology",
     metaDescription:
       "A simple guide to the nine grahas of Vedic astrology — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu and Ketu — and what each planet rules.",
@@ -96,7 +96,7 @@ export const astrologyArticles: ArticleSeed[] = [
     slug: "astrology-for-relationships-compatibility-and-remedies",
     category: "Astrology",
     tags: ["relationship compatibility", "kundli matching", "marriage", "remedies"],
-    featuredImage: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Aries_zodiac_sign%2C_Jantar_Mantar%2C_Jaipur%2C_India.jpg/1280px-Aries_zodiac_sign%2C_Jantar_Mantar%2C_Jaipur%2C_India.jpg",
     metaTitle: "Astrology for Relationships: Compatibility and Remedies",
     metaDescription:
       "How Vedic astrology reveals relationship compatibility — kundli matching, planetary causes of conflict, and simple remedies to restore harmony in love and marriage.",

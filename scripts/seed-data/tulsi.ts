@@ -6,7 +6,7 @@ export const tulsiArticles: ArticleSeed[] = [
     slug: "the-healing-power-of-tulsi-holy-basil",
     category: "Tulsi",
     tags: ["tulsi", "holy basil", "health benefits", "immunity"],
-    featuredImage: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Holy_Basil_edit2.jpg",
     metaTitle: "The Healing Power of Tulsi (Holy Basil)",
     metaDescription:
       "Tulsi (Holy Basil) is nature's most complete healer — immunity, stress relief, digestion and respiratory support backed by Ayurveda and modern science.",
@@ -17,7 +17,7 @@ export const tulsiArticles: ArticleSeed[] = [
     slug: "how-to-grow-and-care-for-tulsi-at-home",
     category: "Tulsi",
     tags: ["grow tulsi", "tulsi plant care", "gardening", "home garden"],
-    featuredImage: "https://images.unsplash.com/photo-1463320726281-696a485928c7?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Thulasi2.jpg/1280px-Thulasi2.jpg",
     metaTitle: "How to Grow and Care for Tulsi at Home",
     metaDescription:
       "Grow healthy Tulsi at home — pot selection, sunlight, watering, pruning and pest care. A complete beginner's guide to the sacred basil plant.",
@@ -28,7 +28,7 @@ export const tulsiArticles: ArticleSeed[] = [
     slug: "tulsi-in-ayurveda-ancient-wisdom-for-modern-health",
     category: "Tulsi",
     tags: ["tulsi ayurveda", "dosha", "rasayana", "holy basil"],
-    featuredImage: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Ocimum_tenuiflorum_24_08_2012.JPG/1280px-Ocimum_tenuiflorum_24_08_2012.JPG",
     metaTitle: "Tulsi in Ayurveda: Ancient Wisdom for Modern Health",
     metaDescription:
       "Tulsi in Ayurveda — a rasayana herb balancing all three doshas. Discover its classical uses for digestion, immunity, mind and longevity.",
@@ -39,7 +39,7 @@ export const tulsiArticles: ArticleSeed[] = [
     slug: "spiritual-benefits-of-tulsi-in-daily-life",
     category: "Tulsi",
     tags: ["tulsi spirituality", "tulsi puja", "vrinda", "daily ritual"],
-    featuredImage: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Tulsi-flower.JPG/1280px-Tulsi-flower.JPG",
     metaTitle: "Spiritual Benefits of Tulsi in Daily Life",
     metaDescription:
       "The spiritual significance of Tulsi — goddess Vrinda, daily worship rituals, energy purification and how the sacred plant elevates home and mind.",
@@ -50,7 +50,7 @@ export const tulsiArticles: ArticleSeed[] = [
     slug: "tulsi-the-queen-of-herbs-and-its-medicinal-uses",
     category: "Tulsi",
     tags: ["tulsi medicinal uses", "queen of herbs", "eugenol", "natural remedies"],
-    featuredImage: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Holy_Basil%28Krishna%3BOcimum_tenuiflorum%29.jpg/1280px-Holy_Basil%28Krishna%3BOcimum_tenuiflorum%29.jpg",
     metaTitle: "Tulsi: The Queen of Herbs and Its Medicinal Uses",
     metaDescription:
       "Tulsi, the Queen of Herbs — every medicinal use explained: colds, fever, digestion, skin, stress, oral health and first aid with Holy Basil.",

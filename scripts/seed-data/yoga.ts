@@ -6,7 +6,7 @@ export const yogaArticles: ArticleSeed[] = [
     slug: "a-beginners-guide-to-yoga-for-inner-peace",
     category: "Yoga, Pranayama & Meditation",
     tags: ["yoga for beginners", "inner peace", "asanas", "pranayama"],
-    featuredImage: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Padamasana.jpg",
     metaTitle: "A Beginner's Guide to Yoga for Inner Peace",
     metaDescription:
       "Start yoga with confidence — simple asanas, breathing and meditation for inner peace. A beginner's roadmap from the yoga tradition of India.",
@@ -17,7 +17,7 @@ export const yogaArticles: ArticleSeed[] = [
     slug: "the-benefits-of-daily-pranayama-breathing-exercises",
     category: "Yoga, Pranayama & Meditation",
     tags: ["pranayama", "breathing exercises", "anulom vilom", "kapalbhati"],
-    featuredImage: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Nadishodhana_Pranayama_-_International_Day_of_Yoga_Celebration_-_NCSM_-_Kolkata_2017-06-21_2455.JPG/1280px-Nadishodhana_Pranayama_-_International_Day_of_Yoga_Celebration_-_NCSM_-_Kolkata_2017-06-21_2455.JPG",
     metaTitle: "The Benefits of Daily Pranayama (Breathing Exercises)",
     metaDescription:
       "Daily pranayama benefits — stress relief, better sleep, sharper focus and stronger lungs. Simple breathing routines for modern life.",
@@ -28,7 +28,7 @@ export const yogaArticles: ArticleSeed[] = [
     slug: "how-to-start-a-meditation-practice-at-home",
     category: "Yoga, Pranayama & Meditation",
     tags: ["meditation", "beginner meditation", "mindfulness", "daily practice"],
-    featuredImage: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Deep_meditation_in_forest.jpg/1280px-Deep_meditation_in_forest.jpg",
     metaTitle: "How to Start a Meditation Practice at Home",
     metaDescription:
       "Start meditating at home in 10 minutes a day — posture, technique, dealing with distractions and building a practice that lasts.",
@@ -39,7 +39,7 @@ export const yogaArticles: ArticleSeed[] = [
     slug: "yoga-for-stress-relief-and-mental-clarity",
     category: "Yoga, Pranayama & Meditation",
     tags: ["yoga for stress", "mental clarity", "anti-stress yoga", "release"],
-    featuredImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Koh_Wai%2C_Thailand%2C_Yoga%2C_Asana.jpg/1280px-Koh_Wai%2C_Thailand%2C_Yoga%2C_Asana.jpg",
     metaTitle: "Yoga for Stress Relief and Mental Clarity",
     metaDescription:
       "A 20-minute anti-stress yoga routine — grounding asanas, calming pranayama and clarity meditation for busy minds and tired bodies.",
@@ -50,7 +50,7 @@ export const yogaArticles: ArticleSeed[] = [
     slug: "the-connection-between-yoga-and-spiritual-healing",
     category: "Yoga, Pranayama & Meditation",
     tags: ["yoga spirituality", "healing", "kundalini", "chakras"],
-    featuredImage: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=1200&q=80",
+    featuredImage: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Kakasana_Yoga-Asana_Nina-Mel.jpg",
     metaTitle: "The Connection Between Yoga and Spiritual Healing",
     metaDescription:
       "Yoga as spiritual healing — energy, chakras, karma and inner transformation. How the eight limbs of yoga heal beyond the physical body.",

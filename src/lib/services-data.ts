@@ -32,6 +32,7 @@ export interface ServiceCardData {
   price: string;
   priceLabel: string | null;
   shortDescription: string | null;
+  imageUrl: string | null;
   categoryName: string;
   categorySlug: string;
 }
@@ -53,6 +54,7 @@ export const getServices = cache(
         price: s.price ? s.price.toString() : "",
         priceLabel: s.priceLabel,
         shortDescription: s.shortDescription,
+        imageUrl: s.imageUrl,
         categoryName: s.category?.name ?? "Services",
         categorySlug: s.category?.slug ?? "services",
       }));
@@ -64,7 +66,6 @@ export const getServices = cache(
 );
 
 export interface ServiceDetailData extends ServiceCardData {
-  imageUrl: string | null;
   longDescription: string | null;
   benefits: string[];
   syllabus: string[];
@@ -119,6 +120,7 @@ export const getServiceBySlug = cache(
           price: s.price ? s.price.toString() : "",
           priceLabel: s.priceLabel,
           shortDescription: s.shortDescription,
+          imageUrl: s.imageUrl,
           categoryName: s.category?.name ?? "Services",
           categorySlug: s.category?.slug ?? "services",
         })),
