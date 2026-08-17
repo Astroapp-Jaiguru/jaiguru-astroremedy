@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { CalendarDays, UserRound, BookOpenText } from "lucide-react";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { RevealGroup, RevealItem } from "@/components/motion/reveal";
 import {
   getArticles,
   getArticleCategories,
+  getArticlesEnabled,
   type ArticleSummary,
 } from "@/lib/articles-data";
 import { getSiteData } from "@/lib/site-data";
@@ -81,6 +83,8 @@ function ArticleCard({ article }: { article: ArticleSummary }) {
 }
 
 export default async function ArticlesPage() {
+  const enabled = await getArticlesEnabled();
+  if (!enabled) notFound();
   const [articles, data] = await Promise.all([
     getArticles(),
     getSiteData(),

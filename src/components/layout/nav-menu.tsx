@@ -32,13 +32,17 @@ export function NavMenu({
   className,
   consultationTopics,
   galleryLinks,
+  showArticles = true,
 }: {
   className?: string;
   consultationTopics?: { label: string; href: string }[];
   galleryLinks?: { label: string; href: string }[];
+  showArticles?: boolean;
 }) {
   const pathname = usePathname();
-  const navItems = MAIN_NAV_ITEMS.map((item) => {
+  const navItems = MAIN_NAV_ITEMS.filter(
+    (item) => showArticles || item.label !== "Articles"
+  ).map((item) => {
     if (item.label === "Consultations" && consultationTopics?.length)
       return { ...item, children: consultationTopics };
     if (item.label === "Gallery" && galleryLinks?.length)

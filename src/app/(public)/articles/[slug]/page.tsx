@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, UserRound, Tag } from "lucide-react";
 import { ArticleContent } from "@/components/articles/article-content";
 import { ShareButtons } from "@/components/social/share-buttons";
-import { getArticleBySlug } from "@/lib/articles-data";
+import { getArticleBySlug, getArticlesEnabled } from "@/lib/articles-data";
 import { absoluteUrl } from "@/lib/share";
 import { IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { BookOpenText } from "lucide-react";
@@ -28,6 +28,8 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const enabled = await getArticlesEnabled();
+  if (!enabled) return { title: "Article not found" };
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Article not found" };
   const title = article.metaTitle || `${article.title} | JAIGURU ASTROREMEDY`;
@@ -59,6 +61,8 @@ export async function generateMetadata({
 
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { slug } = await params;
+  const enabled = await getArticlesEnabled();
+  if (!enabled) notFound();
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 

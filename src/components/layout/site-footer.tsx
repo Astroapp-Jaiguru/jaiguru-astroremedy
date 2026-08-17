@@ -10,6 +10,7 @@ import {
 import { getSiteData } from "@/lib/site-data";
 import { getLegalPages } from "@/lib/legal-data";
 import { getGallerySections } from "@/lib/gallery-data";
+import { getArticlesEnabled } from "@/lib/articles-data";
 import { whatsappLink, siteConfig } from "@/config/site";
 import { SubscribeForm } from "@/components/layout/subscribe-form";
 
@@ -21,10 +22,11 @@ import { SubscribeForm } from "@/components/layout/subscribe-form";
  * (same image + size, managed by the same Branding settings).
  */
 export async function SiteFooter() {
-  const [data, legalPages, gallerySections] = await Promise.all([
+  const [data, legalPages, gallerySections, articlesEnabled] = await Promise.all([
     getSiteData(),
     getLegalPages(),
     getGallerySections(),
+    getArticlesEnabled(),
   ]);
   const contact = data.contact;
 
@@ -33,7 +35,7 @@ export async function SiteFooter() {
     { label: "About", href: "/about" },
     { label: "Consultations", href: "/consultations" },
     { label: "Products", href: "/products" },
-    { label: "Articles", href: "/articles" },
+    ...(articlesEnabled ? [{ label: "Articles", href: "/articles" }] : []),
     { label: "Testimonials", href: "/testimonials" },
     { label: "Contact", href: "/contact" },
   ];

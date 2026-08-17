@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getArticleBySlug } from "@/lib/articles-data";
+import { getArticleBySlug, getArticlesEnabled } from "@/lib/articles-data";
 import { OgCard, ogFonts } from "@/lib/og-image";
 
 export const runtime = "nodejs";
@@ -12,6 +12,8 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
+  const enabled = await getArticlesEnabled();
+  if (!enabled) return new Response("Not found", { status: 404 });
   const article = await getArticleBySlug(slug);
   if (!article) return new Response("Not found", { status: 404 });
   return new ImageResponse(

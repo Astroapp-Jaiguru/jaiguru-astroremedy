@@ -18,6 +18,7 @@ export function SiteHeader({
   socials,
   consultationTopics,
   galleryLinks,
+  showArticles,
 }: {
   branding: {
     siteName: string;
@@ -32,6 +33,7 @@ export function SiteHeader({
   socials: { platform: string; url: string }[];
   consultationTopics: { label: string; href: string }[];
   galleryLinks: { label: string; href: string }[];
+  showArticles: boolean;
 }) {
   return (
     <header className="sticky top-0 z-40">
@@ -66,6 +68,7 @@ export function SiteHeader({
           <NavMenu
             consultationTopics={consultationTopics}
             galleryLinks={galleryLinks}
+            showArticles={showArticles}
             className="xl:ml-3 xl:gap-3.5 2xl:ml-8 2xl:gap-4"
           />
 
@@ -96,7 +99,9 @@ export function SiteHeader({
               labelClassName="hidden min-[400px]:inline"
             />
             <MobileMenu
-              navItems={MAIN_NAV_ITEMS.map((item) =>
+              navItems={MAIN_NAV_ITEMS.filter(
+                (item) => showArticles || item.label !== "Articles"
+              ).map((item) =>
                 item.label === "Consultations" && consultationTopics.length
                   ? { ...item, children: consultationTopics }
                   : item.label === "Gallery" && galleryLinks.length

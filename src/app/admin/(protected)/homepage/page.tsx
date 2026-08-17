@@ -1,13 +1,18 @@
 import { requireAdmin } from "@/lib/dal";
 import { getGallerySections } from "@/lib/gallery-data";
+import { getArticlesEnabled } from "@/lib/articles-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GallerySectionsForm } from "@/components/admin/settings/gallery-sections-form";
+import { ArticlesSettingsForm } from "@/components/admin/settings/articles-settings-form";
 
 export const metadata = { title: "Homepage | Admin" };
 
 export default async function AdminHomepagePage() {
   await requireAdmin();
-  const sections = await getGallerySections();
+  const [sections, articlesEnabled] = await Promise.all([
+    getGallerySections(),
+    getArticlesEnabled(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -27,6 +32,18 @@ export default async function AdminHomepagePage() {
         </CardHeader>
         <CardContent>
           <GallerySectionsForm initial={sections} />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Articles Settings</CardTitle>
+          <CardDescription>
+            Master control for the Article Posting System (knowledge base at
+            /articles).
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ArticlesSettingsForm enabled={articlesEnabled} />
         </CardContent>
       </Card>
     </div>

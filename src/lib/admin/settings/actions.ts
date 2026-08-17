@@ -472,3 +472,31 @@ export async function updateGallerySectionsAction(
   revalidatePath("/");
   return { success: true };
 }
+
+// -------------------------------------------------------------------------
+// Articles master visibility toggle ("Show Articles on Website")
+// -------------------------------------------------------------------------
+
+const ARTICLES_ENABLED_KEY = "articlesEnabled";
+
+export async function updateArticlesVisibilityAction(
+  _state: SettingsFormState | undefined,
+  fd: FormData
+): Promise<SettingsFormState> {
+  await requireAdmin();
+  const enabled = fd.get("articles-enabled") === "on";
+  try {
+    await prisma.siteSetting.upsert({
+      where: { key: ARTICLES_ENABLED_KEY },
+      update: { value: { enabled } as never },
+      create: { key: ARTICLES_ENABLED_KEY, value: { enabled } as never },
+    });
+  } catch (e) {
+    console.error("[admin] updateArticlesVisibilityAction failed:", e);
+    return { error: "Could not save articles settings. Please try again." };
+  }
+  revalidatePath("/");
+  revalidatePath("/articles");
+  revalidatePath("/articles/[slug]", "page");
+  return { success: true };
+}
