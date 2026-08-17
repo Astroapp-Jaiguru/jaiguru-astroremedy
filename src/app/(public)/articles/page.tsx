@@ -60,13 +60,13 @@ function ArticleCard({ article }: { article: ArticleSummary }) {
           </span>
         </div>
         <div className="flex flex-1 flex-col gap-2 p-5">
-          <h2 className="font-display text-lg font-bold leading-snug text-[var(--jaiguru-card-text)] transition group-hover:text-golden">
+          <h2 className="font-display text-lg font-bold leading-snug text-white transition group-hover:text-golden">
             {article.title}
           </h2>
-          <p className="line-clamp-2 text-sm leading-relaxed text-[var(--jaiguru-card-text-muted)]">
+          <p className="line-clamp-2 text-sm leading-relaxed text-[#E2E8F0]">
             {article.metaDescription ?? article.title}
           </p>
-          <div className="mt-auto flex items-center gap-3 pt-3 text-xs text-slate-400">
+          <div className="mt-auto flex items-center gap-3 pt-3 text-xs text-[#94A3B8]">
             <span className="inline-flex items-center gap-1.5">
               <CalendarDays className="h-3.5 w-3.5" />
               {formatDate(article.publishDate)}
