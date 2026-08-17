@@ -23,10 +23,7 @@ export function TopHeader({
   };
   socials: { platform: string; url: string }[];
 }) {
-  const waHref = whatsappLink(
-    "Hello JAIGURU ASTROREMEDY, I want to book a consultation.",
-    contact.whatsappNumber
-  );
+  const waHref = whatsappLink("", contact.whatsappNumber);
 
   return (
     <div className="bg-topbar-gradient border-b border-[color:var(--jaiguru-topbar-border)] text-[color:var(--jaiguru-topbar-text)]">

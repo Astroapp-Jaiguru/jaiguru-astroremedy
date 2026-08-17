@@ -9,6 +9,7 @@ import {
 } from "@/components/layout/social-icons";
 import { getSiteData } from "@/lib/site-data";
 import { getLegalPages } from "@/lib/legal-data";
+import { getGallerySections } from "@/lib/gallery-data";
 import { whatsappLink, siteConfig } from "@/config/site";
 import { SubscribeForm } from "@/components/layout/subscribe-form";
 
@@ -20,7 +21,11 @@ import { SubscribeForm } from "@/components/layout/subscribe-form";
  * (same image + size, managed by the same Branding settings).
  */
 export async function SiteFooter() {
-  const [data, legalPages] = await Promise.all([getSiteData(), getLegalPages()]);
+  const [data, legalPages, gallerySections] = await Promise.all([
+    getSiteData(),
+    getLegalPages(),
+    getGallerySections(),
+  ]);
   const contact = data.contact;
 
   const quickLinks = [
@@ -28,6 +33,7 @@ export async function SiteFooter() {
     { label: "About", href: "/about" },
     { label: "Consultations", href: "/consultations" },
     { label: "Products", href: "/products" },
+    { label: "Articles", href: "/articles" },
     { label: "Testimonials", href: "/testimonials" },
     { label: "Contact", href: "/contact" },
   ];
@@ -38,7 +44,15 @@ export async function SiteFooter() {
     { label: "Vastu Consultation", href: "/consultations/vastu" },
     { label: "Yoga Guidance", href: "/consultations/yoga" },
     { label: "Spiritual Remedies", href: "/consultations/spiritual-remedies" },
-    { label: "Photo Gallery", href: "/photo-gallery" },
+    ...(gallerySections.photo
+      ? [{ label: "Photo Gallery", href: "/photo-gallery" }]
+      : []),
+    ...(gallerySections.video
+      ? [{ label: "Video Gallery", href: "/video-gallery" }]
+      : []),
+    ...(gallerySections.youtube
+      ? [{ label: "YouTube Gallery", href: "/youtube-gallery" }]
+      : []),
   ];
 
   return (
@@ -147,10 +161,7 @@ export async function SiteFooter() {
               <li className="flex items-center gap-3">
                 <WhatsappIcon className="h-4 w-4 shrink-0 text-golden" />
                 <a
-                  href={whatsappLink(
-                    "Hello JAIGURU ASTROREMEDY,",
-                    contact.whatsappNumber
-                  )}
+                  href={whatsappLink("", contact.whatsappNumber)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-golden"

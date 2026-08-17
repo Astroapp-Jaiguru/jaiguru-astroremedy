@@ -17,7 +17,6 @@ import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { getServiceBySlug, SERVICE_MODE_LABELS } from "@/lib/services-data";
 import { formatPrice } from "@/lib/shop-data";
 import { servicePriceDisplay, type ServicePriceDisplay } from "@/lib/pricing/geo";
-import { serviceBookingMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
@@ -71,16 +70,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     converted?.label ??
     service.priceLabel ??
     (service.price ? formatPrice(service.price) : "On Request");
-  const bookingMessage = serviceBookingMessage(
-    {
-      name: service.name,
-      mode: SERVICE_MODE_LABELS[service.mode],
-      price: priceLabel,
-      url: `https://www.jaiguruastroremedy.com/services/${service.slug}`,
-      displayPrice: converted?.label ?? null,
-    },
-    contact.upiId
-  );
+  const bookingMessage = "";
   const relatedConverted = new Map(
     await Promise.all(
       service.related.map(

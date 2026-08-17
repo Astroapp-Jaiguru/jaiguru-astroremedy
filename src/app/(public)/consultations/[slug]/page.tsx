@@ -17,7 +17,7 @@ import {
   formatPrice,
   type FeaturedService,
 } from "@/lib/shop-data";
-import { whatsappLink, consultationMessage } from "@/config/site";
+import { whatsappLink } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { ConsultationPricing } from "@/components/shop/consultation-pricing";
@@ -85,7 +85,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
     ]);
 
   const number = contact.whatsappNumber;
-  const waMessage = whatsappLink(consultationMessage(topic.title), number);
+  const waMessage = whatsappLink("", number);
 
   // Related products: prefer keyword matches, top up with featured ones.
   const keywordProducts = featuredProducts.filter((p) =>
@@ -187,7 +187,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                       homePriceLabel={topic.homeFee}
                       upiId={contact.upiId}
                       whatsappNumber={number}
-                      whatsappMessage={consultationMessage(topic.title)}
+                      whatsappMessage=""
                       razorpayKeyId={razorpayKeyId}
                       kind="consultation"
                       durationMinutes={topic.durationMinutes}
@@ -340,18 +340,7 @@ function RelatedServiceCard({
   razorpayKeyId: string | null;
 }) {
   const price = service.priceLabel ?? formatPrice(service.price);
-  const waMessage = whatsappLink(
-    [
-      "Hello JAIGURU ASTROREMEDY,",
-      "",
-      `I want to book "${service.name}" (${price}).`,
-      "",
-      "My Name:",
-      "Preferred Date:",
-      "Preferred Time:",
-    ].join("\n"),
-    number
-  );
+  const waMessage = whatsappLink("", number);
   return (
     <div className="glass-card flex h-full flex-col gap-3 overflow-hidden rounded-[var(--jaiguru-service-card-radius)] p-6 transition hover:-translate-y-1 hover:border-premium-gold/70">
       <div className="flex items-center justify-between gap-3">

@@ -17,6 +17,7 @@ export function SiteHeader({
   whatsappHref,
   socials,
   consultationTopics,
+  galleryLinks,
 }: {
   branding: {
     siteName: string;
@@ -30,6 +31,7 @@ export function SiteHeader({
   whatsappHref: string;
   socials: { platform: string; url: string }[];
   consultationTopics: { label: string; href: string }[];
+  galleryLinks: { label: string; href: string }[];
 }) {
   return (
     <header className="sticky top-0 z-40">
@@ -63,6 +65,7 @@ export function SiteHeader({
           {/* Desktop navigation */}
           <NavMenu
             consultationTopics={consultationTopics}
+            galleryLinks={galleryLinks}
             className="xl:ml-3 xl:gap-3.5 2xl:ml-8 2xl:gap-4"
           />
 
@@ -96,7 +99,9 @@ export function SiteHeader({
               navItems={MAIN_NAV_ITEMS.map((item) =>
                 item.label === "Consultations" && consultationTopics.length
                   ? { ...item, children: consultationTopics }
-                  : item
+                  : item.label === "Gallery" && galleryLinks.length
+                    ? { ...item, children: galleryLinks }
+                    : item
               )}
               socials={socials}
               whatsappHref={whatsappHref}

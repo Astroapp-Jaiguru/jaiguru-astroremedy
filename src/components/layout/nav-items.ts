@@ -15,15 +15,8 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "Consultations", href: "/consultations" },
   { label: "Products", href: "/products" },
   { label: "Services", href: "/services" },
-  {
-    label: "Gallery",
-    href: "/photo-gallery",
-    children: [
-      { label: "Photo Gallery", href: "/photo-gallery" },
-      { label: "Video Gallery", href: "/video-gallery" },
-      { label: "YouTube Gallery", href: "/youtube-gallery" },
-    ],
-  },
+  { label: "Gallery", href: "/photo-gallery" },
+  { label: "Articles", href: "/articles" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
 ];

@@ -272,6 +272,33 @@ model ConsultationTopic {
 }
 
 // ---------------------------------------------------------------------------
+// Articles (blog / knowledge base: admin publishes articles via the rich text
+// editor; public listing at /articles and detail pages at /articles/[slug])
+// ---------------------------------------------------------------------------
+
+model Article {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  // Featured image URL (admin pastes the image URL in the article form).
+  featuredImage   String?
+  // Rich text editor HTML output.
+  content         String
+  category        String
+  tags            String[] @default([])
+  metaTitle       String?
+  metaDescription String?
+  authorName      String
+  publishDate     DateTime @db.Date
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isActive, isFeatured, publishDate])
+}
+
+// ---------------------------------------------------------------------------
 // Booking availability (admin blocks days/time slots for the public booking
 // calendar; users cannot select blocked slots)
 // ---------------------------------------------------------------------------

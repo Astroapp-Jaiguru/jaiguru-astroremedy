@@ -59,11 +59,7 @@ export function ServiceNavModal({
   waMessage?: string;
 }) {
   const talkHref =
-    waMessage ??
-    whatsappLink(
-      "Hello JAIGURU ASTROREMEDY, I want to book a consultation.",
-      whatsappNumber
-    );
+    waMessage ?? whatsappLink("", whatsappNumber);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

@@ -8,7 +8,6 @@ import {
   type ServiceGroup,
   type FeaturedService,
 } from "@/lib/shop-data";
-import { whatsappLink, serviceBookingMessage } from "@/config/site";
 import { displayPriceForViewer } from "@/lib/pricing/geo";
 import { getSiteData } from "@/lib/site-data";
 import { PaymentButton } from "@/components/shop/payment-button";
@@ -45,19 +44,7 @@ async function ServiceCard({
       ? await displayPriceForViewer(service.price)
       : null;
   const price = conv?.label ?? service.priceLabel ?? formatPrice(service.price);
-  const waMessage = whatsappLink(
-    serviceBookingMessage(
-      {
-        name: service.name,
-        mode: label,
-        price,
-        url: `/services/${service.slug}`,
-        displayPrice: conv?.label ?? null,
-      },
-      upiId
-    ),
-    number
-  );
+  const waMessage = "";
   const GroupIcon = group.slug.includes("yoga") ? GraduationCap : BookOpen;
   return (
     <article className="glass-card-light group flex flex-col overflow-hidden rounded-[var(--jaiguru-service-card-radius)] transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/70 hover:shadow-[0_18px_50px_rgba(250,204,21,0.25)]">

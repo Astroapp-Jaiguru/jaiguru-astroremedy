@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { YoutubeGalleryClient } from "@/components/gallery/youtube-gallery-client";
-import { getYoutubeVideos } from "@/lib/gallery-data";
+import { getYoutubeVideos, getGallerySections } from "@/lib/gallery-data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function YoutubeGalleryPage() {
-  const videos = await getYoutubeVideos();
+  const [videos, sections] = await Promise.all([
+    getYoutubeVideos(),
+    getGallerySections(),
+  ]);
+  if (!sections.youtube) notFound();
 
   return (
     <section className="scroll-mt-24 py-16 sm:py-20">

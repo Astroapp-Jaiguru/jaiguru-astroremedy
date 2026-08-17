@@ -5,7 +5,6 @@ import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { formatPrice } from "@/lib/shop-data";
 import { productPriceDisplay } from "@/lib/pricing/geo";
-import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import {
   certificateTierForPrice,
@@ -87,16 +86,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
     orderPrice,
     hasDiscount ? product.price : null
   );
-  const message = productOrderMessage(
-    {
-      name: displayName,
-      category: product.category?.name ?? null,
-      price: orderPrice,
-      url: `/products/${product.slug}`,
-      displayPrice: display.effective?.label ?? null,
-    },
-    contact.upiId
-  );
+  const message = "";
 
   return (
     <article className="glass-card-light group flex flex-col overflow-hidden rounded-[var(--jaiguru-product-card-radius)] transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/70 hover:shadow-[0_18px_50px_rgba(250,204,21,0.28)]">

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { PhotoGalleryClient } from "@/components/gallery/photo-gallery-client";
-import { getGalleryPhotos } from "@/lib/gallery-data";
+import { getGalleryPhotos, getGallerySections } from "@/lib/gallery-data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function PhotoGalleryPage() {
-  const photos = await getGalleryPhotos();
+  const [photos, sections] = await Promise.all([
+    getGalleryPhotos(),
+    getGallerySections(),
+  ]);
+  if (!sections.photo) notFound();
 
   return (
     <section className="scroll-mt-24 py-16 sm:py-20">

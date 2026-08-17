@@ -28,15 +28,7 @@ export function ContactForm({
     undefined
   );
 
-  const followUpLink = whatsappLink(
-    [
-      "Hello JAIGURU ASTROREMEDY,",
-      "",
-      "I just submitted the contact form on your website.",
-      "Please get back to me at the earliest.",
-    ].join("\n"),
-    whatsappNumber
-  );
+  const followUpLink = whatsappLink("", whatsappNumber);
 
   return (
     <form action={formAction} className="space-y-5">

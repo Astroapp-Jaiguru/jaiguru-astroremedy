@@ -1,5 +1,6 @@
 import { getSiteData } from "@/lib/site-data";
 import { getConsultationTopics } from "@/lib/consultation-topics";
+import { getGallerySections } from "@/lib/gallery-data";
 import { TopHeader } from "@/components/layout/top-header";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AnnouncementBars } from "@/components/layout/announcements";
@@ -10,11 +11,22 @@ import { whatsappLink } from "@/config/site";
  * two scrolling announcement bars. Reads editable content from the database.
  */
 export async function SiteHeaderShell() {
-  const [data, topics] = await Promise.all([getSiteData(), getConsultationTopics()]);
+  const [data, topics, sections] = await Promise.all([
+    getSiteData(),
+    getConsultationTopics(),
+    getGallerySections(),
+  ]);
   const consultationTopics = topics.map((t) => ({
     label: t.title,
     href: t.href,
   }));
+  const galleryLinks = [
+    ...(sections.photo ? [{ label: "Photo Gallery", href: "/photo-gallery" }] : []),
+    ...(sections.video ? [{ label: "Video Gallery", href: "/video-gallery" }] : []),
+    ...(sections.youtube
+      ? [{ label: "YouTube Gallery", href: "/youtube-gallery" }]
+      : []),
+  ];
 
   return (
     <>
@@ -36,12 +48,10 @@ export async function SiteHeaderShell() {
           logo: data.branding.logo,
         }}
         contact={{ callNumber: data.contact.callNumber }}
-        whatsappHref={whatsappLink(
-          `Hello ${data.branding.siteName}, I want to book a consultation.`,
-          data.contact.whatsappNumber
-        )}
+        whatsappHref={whatsappLink("", data.contact.whatsappNumber)}
         socials={data.socials}
         consultationTopics={consultationTopics}
+        galleryLinks={galleryLinks}
       />
       <AnnouncementBars announcements={data.announcements} />
     </>

@@ -9,7 +9,6 @@ import { ProductCard, type ProductCardData } from "@/components/shop/product-car
 import { formatPrice } from "@/lib/shop-data";
 import { productPriceDisplay } from "@/lib/pricing/geo";
 import { Markdown } from "@/components/markdown";
-import { productOrderMessage } from "@/config/site";
 import { getSiteData } from "@/lib/site-data";
 import { getRazorpayKeyId } from "@/lib/payments/settings";
 import {
@@ -37,7 +36,9 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await prisma.product.findUnique({
+    where: { slug, isActive: true },
+  });
   if (!product) return { title: "Product not found" };
   const url = absoluteUrl(`/products/${product.slug}`);
   return {
@@ -86,16 +87,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
   const tier = certificateTierForPrice(product.price);
   const displayName = withCertificateSuffix(product.name, tier);
 
-  const orderMessage = productOrderMessage(
-    {
-      name: displayName,
-      category: product.category?.name ?? null,
-      price: price.toString(),
-      url: `/products/${product.slug}`,
-      displayPrice: display.effective?.label ?? null,
-    },
-    contact.upiId
-  );
+  const orderMessage = "";
 
   const related = await prisma.product.findMany({
     where: {

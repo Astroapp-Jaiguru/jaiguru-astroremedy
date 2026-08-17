@@ -43,7 +43,7 @@ const mapsQuery = encodeURIComponent(
  icon: <WhatsappIcon className="h-5 w-5 shrink-0" />,
  label: "WhatsApp",
  value: contact.whatsappDisplay,
- href: whatsappLink("Hello JAIGURU ASTROREMEDY,", contact.whatsappNumber),
+ href: whatsappLink("", contact.whatsappNumber),
  external: true,
  },
  {

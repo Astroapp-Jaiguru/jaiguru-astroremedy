@@ -66,19 +66,7 @@ export async function Hero() {
 
   if (!hero.active) return null;
 
-  const waMessage = whatsappLink(
-    [
-      `Hello ${data.branding.siteName},`,
-      "",
-      "I want to book a consultation (₹700).",
-      "",
-      "My Name:",
-      "My Date of Birth:",
-      "My Place of Birth:",
-      "Preferred Date & Time:",
-    ].join("\n"),
-    contact.whatsappNumber
-  );
+  const waMessage = whatsappLink("", contact.whatsappNumber);
 
   return (
     <section className="relative overflow-hidden bg-hero-gradient text-white">

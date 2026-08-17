@@ -3,7 +3,6 @@ import type { ReactElement } from "react";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
-import { whatsappLink, consultationMessage } from "@/config/site";
 import { siteConfig } from "@/config/site";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getConsultationTopics } from "@/lib/consultation-topics";
@@ -41,7 +40,6 @@ export async function ConsultationCards(): Promise<ReactElement> {
         <RevealGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {topics.map((card) => {
             const Icon = card.icon;
-            const waMessage = whatsappLink(consultationMessage(card.title), number);
             return (
               <RevealItem key={card.title}>
               <div

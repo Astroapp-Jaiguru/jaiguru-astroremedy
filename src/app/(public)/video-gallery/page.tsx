@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { VideoGalleryClient } from "@/components/gallery/video-gallery-client";
-import { getGalleryVideos } from "@/lib/gallery-data";
+import { getGalleryVideos, getGallerySections } from "@/lib/gallery-data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function VideoGalleryPage() {
-  const videos = await getGalleryVideos();
+  const [videos, sections] = await Promise.all([
+    getGalleryVideos(),
+    getGallerySections(),
+  ]);
+  if (!sections.video) notFound();
 
   return (
     <section className="scroll-mt-24 py-16 sm:py-20">

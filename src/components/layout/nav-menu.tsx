@@ -31,16 +31,20 @@ function NavLink({
 export function NavMenu({
   className,
   consultationTopics,
+  galleryLinks,
 }: {
   className?: string;
   consultationTopics?: { label: string; href: string }[];
+  galleryLinks?: { label: string; href: string }[];
 }) {
   const pathname = usePathname();
-  const navItems = MAIN_NAV_ITEMS.map((item) =>
-    item.label === "Consultations" && consultationTopics?.length
-      ? { ...item, children: consultationTopics }
-      : item
-  );
+  const navItems = MAIN_NAV_ITEMS.map((item) => {
+    if (item.label === "Consultations" && consultationTopics?.length)
+      return { ...item, children: consultationTopics };
+    if (item.label === "Gallery" && galleryLinks?.length)
+      return { ...item, children: galleryLinks };
+    return item;
+  });
 
   return (
     <nav className={cn("hidden items-center gap-7 xl:flex", className)}>
