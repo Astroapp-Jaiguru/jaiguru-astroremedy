@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
-import { NavMenu, MAIN_NAV_ITEMS } from "@/components/layout/nav-menu";
+import { NavMenu } from "@/components/layout/nav-menu";
+import { MAIN_NAV_ITEMS } from "@/components/layout/nav-items";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 
 /**
@@ -15,6 +16,7 @@ export function SiteHeader({
   contact,
   whatsappHref,
   socials,
+  consultationTopics,
 }: {
   branding: {
     siteName: string;
@@ -27,6 +29,7 @@ export function SiteHeader({
   };
   whatsappHref: string;
   socials: { platform: string; url: string }[];
+  consultationTopics: { label: string; href: string }[];
 }) {
   return (
     <header className="sticky top-0 z-40">
@@ -58,7 +61,10 @@ export function SiteHeader({
           </Link>
 
           {/* Desktop navigation */}
-          <NavMenu className="xl:ml-3 xl:gap-3.5 2xl:ml-8 2xl:gap-4" />
+          <NavMenu
+            consultationTopics={consultationTopics}
+            className="xl:ml-3 xl:gap-3.5 2xl:ml-8 2xl:gap-4"
+          />
 
           {/* Desktop CTA area */}
           <div className="hidden items-center gap-2 xl:flex xl:ml-4 2xl:ml-8 2xl:gap-3">
@@ -87,7 +93,11 @@ export function SiteHeader({
               labelClassName="hidden min-[400px]:inline"
             />
             <MobileMenu
-              navItems={MAIN_NAV_ITEMS}
+              navItems={MAIN_NAV_ITEMS.map((item) =>
+                item.label === "Consultations" && consultationTopics.length
+                  ? { ...item, children: consultationTopics }
+                  : item
+              )}
               socials={socials}
               whatsappHref={whatsappHref}
               callNumber={contact.callNumber}

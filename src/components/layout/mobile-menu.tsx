@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
 import { SocialIconRow } from "@/components/layout/social-icons";
-import type { NavItem } from "@/components/layout/nav-menu";
+import type { NavItem } from "@/components/layout/nav-items";
 import { cn } from "@/lib/utils";
 
 export function MobileMenu({
@@ -108,7 +108,7 @@ export function MobileMenu({
                           onClick={() => setOpen(false)}
                           className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                         >
-                          All Consultations
+                          All {item.label}
                         </Link>
                         {item.children.map((child) => (
                           <Link

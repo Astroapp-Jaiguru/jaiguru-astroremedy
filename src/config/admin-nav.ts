@@ -30,6 +30,7 @@ import {
   Type,
   CircleHelp,
   CreditCard,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 
@@ -111,6 +112,7 @@ export const adminNav: AdminNavGroup[] = [
       { title: "Video Gallery", href: "/admin/gallery/videos", icon: Clapperboard },
       { title: "YouTube Gallery", href: "/admin/gallery/youtube", icon: SquarePlay },
       { title: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
+      { title: "Consultation Topics", href: "/admin/consultation-topics", icon: Star },
       { title: "Social Media", href: "/admin/social-links", icon: Share2 },
       { title: "Contact Messages", href: "/admin/contact-messages", icon: Inbox },
       { title: "Contact Settings", href: "/admin/contact-settings", icon: Phone },

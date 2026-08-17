@@ -250,6 +250,27 @@ model Service {
   @@index([priceSource])
 }
 
+model ConsultationTopic {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  description     String
+  longDescription String
+  // Lucide icon key rendered on cards & dedicated pages (see TOPIC_ICONS map).
+  iconKey         String   @default("star")
+  fee             String   @default("₹700")
+  homeFee         String   @default("₹1,500")
+  durationMinutes Int      @default(30)
+  keywords        String[] @default([])
+  benefits        String[] @default([])
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
 // ---------------------------------------------------------------------------
 // Booking availability (admin blocks days/time slots for the public booking
 // calendar; users cannot select blocked slots)

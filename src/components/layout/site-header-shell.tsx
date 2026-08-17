@@ -1,4 +1,5 @@
 import { getSiteData } from "@/lib/site-data";
+import { getConsultationTopics } from "@/lib/consultation-topics";
 import { TopHeader } from "@/components/layout/top-header";
 import { SiteHeader } from "@/components/layout/site-header";
 import { AnnouncementBars } from "@/components/layout/announcements";
@@ -9,7 +10,11 @@ import { whatsappLink } from "@/config/site";
  * two scrolling announcement bars. Reads editable content from the database.
  */
 export async function SiteHeaderShell() {
-  const data = await getSiteData();
+  const [data, topics] = await Promise.all([getSiteData(), getConsultationTopics()]);
+  const consultationTopics = topics.map((t) => ({
+    label: t.title,
+    href: t.href,
+  }));
 
   return (
     <>
@@ -36,6 +41,7 @@ export async function SiteHeaderShell() {
           data.contact.whatsappNumber
         )}
         socials={data.socials}
+        consultationTopics={consultationTopics}
       />
       <AnnouncementBars announcements={data.announcements} />
     </>

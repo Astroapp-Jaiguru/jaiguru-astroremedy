@@ -4,45 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MAIN_NAV_ITEMS, type NavItem } from "@/components/layout/nav-items";
 
-export interface NavItem {
-  label: string;
-  href: string;
-  children?: { label: string; href: string }[];
-}
-
-export const MAIN_NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  {
-    label: "Consultations",
-    href: "/consultations",
-    children: [
-      { label: "Astrology Consultation", href: "/consultations/astrology" },
-      { label: "Numerology Consultation", href: "/consultations/numerology" },
-      { label: "Vastu Consultation", href: "/consultations/vastu" },
-      { label: "Medical Astrology Guidance", href: "/consultations/medical-astrology" },
-      { label: "Spiritual Remedy Guidance", href: "/consultations/spiritual-remedies" },
-      { label: "Gemstone Recommendation", href: "/consultations/gemstone" },
-      { label: "Yoga Guidance", href: "/consultations/yoga" },
-      { label: "Black Magic Protection Guidance", href: "/consultations/black-magic-protection" },
-      { label: "Personal Problem Guidance", href: "/consultations/personal-problem" },
-    ],
-  },
-  { label: "Products", href: "/products" },
-  { label: "Services", href: "/services" },
-  {
-    label: "Gallery",
-    href: "/photo-gallery",
-    children: [
-      { label: "Photo Gallery", href: "/photo-gallery" },
-      { label: "Video Gallery", href: "/video-gallery" },
-      { label: "YouTube Gallery", href: "/youtube-gallery" },
-    ],
-  },
-  { label: "Testimonials", href: "/testimonials" },
-  { label: "Contact", href: "/contact" },
-];
+export type { NavItem };
 
 function NavLink({
   item,
@@ -64,12 +28,23 @@ function NavLink({
   );
 }
 
-export function NavMenu({ className }: { className?: string }) {
+export function NavMenu({
+  className,
+  consultationTopics,
+}: {
+  className?: string;
+  consultationTopics?: { label: string; href: string }[];
+}) {
   const pathname = usePathname();
+  const navItems = MAIN_NAV_ITEMS.map((item) =>
+    item.label === "Consultations" && consultationTopics?.length
+      ? { ...item, children: consultationTopics }
+      : item
+  );
 
   return (
     <nav className={cn("hidden items-center gap-7 xl:flex", className)}>
-      {MAIN_NAV_ITEMS.map((item) => {
+      {navItems.map((item) => {
         const isActive =
           item.href === "/"
             ? pathname === "/"
@@ -109,7 +84,7 @@ export function NavMenu({ className }: { className?: string }) {
                       href={item.href}
                       className="block rounded-xl px-4 py-2.5 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                     >
-                      All Consultations →
+                      All {item.label} →
                     </Link>
                   </div>
                 </div>

@@ -159,6 +159,7 @@ function UnifiedOrderModal(
   const duration = durationMinutes || DEFAULT_SLOT_DURATION;
   const isConsultation = kind === "consultation";
   const isCourse = kind === "course";
+  const isProduct = kind === "product";
 
   const currentUrl = useMemo(() => {
     if (pageUrl) {
@@ -236,6 +237,7 @@ function UnifiedOrderModal(
   const nameValid = name.trim().length >= 2;
   const phoneValid = digits(phone).length >= 10;
   const waValid = digits(waNumber).length >= 10;
+  const addressValid = address.trim().length >= 8;
 
   const modeOptions = useMemo(() => {
     const ids = props.availableModes?.length
@@ -256,7 +258,8 @@ function UnifiedOrderModal(
   const effectivePriceLabel =
     isHomeVisit && props.homePriceLabel ? props.homePriceLabel : priceLabel;
 
-  const detailsValid = nameValid && phoneValid && waValid;
+  const detailsValid =
+    nameValid && phoneValid && waValid && (isProduct ? addressValid : true);
 
   const orderFields = {
     itemName,
@@ -428,7 +431,7 @@ function UnifiedOrderModal(
       <DialogContent
         showCloseButton
         overlayClassName="bg-deep-navy/70 backdrop-blur-md"
-        className="max-w-[calc(100%-2rem)] gap-0 overflow-hidden rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)] sm:max-w-md"
+        className="max-h-[92dvh] max-w-[calc(100%-2rem)] gap-0 overflow-y-auto rounded-[var(--jaiguru-card-radius)] border border-premium-gold/40 bg-deep-navy p-0 text-white shadow-[0_25px_80px_rgba(0,0,0,0.7)] sm:max-w-md"
       >
         {/* Header */}
         <div className="bg-gradient-to-br from-royal-purple via-indigo-deep to-deep-navy px-6 pb-4 pt-6">
@@ -831,7 +834,12 @@ function UnifiedOrderModal(
                         </div>
                       ) : null}
 
-                      <Field label={isCourse ? "Address (optional)" : isConsultation ? "Address (optional)" : "Delivery Address (optional)"}>
+                      <Field
+                        label={isCourse ? "Address (optional)" : isConsultation ? "Address (optional)" : "Delivery Address *"}
+                        valid={!isProduct || addressValid}
+                        invalidMsg="Enter your full delivery address"
+                        showError={isProduct && address.length > 0}
+                      >
                         <textarea
                           rows={2}
                           value={address}

@@ -1,6 +1,6 @@
 ﻿import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { CONSULTATION_TOPICS } from "@/lib/consultation-topics";
+import { getConsultationTopics } from "@/lib/consultation-topics";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
 import { getVisibleModes } from "@/lib/mode-visibility-actions";
@@ -13,7 +13,10 @@ import { ConsultationPricing } from "@/components/shop/consultation-pricing";
  * dedicated /consultations/<slug> page.
  */
 export default async function ConsultationsPage() {
-  const availableModes = await getVisibleModes();
+  const [availableModes, topics] = await Promise.all([
+    getVisibleModes(),
+    getConsultationTopics(),
+  ]);
   return (
     <section className="py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -26,7 +29,7 @@ export default async function ConsultationsPage() {
           />
         </Reveal>
         <RevealGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {CONSULTATION_TOPICS.map((topic) => (
+          {topics.map((topic) => (
             <RevealItem key={topic.slug}>
               <Link
                 href={topic.href}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BadgeCheck, CalendarCheck, ChevronRight, Sparkles } from "lucide-react";
 import {
-  CONSULTATION_TOPICS,
+  getConsultationTopics,
   getConsultationTopic,
 } from "@/lib/consultation-topics";
 import { SectionHeading } from "@/components/sections/section-heading";
@@ -42,7 +42,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const topic = getConsultationTopic(slug);
+  const topic = await getConsultationTopic(slug);
   if (!topic) return { title: "Consultation not found" };
   const url = absoluteUrl(`/consultations/${topic.slug}`);
   return {
@@ -71,16 +71,17 @@ function keywordMatch(text: string, keywords: string[]): boolean {
 
 export default async function ConsultationDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const topic = getConsultationTopic(slug);
+  const topic = await getConsultationTopic(slug);
   if (!topic) notFound();
 
-  const [{ contact }, featuredProducts, serviceGroups, razorpayKeyId, availableModes] =
+  const [{ contact }, featuredProducts, serviceGroups, razorpayKeyId, availableModes, topics] =
     await Promise.all([
       getSiteData(),
       getFeaturedProducts(12),
       getFeaturedServices(),
       getRazorpayKeyId(),
       getVisibleModes(),
+      getConsultationTopics(),
     ]);
 
   const number = contact.whatsappNumber;
@@ -304,7 +305,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
             />
           </Reveal>
           <RevealGroup className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2">
-            {CONSULTATION_TOPICS.filter((t) => t.slug !== topic.slug)
+            {topics.filter((t) => t.slug !== topic.slug)
               .slice(0, 6)
               .map((other) => (
                 <RevealItem key={other.slug}>

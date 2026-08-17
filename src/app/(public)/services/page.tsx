@@ -73,7 +73,7 @@ export default async function ServicesPage({
  eyebrow="Guidance & Courses"
  title="Our"
  highlight="Services"
- subtitle="Astrology, numerology, vastu, yoga and spiritual remedy guidance — available online, at the chamber or at your home."
+ subtitle="Astrology, numerology, vastu, yoga and spiritual remedy guidance by Arup Shastri ( Jai Guru )— available online, at the chamber or at your home ( 100% Privacy )."
  />
 
  <div className="flex flex-wrap items-center justify-center gap-2.5">

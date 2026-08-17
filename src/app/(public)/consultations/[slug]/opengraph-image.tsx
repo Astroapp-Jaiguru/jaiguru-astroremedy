@@ -13,7 +13,7 @@ export default async function Image({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const topic = getConsultationTopic(slug);
+  const topic = await getConsultationTopic(slug);
   if (!topic) return new ImageResponse(<div />, { ...size });
   return new ImageResponse(
     <OgCard

@@ -6,7 +6,7 @@ import { WhatsappNavTrigger } from "@/components/layout/whatsapp-nav-trigger";
 import { whatsappLink, consultationMessage } from "@/config/site";
 import { siteConfig } from "@/config/site";
 import { Reveal, RevealGroup, RevealItem } from "@/components/motion/reveal";
-import { CONSULTATION_TOPICS } from "@/lib/consultation-topics";
+import { getConsultationTopics } from "@/lib/consultation-topics";
 import { getVisibleModes } from "@/lib/mode-visibility-actions";
 import { ConsultationPricing } from "@/components/shop/consultation-pricing";
 
@@ -19,7 +19,10 @@ import { ConsultationPricing } from "@/components/shop/consultation-pricing";
  */
 export async function ConsultationCards(): Promise<ReactElement> {
   const number = siteConfig.contact.whatsappNumber;
-  const availableModes = await getVisibleModes();
+  const [availableModes, topics] = await Promise.all([
+    getVisibleModes(),
+    getConsultationTopics(),
+  ]);
   return (
     <section
       id="consultations"
@@ -36,7 +39,7 @@ export async function ConsultationCards(): Promise<ReactElement> {
           />
         </Reveal>
         <RevealGroup className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {CONSULTATION_TOPICS.map((card) => {
+          {topics.map((card) => {
             const Icon = card.icon;
             const waMessage = whatsappLink(consultationMessage(card.title), number);
             return (
