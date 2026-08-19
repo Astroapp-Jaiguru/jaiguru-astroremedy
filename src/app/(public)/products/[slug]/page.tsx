@@ -337,19 +337,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
             ) : null}
 
             {sizeOptions && sizeOptions.length > 0 ? null : (
-              <PaymentButton
-                label="Order on WhatsApp"
-                icon={<WhatsappIcon className="h-5 w-5" />}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
-                itemName={displayName}
-                priceLabel={display.effective?.label ?? formatPrice(price)}
-                price={display.effective?.amount ?? price.toString()}
-                upiId={contact.upiId}
-                whatsappNumber={contact.whatsappNumber}
-                whatsappMessage={orderMessage}
-                razorpayKeyId={razorpayKeyId}
-                pageUrl={`/products/${product.slug}`}
-              />
+              <div className="flex justify-start">
+                <PaymentButton
+                  label="Order"
+                  icon={<WhatsappIcon className="h-4 w-4" />}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp/90 px-7 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] ring-1 ring-white/20 backdrop-blur transition hover:bg-[#1EBE5B]"
+                  itemName={displayName}
+                  priceLabel={display.effective?.label ?? formatPrice(price)}
+                  price={display.effective?.amount ?? price.toString()}
+                  upiId={contact.upiId}
+                  whatsappNumber={contact.whatsappNumber}
+                  whatsappMessage={orderMessage}
+                  razorpayKeyId={razorpayKeyId}
+                  pageUrl={`/products/${product.slug}`}
+                />
+              </div>
             )}
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with

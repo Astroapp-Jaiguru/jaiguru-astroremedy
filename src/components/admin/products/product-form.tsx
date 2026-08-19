@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SizeOptionsEditor } from "@/components/admin/products/size-options-editor";
 import { createProductAction, updateProductAction } from "@/lib/admin/products/actions";
 
 export const DELIVERY_TIME_OPTIONS = [
@@ -209,20 +210,16 @@ export function ProductForm({
         <div className="space-y-2">
           <Label htmlFor="size">Size</Label>
           <Input id="size" name="size" defaultValue={product?.size ?? ""} />
+        </div>
+        <div className="space-y-2 sm:col-span-2">
+          <Label>Size Options</Label>
+          <SizeOptionsEditor initialJson={product?.sizeOptions ?? ""} />
           <p className="text-[11px] text-muted-foreground">
-            For grouped products the size selector replaces the single size field.
-          </p>
-          <Label htmlFor="sizeOptions" className="mt-3">Size Options (JSON)</Label>
-          <Textarea
-            id="sizeOptions"
-            name="sizeOptions"
-            rows={5}
-            defaultValue={product?.sizeOptions ?? ""}
-            placeholder={'[{"label":"1 Carat","price":4500},{"label":"1.5 Carat","price":5400}]'}
-          />
-          <p className="text-[11px] text-muted-foreground">
-            One entry per selectable size. The first entry is the base price
-            shown on cards and listings. Leave empty to disable the selector.
+            One row per selectable size on the product page. The first active
+            size is the base price shown on cards and listings. Inactive sizes
+            are hidden from the public. Certificate label is optional — when
+            empty it is auto-derived from the price (₹701–₹5,000 Lab Tested,
+            above ₹5,000 Lab Certified with Mine Test).
           </p>
         </div>
         <div className="space-y-2">

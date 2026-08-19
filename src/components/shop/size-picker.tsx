@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Check } from "lucide-react";
 import { PaymentButton } from "@/components/shop/payment-button";
+import { WhatsappIcon } from "@/components/layout/social-icons";
 import {
   certificateTierForPrice,
   CERTIFICATE_TIER_LABEL,
@@ -21,6 +22,8 @@ function formatPrice(value: number): string {
 export interface SizeOptionData {
   label: string;
   price: number;
+  certificateLabel?: string | null;
+  isActive?: boolean;
 }
 
 interface GeoConfig {
@@ -97,9 +100,17 @@ export function SizePicker({
   geo,
   viewerCountry,
 }: SizePickerProps) {
+  const activeOptions = useMemo(
+    () => options.filter((o) => o.isActive !== false),
+    [options]
+  );
   const [selected, setSelected] = useState(0);
-  const option = options[selected];
+  const option = activeOptions[selected] ?? activeOptions[0];
   const tier = certificateTierForPrice(option.price);
+  const certLabel =
+    option.certificateLabel?.trim() ||
+    (tier ? CERTIFICATE_TIER_LABEL[tier] : "");
+  const showCertBadge = Boolean(certLabel);
   const converted = geoLabel(option.price, geo, viewerCountry);
   const priceLabel = converted ?? formatPrice(option.price);
   const itemName = `${baseName} – ${option.label}`;
@@ -118,11 +129,11 @@ export function SizePicker({
             Select Size
           </span>
           <span className="text-[10px] text-slate-500">
-            {options.length} sizes available
+            {activeOptions.length} sizes available
           </span>
         </div>
         <div className="mt-2.5 flex flex-wrap gap-2">
-          {options.map((o, i) => (
+          {activeOptions.map((o, i) => (
             <button
               key={o.label}
               type="button"
@@ -152,26 +163,29 @@ export function SizePicker({
             </p>
           ) : null}
         </div>
-        {tier ? (
-          <span className={CERTIFICATE_TIER_BADGE_CLASS[tier]}>
+        {showCertBadge ? (
+          <span className={tier ? CERTIFICATE_TIER_BADGE_CLASS[tier] : "inline-flex items-center gap-1.5 rounded-full border border-premium-gold/40 bg-white/5 px-3 py-1 text-xs font-bold text-golden"}>
             <Check className="h-3.5 w-3.5" />
-            {CERTIFICATE_TIER_LABEL[tier]}
+            {certLabel}
           </span>
         ) : null}
       </div>
 
-      <PaymentButton
-        label="Order on WhatsApp"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
-        itemName={itemName}
-        priceLabel={priceLabel}
-        price={option.price}
-        upiId={upiId}
-        whatsappNumber={whatsappNumber}
-        whatsappMessage={message}
-        razorpayKeyId={razorpayKeyId}
-        pageUrl={pageUrl}
-      />
+      <div className="flex justify-center pt-1">
+        <PaymentButton
+          label="Order"
+          icon={<WhatsappIcon className="h-4 w-4" />}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp/90 px-7 py-2.5 text-sm font-bold text-white shadow-[0_8px_24px_rgba(37,211,102,0.35)] ring-1 ring-white/20 backdrop-blur transition hover:bg-[#1EBE5B]"
+          itemName={itemName}
+          priceLabel={priceLabel}
+          price={option.price}
+          upiId={upiId}
+          whatsappNumber={whatsappNumber}
+          whatsappMessage={message}
+          razorpayKeyId={razorpayKeyId}
+          pageUrl={pageUrl}
+        />
+      </div>
     </div>
   );
 }

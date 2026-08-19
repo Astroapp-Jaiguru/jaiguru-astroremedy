@@ -1,23 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { BadgeCheck, Flame, TrendingUp } from "lucide-react";
-import { WhatsappIcon } from "@/components/layout/social-icons";
 import { CategoryGlyph, RatingStars, IMAGE_FALLBACK_STYLES } from "@/components/sections/shop-helpers";
 import { formatPrice } from "@/lib/shop-data";
 import { productPriceDisplay } from "@/lib/pricing/geo";
-import { getSiteData } from "@/lib/site-data";
 import {
   certificateTierForPrice,
   withCertificateSuffix,
   CERTIFICATE_TIER_LABEL,
   CERTIFICATE_TIER_BADGE_CLASS,
 } from "@/lib/products/certificate";
-import { PaymentButton } from "@/components/shop/payment-button";
 
 /**
  * Shared premium product card used on the homepage (featured) and the
  * /products listing. Image, name, category, price, discount, rating stars,
- * feature badge, WhatsApp "Order" button and "View Details" link.
+ * feature badge and "View Details" link. Orders start on the detail page.
  */
 export interface ProductCardData {
   id: string;
@@ -81,13 +78,11 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
     Number.parseFloat(product.discountPrice) < Number.parseFloat(product.price);
   const tier = certificateTierForPrice(product.price);
   const displayName = withCertificateSuffix(product.name, tier);
-  const { contact } = await getSiteData();
   const orderPrice = product.discountPrice ?? product.price;
   const display = await productPriceDisplay(
     orderPrice,
     hasDiscount ? product.price : null
   );
-  const message = "";
 
   return (
     <article className="glass-card-light group flex flex-col overflow-hidden rounded-[var(--jaiguru-product-card-radius)] transition-all duration-300 hover:-translate-y-1.5 hover:border-golden/70 hover:shadow-[0_18px_50px_rgba(250,204,21,0.28)]">
@@ -157,21 +152,9 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
           <p className="text-[10px] leading-snug text-slate-500">{display.effective.note}</p>
         ) : null}
         <div className="mt-auto flex gap-2 pt-2">
-          <PaymentButton
-            label="Order"
-            icon={<WhatsappIcon className="h-3.5 w-3.5" />}
-            className="btn-glow-whatsapp inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] bg-whatsapp px-3 py-2.5 text-xs font-semibold text-white shadow-[0_8px_25px_rgba(37,211,102,0.4)] transition hover:bg-[var(--jaiguru-whatsapp-hover)]"
-            itemName={displayName}
-            priceLabel={display.effective?.label ?? formatPrice(orderPrice)}
-            price={display.effective?.amount ?? orderPrice}
-            upiId={contact.upiId}
-            whatsappNumber={contact.whatsappNumber}
-            whatsappMessage={message}
-            pageUrl={`/products/${product.slug}`}
-          />
           <Link
             href={`/products/${product.slug}`}
-            className="inline-flex flex-1 items-center justify-center whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] border-2 border-[var(--jaiguru-cta-primary)] px-3 py-2.5 text-xs font-semibold text-[var(--jaiguru-cta-primary)] transition hover:bg-[var(--jaiguru-cta-primary)] hover:text-white"
+            className="inline-flex w-full items-center justify-center whitespace-nowrap rounded-[var(--jaiguru-btn-radius)] border-2 border-[var(--jaiguru-cta-primary)] px-3 py-2.5 text-xs font-semibold text-[var(--jaiguru-cta-primary)] transition hover:bg-[var(--jaiguru-cta-primary)] hover:text-white"
           >
             View Details
           </Link>

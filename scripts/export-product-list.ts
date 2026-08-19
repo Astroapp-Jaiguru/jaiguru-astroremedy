@@ -26,11 +26,11 @@ async function main() {
   lines.push("--------------------------------------------------");
   products.forEach((p, i) => {
     let name = p.name;
-    if (Array.isArray(p.sizeOptions) && p.sizeOptions.length) {
-      const labels = (p.sizeOptions as { label: string }[])
-        .map((o) => o.label)
-        .join(", ");
-      name = `${name} [sizes: ${labels}]`;
+if (Array.isArray(p.sizeOptions) && p.sizeOptions.length) {
+      const labels = (p.sizeOptions as { label: string; isActive?: boolean }[])
+        .filter((o) => o.isActive !== false)
+        .map((o) => o.label);
+      if (labels.length) name = `${name} [sizes: ${labels.join(", ")}]`;
     }
     lines.push(`${i + 1}. ${name}`);
   });

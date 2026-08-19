@@ -91,19 +91,32 @@ function parseProductForm(fd: FormData) {
   const priceSource = str(fd, "priceSource") || "manual";
 
   const sizeOptionsRaw = str(fd, "sizeOptions");
-  let sizeOptions: { label: string; price: number }[] | null = null;
+  let sizeOptions: {
+    label: string;
+    price: number;
+    certificateLabel?: string;
+    isActive?: boolean;
+  }[] | null = null;
   if (sizeOptionsRaw && sizeOptionsRaw.trim()) {
     try {
       const parsed = JSON.parse(sizeOptionsRaw);
       if (Array.isArray(parsed)) {
         sizeOptions = parsed
-          .map((o) => ({ label: String(o?.label ?? ""), price: toNumber(String(o?.price ?? "")) ?? 0 }))
+          .map((o) => ({
+            label: String(o?.label ?? "").trim(),
+            price: toNumber(String(o?.price ?? "")) ?? 0,
+            certificateLabel: o?.certificateLabel
+              ? String(o.certificateLabel).trim()
+              : undefined,
+            isActive: o?.isActive === undefined ? true : Boolean(o.isActive),
+          }))
           .filter((o) => o.label && o.price > 0);
       }
     } catch {
       sizeOptions = null;
     }
   }
+  if (sizeOptions && sizeOptions.length === 0) sizeOptions = null;
 
   return {
     name,
