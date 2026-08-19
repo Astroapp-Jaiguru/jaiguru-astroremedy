@@ -68,6 +68,9 @@ function parseProductForm(fd: FormData) {
   const quantity = toNumber(str(fd, "quantity")) ?? 0;
   const sortOrder = toNumber(str(fd, "sortOrder")) ?? 0;
   const categoryId = str(fd, "categoryId");
+  const productTypeId = str(fd, "productTypeId") || null;
+  let subtypeId = str(fd, "subtypeId") || null;
+  if (subtypeId && !productTypeId) subtypeId = null;
   const stockStatus = str(fd, "stockStatus") || "IN_STOCK";
 
   const estimatedDeliveryTime = str(fd, "estimatedDeliveryTime");
@@ -121,6 +124,8 @@ function parseProductForm(fd: FormData) {
   return {
     name,
     categoryId,
+    productTypeId,
+    subtypeId,
     price,
     finalDiscount,
     costPrice,
@@ -174,6 +179,8 @@ export async function createProductAction(
         name: data.name,
         slug,
         categoryId: data.categoryId,
+        productTypeId: data.productTypeId,
+        subtypeId: data.subtypeId,
         subcategory: data.subcategory,
         sku: data.sku,
         mainImage: data.mainImage,
@@ -235,6 +242,8 @@ export async function updateProductAction(
         name: data.name,
         slug,
         categoryId: data.categoryId,
+        productTypeId: data.productTypeId,
+        subtypeId: data.subtypeId,
         subcategory: data.subcategory,
         sku: data.sku,
         mainImage: data.mainImage,

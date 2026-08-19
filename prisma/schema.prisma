@@ -100,6 +100,10 @@ model Product {
   slug             String         @unique
   categoryId       String
   category         ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  productTypeId    String?
+  productType      ProductType?   @relation(fields: [productTypeId], references: [id], onDelete: SetNull)
+  subtypeId        String?
+  subtype          Subtype?       @relation(fields: [subtypeId], references: [id], onDelete: SetNull)
   subcategory      String?
   sku              String?
   mainImage        String?
@@ -149,9 +153,42 @@ model Product {
   priceChanges     PriceChange[]
 
   @@index([categoryId])
+  @@index([productTypeId])
+  @@index([subtypeId])
   @@index([isActive, isFeatured])
   @@index([isActive, isPopular])
   @@index([priceSource])
+}
+
+model ProductType {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  icon      String?
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  subtypes  Subtype[]
+  products  Product[]
+
+  @@index([isActive])
+}
+
+model Subtype {
+  id            String      @id @default(cuid())
+  name          String
+  slug          String
+  productTypeId String
+  productType   ProductType @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+  sortOrder     Int         @default(0)
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  products      Product[]
+
+  @@unique([productTypeId, slug])
+  @@index([productTypeId])
 }
 
 model ProductImage {

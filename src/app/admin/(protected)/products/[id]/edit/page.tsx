@@ -14,12 +14,25 @@ interface PageProps {
 
 export default async function EditProductPage({ params }: PageProps) {
   const { id } = await params;
-  const [product, categories] = await Promise.all([
+  const [product, categories, productTypes] = await Promise.all([
     prisma.product.findUnique({ where: { id } }),
     prisma.productCategory.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
       orderBy: { sortOrder: "asc" },
+    }),
+    prisma.productType.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        subtypes: {
+          where: { isActive: true },
+          select: { id: true, name: true },
+          orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        },
+      },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
   ]);
   if (!product) notFound();
@@ -29,6 +42,8 @@ export default async function EditProductPage({ params }: PageProps) {
     name: product.name,
     slug: product.slug,
     categoryId: product.categoryId,
+    productTypeId: product.productTypeId ?? "",
+    subtypeId: product.subtypeId ?? "",
     subcategory: product.subcategory ?? "",
     sku: product.sku ?? "",
     price: product.price.toString(),
@@ -80,7 +95,7 @@ export default async function EditProductPage({ params }: PageProps) {
           <CardDescription>Update the product and save your changes.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ProductForm categories={categories} product={values} />
+          <ProductForm categories={categories} productTypes={productTypes} product={values} />
         </CardContent>
       </Card>
     </div>

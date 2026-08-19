@@ -8,11 +8,26 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export default async function NewProductPage() {
-  const categories = await prisma.productCategory.findMany({
-    where: { isActive: true },
-    select: { id: true, name: true },
-    orderBy: { sortOrder: "asc" },
-  });
+  const [categories, productTypes] = await Promise.all([
+    prisma.productCategory.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.productType.findMany({
+      where: { isActive: true },
+      select: {
+        id: true,
+        name: true,
+        subtypes: {
+          where: { isActive: true },
+          select: { id: true, name: true },
+          orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+        },
+      },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    }),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -35,7 +50,7 @@ export default async function NewProductPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ProductForm categories={categories} />
+          <ProductForm categories={categories} productTypes={productTypes} />
         </CardContent>
       </Card>
     </div>

@@ -8,7 +8,8 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal, Tags, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface ProductFilterCategories {
   name: string;
@@ -16,8 +17,17 @@ export interface ProductFilterCategories {
   count: number;
 }
 
+export interface ProductFilterType {
+  name: string;
+  slug: string;
+  icon: string | null;
+  count: number;
+  subtypes: { name: string; slug: string; count: number }[];
+}
+
 export interface ProductFiltersProps {
   categories: ProductFilterCategories[];
+  types: ProductFilterType[];
   total: number;
   initial: {
     category: string;
@@ -27,6 +37,8 @@ export interface ProductFiltersProps {
     max: number | null;
     size: string;
     tier: string;
+    pt: string;
+    st: string;
   };
 }
 
@@ -79,7 +91,7 @@ const glassField =
 const glassLabel =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-[#FACC15]/70";
 
-export function ProductFilters({ categories, total, initial }: ProductFiltersProps) {
+export function ProductFilters({ categories, types, total, initial }: ProductFiltersProps) {
   const router = useRouter();
   const [category, setCategory] = useState(initial.category);
   const [q, setQ] = useState(initial.q);
@@ -88,6 +100,9 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
   const [max, setMax] = useState(initial.max ?? PRICE_MAX);
   const [size, setSize] = useState(initial.size);
   const [tier, setTier] = useState(initial.tier);
+  const [pt, setPt] = useState(initial.pt);
+  const [st, setSt] = useState(initial.st);
+  const [expandedType, setExpandedType] = useState<string | null>(initial.pt || null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
@@ -95,9 +110,9 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
   }, []);
 
   const hasFilters =
-    category !== "" || q.trim() !== "" || min > PRICE_MIN || max < PRICE_MAX || size !== "" || tier !== "";
+    category !== "" || q.trim() !== "" || min > PRICE_MIN || max < PRICE_MAX || size !== "" || tier !== "" || pt !== "" || st !== "";
 
-  const apply = (patch?: Partial<{ category: string; q: string; sort: string; min: number; max: number; size: string; tier: string }>) => {
+  const apply = (patch?: Partial<{ category: string; q: string; sort: string; min: number; max: number; size: string; tier: string; pt: string; st: string }>) => {
     const p = new URLSearchParams();
     const merged = {
       category: category ?? "",
@@ -107,6 +122,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
       max,
       size: size ?? "",
       tier: tier ?? "",
+      pt: pt ?? "",
+      st: st ?? "",
       ...patch,
     };
     if (merged.category) p.set("category", merged.category);
@@ -116,6 +133,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     if (merged.max < PRICE_MAX) p.set("max", String(merged.max));
     if (merged.size) p.set("size", merged.size);
     if (merged.tier) p.set("tier", merged.tier);
+    if (merged.pt) p.set("pt", merged.pt);
+    if (merged.st) p.set("st", merged.st);
     const qs = p.toString();
     router.push(qs ? `/products?${qs}` : "/products", { scroll: false });
   };
@@ -133,8 +152,28 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     setMax(PRICE_MAX);
     setSize("");
     setTier("");
+    setPt("");
+    setSt("");
+    setExpandedType(null);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     router.push("/products", { scroll: false });
+  };
+
+  const selectType = (slug: string) => {
+    if (pt === slug) {
+      setExpandedType(expandedType === slug ? null : slug);
+      return;
+    }
+    setPt(slug);
+    setSt("");
+    setExpandedType(slug);
+    apply({ pt: slug, st: "" });
+  };
+
+  const selectSubtype = (typeSlug: string, subSlug: string) => {
+    setPt(typeSlug);
+    setSt(subSlug);
+    apply({ pt: typeSlug, st: subSlug });
   };
 
   return (
@@ -331,6 +370,122 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
             </button>
           );
         })}
+      </div>
+
+      {/* Product Type filter */}
+      <div className="mt-5 border-t border-white/10 pt-5">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#FACC15]/70">
+            <Tags className="h-3.5 w-3.5" />
+            Product Type
+          </span>
+          {pt ? (
+            <button
+              type="button"
+              onClick={() => {
+                setPt("");
+                setSt("");
+                setExpandedType(null);
+                apply({ pt: "", st: "" });
+              }}
+              className="rounded-full border border-white/15 px-3 py-1 text-[11px] font-semibold text-slate-300 transition hover:border-[#D4AF37]/50 hover:text-[#FACC15]"
+            >
+              All Types
+            </button>
+          ) : null}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {types.map((t) => {
+            const active = pt === t.slug;
+            const expanded = expandedType === t.slug;
+            return (
+              <button
+                key={t.slug}
+                type="button"
+                onClick={() => selectType(t.slug)}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition",
+                  active
+                    ? "bg-gradient-to-r from-[#FACC15] to-[#F97316] text-slate-900 shadow-[0_6px_20px_rgba(250,204,21,0.35)]"
+                    : "border border-white/15 bg-white/5 text-slate-200 backdrop-blur hover:border-[#D4AF37]/50 hover:bg-white/10 hover:text-[#FACC15]"
+                )}
+              >
+                {t.icon ? <span aria-hidden>{t.icon}</span> : null}
+                {t.name}
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 text-[10px] font-bold",
+                    active ? "bg-slate-900/15 text-slate-900" : "bg-white/10 text-slate-400"
+                  )}
+                >
+                  {t.count}
+                </span>
+                <ChevronDown
+                  className={cn("h-3.5 w-3.5 transition-transform duration-300", expanded && "rotate-180")}
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        {expandedType ? (
+          <div className="mt-3 animate-in fade-in-0 slide-in-from-top-2 duration-300 rounded-2xl border border-[#D4AF37]/25 bg-white/[0.03] p-3.5">
+            {(() => {
+              const t = types.find((x) => x.slug === expandedType);
+              if (!t || t.subtypes.length === 0)
+                return (
+                  <p className="text-xs text-slate-500">
+                    No subtypes for this type yet.
+                  </p>
+                );
+              return (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSt("");
+                      apply({ pt: expandedType, st: "" });
+                    }}
+                    className={cn(
+                      "rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
+                      st === ""
+                        ? "bg-[#D4AF37]/25 text-[#FACC15] ring-1 ring-[#D4AF37]/60"
+                        : "border border-white/15 text-slate-400 hover:text-[#FACC15]"
+                    )}
+                  >
+                    All {t.name}
+                  </button>
+                  {t.subtypes.map((s) => {
+                    const active = st === s.slug;
+                    return (
+                      <button
+                        key={s.slug}
+                        type="button"
+                        onClick={() => selectSubtype(expandedType, s.slug)}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
+                          active
+                            ? "bg-gradient-to-r from-[#FACC15] to-[#F97316] text-slate-900 shadow-[0_5px_16px_rgba(250,204,21,0.3)]"
+                            : "border border-white/15 bg-white/5 text-slate-200 hover:border-[#D4AF37]/50 hover:bg-white/10 hover:text-[#FACC15]"
+                        )}
+                      >
+                        {s.name}
+                        <span
+                          className={cn(
+                            "rounded-full px-1.5 text-[10px] font-bold",
+                            active ? "bg-slate-900/15 text-slate-900" : "bg-white/10 text-slate-400"
+                          )}
+                        >
+                          {s.count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+          </div>
+        ) : null}
       </div>
     </div>
   );

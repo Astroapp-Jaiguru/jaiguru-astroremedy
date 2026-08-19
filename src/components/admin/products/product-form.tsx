@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,8 @@ export interface ProductFormValues {
   name: string;
   slug: string;
   categoryId: string;
+  productTypeId: string;
+  subtypeId: string;
   subcategory: string;
   sku: string;
   price: string;
@@ -58,9 +60,11 @@ export interface ProductFormValues {
 
 export function ProductForm({
   categories,
+  productTypes,
   product,
 }: {
   categories: { id: string; name: string }[];
+  productTypes?: { id: string; name: string; subtypes: { id: string; name: string }[] }[];
   product?: ProductFormValues;
 }) {
   const action = product?.id ? updateProductAction : createProductAction;
@@ -74,6 +78,12 @@ export function ProductForm({
   );
   const [customDelivery, setCustomDelivery] = useState(
     isCustom && savedDelivery ? savedDelivery : ""
+  );
+  const [typeId, setTypeId] = useState(product?.productTypeId ?? "");
+  const [subtypeId, setSubtypeId] = useState(product?.subtypeId ?? "");
+  const typeSubtypes = useMemo(
+    () => productTypes?.find((t) => t.id === typeId)?.subtypes ?? [],
+    [productTypes, typeId]
   );
 
   return (
@@ -117,6 +127,50 @@ export function ProductForm({
               </option>
             ))}
           </select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="productTypeId">Product Type</Label>
+          <select
+            id="productTypeId"
+            name="productTypeId"
+            value={typeId}
+            onChange={(e) => {
+              setTypeId(e.target.value);
+              setSubtypeId("");
+            }}
+            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            <option value="">None</option>
+            {(productTypes ?? []).map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+          <p className="text-[11px] text-muted-foreground">
+            Groups this product under a shop filter (e.g. Yellow Sapphire).
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="subtypeId">Subtype</Label>
+          <select
+            id="subtypeId"
+            name="subtypeId"
+            value={subtypeId}
+            onChange={(e) => setSubtypeId(e.target.value)}
+            disabled={!typeId || typeSubtypes.length === 0}
+            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50"
+          >
+            <option value="">None</option>
+            {typeSubtypes.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          <p className="text-[11px] text-muted-foreground">
+            Origin / mine / variety (e.g. Ceylon, Burmese).
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="subcategory">Subcategory / Type</Label>

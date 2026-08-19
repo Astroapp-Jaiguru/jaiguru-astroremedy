@@ -41,7 +41,7 @@ const TIERS = new Set(["budget", "premium", "deluxe"]);
 
 function filterHref(sp: Awaited<PageProps["searchParams"]>, page: number): string {
   const p = new URLSearchParams();
-  for (const key of ["category", "q", "sort", "min", "max", "size", "tier"] as const) {
+  for (const key of ["category", "q", "sort", "min", "max", "size", "tier", "pt", "st"] as const) {
     const v = param(sp, key);
     if (v) p.set(key, v);
   }
@@ -54,6 +54,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const page = Math.max(1, Number.parseInt(param(sp, "page"), 10) || 1);
   const categorySlug = param(sp, "category");
+  const pt = param(sp, "pt");
+  const st = param(sp, "st");
   const q = param(sp, "q").trim();
   const sort = param(sp, "sort") in SORTS ? param(sp, "sort") : "featured";
 
@@ -79,6 +81,33 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const categoryCounts: Record<string, number> = {};
   for (const c of categories) categoryCounts[c.slug] = c._count.products;
 
+  const productTypes = await prisma.productType.findMany({
+    where: { isActive: true },
+    select: {
+      name: true,
+      slug: true,
+      icon: true,
+      subtypes: {
+        where: { isActive: true },
+        select: {
+          name: true,
+          slug: true,
+          _count: { select: { products: { where: { isActive: true } } } },
+        },
+        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      },
+      _count: { select: { products: { where: { isActive: true } } } },
+    },
+    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+  });
+
+  const isValidType = productTypes.some((t) => t.slug === pt);
+  const isValidSubtype = isValidType
+    ? productTypes
+        .find((t) => t.slug === pt)
+        ?.subtypes.some((s) => s.slug === st)
+    : false;
+
   const isValidCategory = categories.some((c) => c.slug === categorySlug);
   const priceFilter =
     min != null || max != null
@@ -92,6 +121,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const where = {
     isActive: true,
     ...(isValidCategory ? { category: { slug: categorySlug } } : {}),
+    ...(isValidType ? { productType: { slug: pt } } : {}),
+    ...(isValidSubtype ? { subtype: { slug: st } } : {}),
     ...(q ? { OR: [{ name: { contains: q } }, { tags: { has: q } }] } : {}),
     ...priceFilter,
     ...(size ? { tags: { has: `${size}-carat` } } : {}),
@@ -149,6 +180,17 @@ rating: p.rating.toString(),
             slug: c.slug,
             count: c._count.products,
           }))}
+          types={productTypes.map((t) => ({
+            name: t.name,
+            slug: t.slug,
+            icon: t.icon,
+            count: t._count.products,
+            subtypes: t.subtypes.map((s) => ({
+              name: s.name,
+              slug: s.slug,
+              count: s._count.products,
+            })),
+          }))}
           total={total}
           initial={{
             category: isValidCategory ? categorySlug : "",
@@ -158,6 +200,8 @@ rating: p.rating.toString(),
             max,
             size,
             tier,
+            pt: isValidType ? pt : "",
+            st: isValidSubtype ? st : "",
           }}
         />
 
