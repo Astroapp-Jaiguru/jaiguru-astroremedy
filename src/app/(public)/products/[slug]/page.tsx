@@ -18,9 +18,12 @@ import {
   CERTIFICATE_TIER_BADGE_CLASS,
 } from "@/lib/products/certificate";
 import { PaymentButton } from "@/components/shop/payment-button";
+import { SizePicker } from "@/components/shop/size-picker";
 import { WhatsappIcon } from "@/components/layout/social-icons";
 import { ShareButtons } from "@/components/social/share-buttons";
 import { absoluteUrl } from "@/lib/share";
+import { getViewerCountry, displayPriceForViewer } from "@/lib/pricing/geo";
+import { getPricingSettings } from "@/lib/pricing/settings";
 
 /**
  * Product detail page (scope §15.3). Single-column layout: image on top,
@@ -87,6 +90,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
     hasDiscount ? product.price : null
   );
 
+  const sizeOptions = Array.isArray(product.sizeOptions)
+    ? (product.sizeOptions as unknown as { label: string; price: number }[])
+    : null;
+
+  const [pricingSettings, viewerCountry] = await Promise.all([
+    getPricingSettings().catch(() => null),
+    getViewerCountry().catch(() => "IN"),
+  ]);
+  const geo = pricingSettings
+    ? {
+        enabled: pricingSettings.enabled,
+        baseCountry: pricingSettings.baseCountry,
+        markup: pricingSettings.markup,
+        currencies: pricingSettings.currencies,
+        disclosure: pricingSettings.disclosure,
+      }
+    : null;
+
   const tier = certificateTierForPrice(product.price);
   const displayName = withCertificateSuffix(product.name, tier);
 
@@ -116,12 +137,15 @@ export default async function ProductDetailPage({ params }: PageProps) {
     isNewArrival: p.isNewArrival,
     rating: p.rating.toString(),
     ratingCount: p.ratingCount,
+    hasVariants: Array.isArray((p as unknown as { sizeOptions?: unknown }).sizeOptions),
   }));
 
   const meta: { label: string; value: string }[] = [
     ...(product.subcategory ? [{ label: "Type", value: product.subcategory }] : []),
     ...(product.material ? [{ label: "Material", value: product.material }] : []),
-    ...(product.size ? [{ label: "Size", value: product.size }] : []),
+    ...(product.size && (!sizeOptions || sizeOptions.length === 0)
+      ? [{ label: "Size", value: product.size }]
+      : []),
     ...(product.weight ? [{ label: "Weight", value: product.weight }] : []),
     ...(product.color ? [{ label: "Color", value: product.color }] : []),
     ...(product.sku ? [{ label: "SKU", value: product.sku }] : []),
@@ -241,19 +265,35 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </span>
             </div>
 
-            <div className="flex items-baseline gap-3">
-              <span className="font-display text-3xl font-bold text-[#FACC15]">
-                {display.effective?.label ?? formatPrice(price)}
-              </span>
-              {hasDiscount ? (
-                <span className="text-xl text-slate-500 line-through">
-                  {display.original?.label ?? formatPrice(product.price)}
-                </span>
-              ) : null}
-            </div>
-            {display.effective ? (
-              <p className="text-xs text-slate-500">{display.effective.note}</p>
-            ) : null}
+            {sizeOptions && sizeOptions.length > 0 ? (
+              <SizePicker
+                options={sizeOptions}
+                baseName={product.name}
+                upiId={contact.upiId}
+                whatsappNumber={contact.whatsappNumber}
+                whatsappMessage=""
+                razorpayKeyId={razorpayKeyId}
+                pageUrl={`/products/${product.slug}`}
+                geo={geo}
+                viewerCountry={viewerCountry}
+              />
+            ) : (
+              <>
+                <div className="flex items-baseline gap-3">
+                  <span className="font-display text-3xl font-bold text-[#FACC15]">
+                    {display.effective?.label ?? formatPrice(price)}
+                  </span>
+                  {hasDiscount ? (
+                    <span className="text-xl text-slate-500 line-through">
+                      {display.original?.label ?? formatPrice(product.price)}
+                    </span>
+                  ) : null}
+                </div>
+                {display.effective ? (
+                  <p className="text-xs text-slate-500">{display.effective.note}</p>
+                ) : null}
+              </>
+            )}
 
             {product.shortDescription ? (
               <p className="leading-relaxed text-[color:var(--jaiguru-page-text-muted)]">
@@ -296,19 +336,21 @@ export default async function ProductDetailPage({ params }: PageProps) {
               </dl>
             ) : null}
 
-            <PaymentButton
-              label="Order on WhatsApp"
-              icon={<WhatsappIcon className="h-5 w-5" />}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
-              itemName={displayName}
-              priceLabel={display.effective?.label ?? formatPrice(price)}
-              price={display.effective?.amount ?? price.toString()}
-              upiId={contact.upiId}
-              whatsappNumber={contact.whatsappNumber}
-              whatsappMessage={orderMessage}
-              razorpayKeyId={razorpayKeyId}
-              pageUrl={`/products/${product.slug}`}
-            />
+            {sizeOptions && sizeOptions.length > 0 ? null : (
+              <PaymentButton
+                label="Order on WhatsApp"
+                icon={<WhatsappIcon className="h-5 w-5" />}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-whatsapp px-8 py-4 text-base font-bold text-white shadow-[0_10px_30px_rgba(37,211,102,0.35)] transition hover:bg-[#1EBE5B]"
+                itemName={displayName}
+                priceLabel={display.effective?.label ?? formatPrice(price)}
+                price={display.effective?.amount ?? price.toString()}
+                upiId={contact.upiId}
+                whatsappNumber={contact.whatsappNumber}
+                whatsappMessage={orderMessage}
+                razorpayKeyId={razorpayKeyId}
+                pageUrl={`/products/${product.slug}`}
+              />
+            )}
             <p className="text-xs text-slate-500">
               Questions about this item? Chat with us - we reply quickly with
               availability, shipping and payment via UPI.

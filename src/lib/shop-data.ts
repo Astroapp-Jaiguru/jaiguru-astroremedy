@@ -39,6 +39,7 @@ export interface FeaturedProduct {
   isNewArrival: boolean;
   rating: string;
   ratingCount: number;
+  hasVariants?: boolean;
 }
 
 export const getFeaturedProducts = cache(
@@ -65,6 +66,7 @@ export const getFeaturedProducts = cache(
         isNewArrival: p.isNewArrival,
         rating: p.rating.toString(),
         ratingCount: p.ratingCount,
+        hasVariants: Array.isArray((p as unknown as { sizeOptions?: unknown }).sizeOptions),
       }));
     } catch (e) {
       console.error("[shop-data] getFeaturedProducts failed:", e);

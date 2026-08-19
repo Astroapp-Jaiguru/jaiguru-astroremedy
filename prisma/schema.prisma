@@ -126,6 +126,7 @@ model Product {
   usageMethod      String?
   material         String?
   size             String?
+  sizeOptions      Json? // [{ label, price }] — size selector options (grouped products)
   weight           String?
   color            String?
   tags             String[]       @default([])

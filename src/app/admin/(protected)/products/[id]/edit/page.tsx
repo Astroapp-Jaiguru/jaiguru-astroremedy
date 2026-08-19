@@ -47,6 +47,9 @@ export default async function EditProductPage({ params }: PageProps) {
     tags: product.tags,
     material: product.material ?? "",
     size: product.size ?? "",
+    sizeOptions: Array.isArray(product.sizeOptions)
+      ? JSON.stringify(product.sizeOptions, null, 2)
+      : "",
     weight: product.weight ?? "",
     color: product.color ?? "",
     estimatedDeliveryTime: product.estimatedDeliveryTime ?? "",

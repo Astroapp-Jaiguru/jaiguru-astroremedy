@@ -32,6 +32,7 @@ export interface ProductCardData {
   isNewArrival: boolean;
   rating: string;
   ratingCount: number;
+  hasVariants?: boolean;
 }
 
 const BADGE_PREMIUM =
@@ -143,6 +144,7 @@ export async function ProductCard({ product }: { product: ProductCardData }) {
         ) : null}
         <div className="mt-1 flex items-baseline gap-2">
           <span className="text-lg font-bold text-royal-purple">
+            {product.hasVariants ? "From " : ""}
             {display.effective?.label ?? formatPrice(product.discountPrice ?? product.price)}
           </span>
           {hasDiscount ? (

@@ -43,6 +43,7 @@ export interface ProductFormValues {
   tags: string[];
   material: string;
   size: string;
+  sizeOptions: string;
   weight: string;
   color: string;
   estimatedDeliveryTime: string;
@@ -208,6 +209,21 @@ export function ProductForm({
         <div className="space-y-2">
           <Label htmlFor="size">Size</Label>
           <Input id="size" name="size" defaultValue={product?.size ?? ""} />
+          <p className="text-[11px] text-muted-foreground">
+            For grouped products the size selector replaces the single size field.
+          </p>
+          <Label htmlFor="sizeOptions" className="mt-3">Size Options (JSON)</Label>
+          <Textarea
+            id="sizeOptions"
+            name="sizeOptions"
+            rows={5}
+            defaultValue={product?.sizeOptions ?? ""}
+            placeholder={'[{"label":"1 Carat","price":4500},{"label":"1.5 Carat","price":5400}]'}
+          />
+          <p className="text-[11px] text-muted-foreground">
+            One entry per selectable size. The first entry is the base price
+            shown on cards and listings. Leave empty to disable the selector.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="weight">Weight</Label>

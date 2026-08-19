@@ -90,6 +90,21 @@ function parseProductForm(fd: FormData) {
   const priceFloor = toNumber(str(fd, "priceFloor"));
   const priceSource = str(fd, "priceSource") || "manual";
 
+  const sizeOptionsRaw = str(fd, "sizeOptions");
+  let sizeOptions: { label: string; price: number }[] | null = null;
+  if (sizeOptionsRaw && sizeOptionsRaw.trim()) {
+    try {
+      const parsed = JSON.parse(sizeOptionsRaw);
+      if (Array.isArray(parsed)) {
+        sizeOptions = parsed
+          .map((o) => ({ label: String(o?.label ?? ""), price: toNumber(String(o?.price ?? "")) ?? 0 }))
+          .filter((o) => o.label && o.price > 0);
+      }
+    } catch {
+      sizeOptions = null;
+    }
+  }
+
   return {
     name,
     categoryId,
@@ -112,6 +127,7 @@ function parseProductForm(fd: FormData) {
     tags: toList(str(fd, "tags")),
     material: str(fd, "material") || null,
     size: str(fd, "size") || null,
+    sizeOptions,
     weight: str(fd, "weight") || null,
     color: str(fd, "color") || null,
     estimatedDeliveryTime: finalDeliveryTime || null,
@@ -159,6 +175,7 @@ export async function createProductAction(
         tags: data.tags,
         material: data.material,
         size: data.size,
+        ...(data.sizeOptions ? { sizeOptions: data.sizeOptions } : {}),
         weight: data.weight,
         color: data.color,
         estimatedDeliveryTime: data.estimatedDeliveryTime,
@@ -223,6 +240,7 @@ export async function updateProductAction(
         tags: data.tags,
         material: data.material,
         size: data.size,
+        ...(data.sizeOptions ? { sizeOptions: data.sizeOptions } : {}),
         weight: data.weight,
         color: data.color,
         estimatedDeliveryTime: data.estimatedDeliveryTime,

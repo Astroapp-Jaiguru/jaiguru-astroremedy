@@ -15,15 +15,25 @@ const prisma = new PrismaClient({
  */
 async function main() {
   const products = await prisma.product.findMany({
-    select: { slug: true, name: true },
+    where: { isActive: true },
+    select: { slug: true, name: true, sizeOptions: true },
     orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
   });
 
   const lines: string[] = [];
-  lines.push(`Jaiguru product catalog - ${products.length} items`);
-  lines.push("Order is stable: products are sorted by slug. Save photos as 1.jpg, 2.png, 3.jpeg ...");
+  lines.push(`Jaiguru product catalog - ${products.length} items (grouped: one product per quality tier with size options)`);
+  lines.push("Order is stable: products are sorted by slug.");
   lines.push("--------------------------------------------------");
-  products.forEach((p, i) => lines.push(`${i + 1}. ${p.name}`));
+  products.forEach((p, i) => {
+    let name = p.name;
+    if (Array.isArray(p.sizeOptions) && p.sizeOptions.length) {
+      const labels = (p.sizeOptions as { label: string }[])
+        .map((o) => o.label)
+        .join(", ");
+      name = `${name} [sizes: ${labels}]`;
+    }
+    lines.push(`${i + 1}. ${name}`);
+  });
 
   const out = path.resolve(process.cwd(), "product-list.txt");
   fs.writeFileSync(out, lines.join("\n"), "utf8");

@@ -123,8 +123,9 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     category: p.category,
     isPopular: p.isPopular,
     isNewArrival: p.isNewArrival,
-    rating: p.rating.toString(),
+rating: p.rating.toString(),
     ratingCount: p.ratingCount,
+    hasVariants: Array.isArray((p as unknown as { sizeOptions?: unknown }).sizeOptions),
   }));
 
   const activeCategory = categories.find((c) => c.slug === categorySlug) ?? null;
