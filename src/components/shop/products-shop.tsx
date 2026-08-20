@@ -121,20 +121,6 @@ export function ProductsShop({
     commit(filtersRef.current, 1);
   }, [commit]);
 
-  const clear = useCallback(() => {
-    const empty: FiltersState = {
-      category: "",
-      q: "",
-      sort: "featured",
-      min: 0,
-      max: PRICE_MAX,
-      size: "",
-      tier: "",
-      nav: "",
-    };
-    commit(empty, 1);
-  }, [commit]);
-
   const goPage = useCallback(
     (page: number) => {
       commit(filtersRef.current, page);
@@ -166,7 +152,6 @@ export function ProductsShop({
         onStage={stage}
         onInstant={instant}
         onSubmit={submit}
-        onClear={clear}
       />
 
       {products.length === 0 ? (

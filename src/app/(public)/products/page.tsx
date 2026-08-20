@@ -8,11 +8,11 @@ import { fetchNavNodes, fetchProductsPage, parseProductsQuery } from "@/lib/prod
 /**
  * Products catalogue (scope §7.6 / §15). All products with pagination,
  * category filters, navigation-level filters (from the in-page "Browse"
- * menu), search, price range, size/carat, quality tier and sorting. Every
- * filter lives in the URL so views are shareable and server-rendered.
- * The server renders the initial filtered grid; ProductsShop then drives
- * instant client-side updates (slider, pills, suggestions, pagination)
- * against /api/products/filter while keeping the URL in sync.
+ * menu), search, and size/carat + sorting. Every filter lives in the URL
+ * so views are shareable and server-rendered. The server renders the
+ * initial filtered grid; ProductsShop then drives instant client-side
+ * updates (autocomplete suggestions, Search button, pagination) against
+ * /api/products/filter while keeping the URL in sync.
  */
 
 export const dynamic = "force-dynamic";
