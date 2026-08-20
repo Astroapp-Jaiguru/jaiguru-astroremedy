@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, LayoutGrid, X } from "lucide-react";
 import type { NavMenuItem } from "@/lib/product-navigation";
@@ -51,7 +50,12 @@ function AccordionTree({
   onNavigate: () => void;
 }) {
   const [open, setOpen] = useState<string | null>(null);
-  const router = useRouter();
+
+  const go = (href: string, onNavigate: () => void) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onNavigate();
+    window.location.assign(href);
+  };
   return (
     <div className={cn("flex flex-col", depth > 0 && "ml-3 border-l-2 border-golden/30 pl-3")}>
       {items.map((item) => {
@@ -71,11 +75,8 @@ function AccordionTree({
             ) : (
               <Link
                 href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate();
-                  router.push(item.href, { scroll: false });
-                }}
+                prefetch={false}
+                onClick={go(item.href, onNavigate)}
                 className="flex min-h-12 items-center rounded-xl px-3.5 text-[15px] font-medium text-slate-200 transition-colors hover:bg-golden/10 hover:text-[#FACC15]"
               >
                 {item.name}
@@ -95,7 +96,6 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [panels, setPanels] = useState<Panel[]>([]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const router = useRouter();
 
   const closeAll = useCallback(() => setPanels([]), []);
 
@@ -104,9 +104,9 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
       (e: React.MouseEvent<HTMLAnchorElement>) => {
         e.preventDefault();
         close?.();
-        router.push(href, { scroll: false });
+        window.location.assign(href);
       },
-    [router]
+    []
   );
 
   const scheduleClose = useCallback(() => {
@@ -201,6 +201,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
             >
               <Link
                 href={item.href}
+                prefetch={false}
                 onClick={navigate(item.href, closeAll)}
                 className="flex items-center gap-1.5 rounded-full border border-[#D4AF37]/40 bg-[#0B1120]/60 px-4 py-2 text-sm font-semibold text-[#FACC15] shadow-[0_4px_16px_rgba(0,0,0,0.25)] transition hover:border-[#FACC15]/70 hover:bg-[#FACC15]/10"
               >
@@ -227,6 +228,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
                 >
                   <Link
                     href={child.href}
+                    prefetch={false}
                     onClick={navigate(child.href, closeAll)}
                     className="flex h-8 items-center justify-between gap-2 rounded-xl px-2.5 text-[13px] font-medium text-slate-700 transition-colors hover:bg-golden/10 hover:text-slate-900"
                   >
@@ -241,6 +243,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
                 <div className="mt-1 border-t border-golden/25 pt-1">
                   <Link
                     href={panel.footer.href}
+                    prefetch={false}
                     onClick={navigate(panel.footer.href, closeAll)}
                     className="block h-8 rounded-xl px-2.5 py-1.5 text-[13px] font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                   >
@@ -291,6 +294,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
               <div className="flex-1 overflow-y-auto px-4 py-4">
                 <Link
                   href="/products"
+                  prefetch={false}
                   onClick={navigate("/products", () => setMobileOpen(false))}
                   className="mb-2 flex min-h-12 items-center rounded-xl bg-gradient-to-r from-[#FACC15]/15 to-[#F97316]/15 px-3.5 text-[15px] font-bold text-[#FACC15] transition hover:brightness-110"
                 >

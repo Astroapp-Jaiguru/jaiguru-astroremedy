@@ -1,20 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 /**
- * Client-side pagination for the /products catalogue. Uses router.push
- * (instead of Link's default navigation) because query-string Link
- * navigation is unreliable on Turbopack builds; keeps the <a> semantics
- * for crawlers.
+ * Client-side pagination for the /products catalogue. Query-string
+ * navigations use window.location.assign (instead of the client router)
+ * because RSC query navigation is unreliable on Vercel builds; keeps the
+ * <a> semantics for crawlers.
  */
 export function Pagination({ base, current, pages }: { base: string; current: number; pages: number }) {
-  const router = useRouter();
-
   const go = (href: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    router.push(href, { scroll: false });
+    window.location.assign(href);
   };
 
   if (pages <= 1) return null;

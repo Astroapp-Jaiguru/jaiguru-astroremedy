@@ -11,7 +11,7 @@
  * - Applied filters live in the URL; the bar resyncs on external navigation.
  */
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X, Package, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -94,7 +94,6 @@ const labelClass =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400";
 
 export function ProductFilters({ categories, total, initial }: ProductFiltersProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   const [category, setCategory] = useState(initial.category);
@@ -173,7 +172,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     }
     p.delete("page");
     const qs = p.toString();
-    router.push(qs ? `/products?${qs}` : "/products", { scroll: false });
+    window.location.assign(qs ? `/products?${qs}` : "/products");
   };
 
   const scheduleSlider = (patch: Partial<{ min: number; max: number }>) => {
@@ -193,7 +192,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     setShowResults(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (searchRef.current) clearTimeout(searchRef.current);
-    router.push("/products", { scroll: false });
+    window.location.assign("/products");
   };
 
   // Debounced autocomplete against the search API.
@@ -230,7 +229,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
   const pickNav = (slug: string) => {
     setQ("");
     setShowResults(false);
-    router.push(`/products?nav=${slug}`, { scroll: false });
+    window.location.assign(`/products?nav=${slug}`);
   };
 
   return (
