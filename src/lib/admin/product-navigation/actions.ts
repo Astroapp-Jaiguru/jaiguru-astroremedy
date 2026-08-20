@@ -80,3 +80,26 @@ export async function deleteNavigationAction(
   revalidatePath("/products");
   return { ok: true };
 }
+
+/**
+ * Quick Active/Inactive toggle for any menu level (top-level, sub-level or
+ * deep-level). Inactive nodes disappear from the public Browse menu and
+ * header navigation immediately.
+ */
+export async function setNavigationActiveAction(
+  id: string,
+  isActive: boolean
+): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+  try {
+    const node = await prisma.productNavigation.findUnique({ where: { id } });
+    if (!node) return { ok: false, error: "Node not found." };
+    await prisma.productNavigation.update({ where: { id }, data: { isActive } });
+  } catch (e) {
+    console.error("[admin] setNavigationActive failed:", e);
+    return { ok: false, error: "Could not update node status." };
+  }
+  revalidatePath("/admin/product-navigation");
+  revalidatePath("/products");
+  return { ok: true };
+}

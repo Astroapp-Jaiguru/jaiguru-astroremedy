@@ -19,6 +19,7 @@ import {
 import {
   upsertNavigationAction,
   deleteNavigationAction,
+  setNavigationActiveAction,
 } from "@/lib/admin/product-navigation/actions";
 import { cn } from "@/lib/utils";
 
@@ -147,6 +148,19 @@ export function NavigationManager({ nodes }: { nodes: NavigationRow[] }) {
     });
   }
 
+  function toggleActive(row: NavigationRow) {
+    const next = !row.isActive;
+    startTransition(async () => {
+      const res = await setNavigationActiveAction(row.id, next);
+      if (res.ok) {
+        toast.success(next ? `"${row.name}" is now visible` : `"${row.name}" is now hidden`);
+        router.refresh();
+      } else {
+        toast.error(res.error ?? "Could not toggle node.");
+      }
+    });
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -205,9 +219,17 @@ export function NavigationManager({ nodes }: { nodes: NavigationRow[] }) {
                     </td>
                     <td className="px-4 py-2.5 text-right">{row.productCount}</td>
                     <td className="px-4 py-2.5 text-center">
-                      <Badge variant={row.isActive ? "default" : "secondary"}>
-                        {row.isActive ? "Active" : "Hidden"}
-                      </Badge>
+                      <div className="flex items-center justify-center gap-2">
+                        <Switch
+                          checked={row.isActive}
+                          disabled={pending}
+                          onCheckedChange={() => toggleActive(row)}
+                          aria-label={`Toggle ${row.name} active status`}
+                        />
+                        <Badge variant={row.isActive ? "default" : "secondary"}>
+                          {row.isActive ? "Active" : "Hidden"}
+                        </Badge>
+                      </div>
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center justify-end gap-1">
