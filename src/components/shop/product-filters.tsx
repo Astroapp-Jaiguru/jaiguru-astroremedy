@@ -4,15 +4,19 @@
  * Minimal, professional filter toolbar for the /products catalogue.
  * Single elegant row: search (with merged pill search button), category,
  * sort and size. Below it a compact price slider and quality pills.
- * - Autocomplete: typing a partial word shows matching products / levels;
- *   clicking a suggestion filters the grid immediately.
- * - The Search button applies any single field or combination.
- * - Price slider (debounced) and quality pills apply instantly.
- * - Applied filters live in the URL; the bar resyncs on external navigation.
+ *
+ * Controlled component - all filter state lives in the parent (ProductsShop)
+ * so it can drive instant client-side grid updates:
+ *  - Search field shows live autocomplete suggestions; clicking one applies
+ *    that filter to the grid immediately.
+ *  - The Search button applies every selected filter together.
+ *  - Category / Sort By / Size dropdowns only stage their value - the grid
+ *    updates when Search is clicked.
+ *  - Price slider (500 ms debounce) and quality pills update instantly.
+ *  - Clear all resets everything and shows the full grid.
  */
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Search, SlidersHorizontal, X, Package, GitBranch } from "lucide-react";
+import { Search, SlidersHorizontal, X, Package, GitBranch, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ProductFilterCategories {
@@ -24,21 +28,32 @@ export interface ProductFilterCategories {
 export interface SearchResult {
   products: { id: string; name: string; slug: string; price: string }[];
   nav: { id: string; name: string; slug: string }[];
+  categories: { id: string; name: string; slug: string }[];
+}
+
+export interface FiltersState {
+  category: string;
+  q: string;
+  sort: string;
+  min: number;
+  max: number;
+  size: string;
+  tier: string;
+  nav: string;
 }
 
 export interface ProductFiltersProps {
   categories: ProductFilterCategories[];
   total: number;
-  initial: {
-    category: string;
-    q: string;
-    sort: string;
-    min: number | null;
-    max: number | null;
-    size: string;
-    tier: string;
-    nav: string;
-  };
+  filters: FiltersState;
+  /** Stage a dropdown field locally - grid is NOT updated until Search. */
+  onStage: (patch: Partial<FiltersState>) => void;
+  /** Apply a field to the grid immediately (slider, pills, suggestions). */
+  onInstant: (patch: Partial<FiltersState>) => void;
+  /** Search button - applies every selected filter together. */
+  onSubmit: () => void;
+  /** Reset all filters and show the full grid. */
+  onClear: () => void;
 }
 
 const PRICE_MIN = 0;
@@ -80,9 +95,6 @@ const SORTS = [
   { value: "name", label: "Name" },
 ];
 
-type FilterField = "category" | "q" | "sort" | "min" | "max" | "size" | "tier";
-const ALL_FIELDS: FilterField[] = ["category", "q", "sort", "min", "max", "size", "tier"];
-
 function formatINR(n: number): string {
   return `₹${new Intl.NumberFormat("en-IN", { notation: "compact", maximumFractionDigits: 1 }).format(n)}`;
 }
@@ -93,106 +105,42 @@ const fieldClass =
 const labelClass =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400";
 
-export function ProductFilters({ categories, total, initial }: ProductFiltersProps) {
-  const searchParams = useSearchParams();
-
-  const [category, setCategory] = useState(initial.category);
-  const [q, setQ] = useState(initial.q);
-  const [sort, setSort] = useState(initial.sort || "featured");
-  const [min, setMin] = useState(initial.min ?? PRICE_MIN);
-  const [max, setMax] = useState(initial.max ?? PRICE_MAX);
-  const [size, setSize] = useState(initial.size);
-  const [tier, setTier] = useState(initial.tier);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const searchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
+export function ProductFilters({
+  categories,
+  total,
+  filters,
+  onStage,
+  onInstant,
+  onSubmit,
+  onClear,
+}: ProductFiltersProps) {
   const [results, setResults] = useState<SearchResult | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [searching, setSearching] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => () => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (searchRef.current) clearTimeout(searchRef.current);
-  }, []);
-
-  // Resync the bar whenever the URL changes externally (nav clicks, header
-  // navigation, pagination, back button).
-  const urlKey = searchParams.toString();
-  useEffect(() => {
-    const sp = searchParams;
-    setCategory(sp.get("category") ?? "");
-    setQ(sp.get("q") ?? "");
-    setSort(sp.get("sort") || "featured");
-    setMin(Number.parseInt(sp.get("min") ?? "", 10) || PRICE_MIN);
-    setMax(Number.parseInt(sp.get("max") ?? "", 10) || PRICE_MAX);
-    setSize(sp.get("size") ?? "");
-    setTier(sp.get("tier") ?? "");
-    setResults(null);
-    setShowResults(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlKey]);
+  useEffect(
+    () => () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (searchRef.current) clearTimeout(searchRef.current);
+    },
+    []
+  );
 
   const hasFilters =
-    category !== "" ||
-    q.trim() !== "" ||
-    sort !== "featured" ||
-    min > PRICE_MIN ||
-    max < PRICE_MAX ||
-    size !== "" ||
-    tier !== "" ||
-    initial.nav !== "";
-
-  /** Rewrite the URL query string. Only `fields` are re-applied from state;
-   * everything already applied in the URL is preserved. */
-  const apply = (
-    patch: Partial<Record<FilterField, string | number | null>> = {},
-    fields: FilterField[] = ALL_FIELDS
-  ) => {
-    const merged: Record<FilterField, string | number | null> = {
-      category,
-      q,
-      sort,
-      min,
-      max,
-      size,
-      tier,
-      ...patch,
-    };
-    const p = new URLSearchParams(searchParams.toString());
-    for (const f of fields) {
-      const v = merged[f];
-      const empty =
-        v == null ||
-        v === "" ||
-        (f === "sort" && v === "featured") ||
-        (f === "min" && v === PRICE_MIN) ||
-        (f === "max" && v === PRICE_MAX);
-      if (empty) p.delete(f);
-      else p.set(f, String(v));
-    }
-    p.delete("page");
-    const qs = p.toString();
-    window.location.assign(qs ? `/products?${qs}` : "/products");
-  };
+    filters.category !== "" ||
+    filters.q.trim() !== "" ||
+    filters.sort !== "featured" ||
+    filters.min > PRICE_MIN ||
+    filters.max < PRICE_MAX ||
+    filters.size !== "" ||
+    filters.tier !== "" ||
+    filters.nav !== "";
 
   const scheduleSlider = (patch: Partial<{ min: number; max: number }>) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => apply(patch, ["min", "max"]), 350);
-  };
-
-  const clearAll = () => {
-    setCategory("");
-    setQ("");
-    setSort("featured");
-    setMin(PRICE_MIN);
-    setMax(PRICE_MAX);
-    setSize("");
-    setTier("");
-    setResults(null);
-    setShowResults(false);
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (searchRef.current) clearTimeout(searchRef.current);
-    window.location.assign("/products");
+    debounceRef.current = setTimeout(() => onInstant(patch), 500);
   };
 
   // Debounced autocomplete against the search API.
@@ -221,19 +169,25 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
   };
 
   const pickProduct = (name: string) => {
-    setQ(name);
+    onStage({ q: name });
     setShowResults(false);
-    apply({ q: name }, ["q"]);
+    onInstant({ q: name });
   };
 
   const pickNav = (slug: string) => {
-    setQ("");
+    onStage({ q: "", nav: slug });
     setShowResults(false);
-    window.location.assign(`/products?nav=${slug}`);
+    onInstant({ q: "", nav: slug });
+  };
+
+  const pickCategory = (slug: string) => {
+    onStage({ category: slug });
+    setShowResults(false);
+    onInstant({ category: slug });
   };
 
   return (
-    <div className="mb-8 overflow-visible rounded-2xl border border-white/15 bg-white/[0.05] shadow-[0_16px_48px_rgba(0,0,0,0.25)] backdrop-blur-xl">
+    <div className="relative z-50 mb-8 overflow-visible rounded-2xl border border-white/15 bg-white/[0.05] shadow-[0_16px_48px_rgba(0,0,0,0.25)] backdrop-blur-xl">
       {/* Toolbar header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 px-4 py-2.5 sm:px-5">
         <p className="flex items-center gap-2 text-[13px] font-semibold text-white">
@@ -243,7 +197,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
         {hasFilters ? (
           <button
             type="button"
-            onClick={clearAll}
+            onClick={onClear}
             className="inline-flex items-center gap-1 rounded-full border border-white/15 px-2.5 py-1 text-[11px] font-medium text-slate-300 transition hover:border-red-400/50 hover:text-red-300"
           >
             <X className="h-3 w-3" />
@@ -264,7 +218,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
               onSubmit={(e) => {
                 e.preventDefault();
                 setShowResults(false);
-                apply();
+                onSubmit();
               }}
             >
               <div className="flex h-10 items-center overflow-hidden rounded-xl border border-white/15 bg-[#0B1120]/80 transition focus-within:border-[#FACC15]/60 focus-within:ring-2 focus-within:ring-[#FACC15]/20">
@@ -272,13 +226,14 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                 <input
                   id="jf-q"
                   type="search"
-                  value={q}
+                  value={filters.q}
                   onChange={(e) => {
-                    setQ(e.target.value);
+                    onStage({ q: e.target.value });
                     runSearch(e.target.value);
                   }}
                   onFocus={() => {
-                    if (results && results.products.length + results.nav.length > 0) setShowResults(true);
+                    if (results && results.products.length + results.nav.length + results.categories.length > 0)
+                      setShowResults(true);
                   }}
                   onBlur={() => setTimeout(() => setShowResults(false), 150)}
                   placeholder="Stone, mala, yantra…"
@@ -298,8 +253,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
               </div>
             </form>
 
-            {showResults && results && (
-              <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-[#D4AF37]/30 bg-[#0B1120] shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+            {showResults && results ? (
+              <div className="absolute left-0 right-0 top-full z-30 mt-1 max-h-[26rem] overflow-y-auto rounded-xl border border-[#D4AF37]/30 bg-[#0B1120] shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
                 {results.nav.length > 0 ? (
                   <div className="border-b border-white/10 py-1">
                     <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FACC15]/70">
@@ -315,6 +270,25 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                       >
                         <GitBranch className="h-3.5 w-3.5 shrink-0 text-[#B8860B]" />
                         {n.name}
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+                {results.categories.length > 0 ? (
+                  <div className="border-b border-white/10 py-1">
+                    <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FACC15]/70">
+                      Product Categories
+                    </p>
+                    {results.categories.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => pickCategory(c.slug)}
+                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                      >
+                        <Layers className="h-3.5 w-3.5 shrink-0 text-sky-400" />
+                        {c.name}
                       </button>
                     ))}
                   </div>
@@ -339,11 +313,13 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                     ))}
                   </div>
                 ) : null}
-                {results.products.length === 0 && results.nav.length === 0 ? (
+                {results.products.length === 0 &&
+                results.nav.length === 0 &&
+                results.categories.length === 0 ? (
                   <p className="px-3 py-4 text-center text-xs text-slate-500">No matches found.</p>
                 ) : null}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Category */}
@@ -353,8 +329,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
             </label>
             <select
               id="jf-cat"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={filters.category}
+              onChange={(e) => onStage({ category: e.target.value })}
               className={fieldClass}
             >
               <option value="">All Categories ({total})</option>
@@ -373,8 +349,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
             </label>
             <select
               id="jf-sort"
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              value={filters.sort}
+              onChange={(e) => onStage({ sort: e.target.value })}
               className={fieldClass}
             >
               {SORTS.map((o) => (
@@ -392,8 +368,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
             </label>
             <select
               id="jf-size"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
+              value={filters.size}
+              onChange={(e) => onStage({ size: e.target.value })}
               className={fieldClass}
             >
               <option value="">Any Size</option>
@@ -412,7 +388,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
             <div className="mb-1.5 flex items-center justify-between">
               <span className={labelClass}>Price Range</span>
               <span className="text-[11px] font-semibold text-[#FACC15]">
-                {formatINR(min)} – {formatINR(max)}
+                {formatINR(filters.min)} – {formatINR(filters.max)}
               </span>
             </div>
             <div className="relative h-5">
@@ -420,8 +396,8 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
               <div
                 className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-gradient-to-r from-[#FACC15] to-[#F97316]"
                 style={{
-                  left: `${((min - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
-                  right: `${100 - ((max - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
+                  left: `${((filters.min - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
+                  right: `${100 - ((filters.max - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100}%`,
                 }}
               />
               <input
@@ -429,11 +405,11 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                 min={PRICE_MIN}
                 max={PRICE_MAX}
                 step={PRICE_STEP}
-                value={min}
+                value={filters.min}
                 aria-label="Minimum price"
                 onChange={(e) => {
-                  const v = Math.min(Number(e.target.value), max - PRICE_STEP);
-                  setMin(v);
+                  const v = Math.min(Number(e.target.value), filters.max - PRICE_STEP);
+                  onStage({ min: v });
                   scheduleSlider({ min: v });
                 }}
                 className="jf-slider"
@@ -443,11 +419,11 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                 min={PRICE_MIN}
                 max={PRICE_MAX}
                 step={PRICE_STEP}
-                value={max}
+                value={filters.max}
                 aria-label="Maximum price"
                 onChange={(e) => {
-                  const v = Math.max(Number(e.target.value), min + PRICE_STEP);
-                  setMax(v);
+                  const v = Math.max(Number(e.target.value), filters.min + PRICE_STEP);
+                  onStage({ max: v });
                   scheduleSlider({ max: v });
                 }}
                 className="jf-slider"
@@ -457,20 +433,21 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
 
           <div className="flex shrink-0 flex-wrap items-center gap-1.5">
             {TIERS.map((t) => {
-              const active = tier === t.value;
+              const active = filters.tier === t.value;
               return (
                 <button
                   key={t.value || "all"}
                   type="button"
                   onClick={() => {
-                    setTier(t.value);
-                    apply({ tier: t.value }, ["tier"]);
+                    onStage({ tier: t.value });
+                    onInstant({ tier: t.value });
                   }}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${
+                  className={cn(
+                    "rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
                     active
                       ? "bg-gradient-to-r from-[#FACC15] to-[#F97316] text-slate-900 shadow-[0_4px_16px_rgba(250,204,21,0.35)]"
                       : "border border-white/15 bg-white/5 text-slate-300 hover:border-[#D4AF37]/50 hover:text-[#FACC15]"
-                  }`}
+                  )}
                 >
                   {t.label}
                 </button>
