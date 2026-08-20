@@ -4,12 +4,13 @@ import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard } from "@/components/shop/product-card";
 import { ProductFilters } from "@/components/shop/product-filters";
 import { type FeaturedProduct } from "@/lib/shop-data";
+import { navSubtreeIds } from "@/lib/product-navigation";
 
 /**
  * Products catalogue (scope §7.6 / §15). All products with pagination,
- * category filters, search, price range, size/carat, quality tier and
- * sorting. Every filter lives in the URL so views are shareable and
- * server-rendered.
+ * category filters, navigation-level filters (from the header "Product List"
+ * menu), search, price range, size/carat, quality tier and sorting. Every
+ * filter lives in the URL so views are shareable and server-rendered.
  */
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ const TIERS = new Set(["budget", "premium", "deluxe"]);
 
 function filterHref(sp: Awaited<PageProps["searchParams"]>, page: number): string {
   const p = new URLSearchParams();
-  for (const key of ["category", "q", "sort", "min", "max", "size", "tier", "pt", "st"] as const) {
+  for (const key of ["category", "nav", "q", "sort", "min", "max", "size", "tier"] as const) {
     const v = param(sp, key);
     if (v) p.set(key, v);
   }
@@ -54,8 +55,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const page = Math.max(1, Number.parseInt(param(sp, "page"), 10) || 1);
   const categorySlug = param(sp, "category");
-  const pt = param(sp, "pt");
-  const st = param(sp, "st");
+  const navSlug = param(sp, "nav");
   const q = param(sp, "q").trim();
   const sort = param(sp, "sort") in SORTS ? param(sp, "sort") : "featured";
 
@@ -78,35 +78,45 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     orderBy: { sortOrder: "asc" },
   });
 
-  const categoryCounts: Record<string, number> = {};
-  for (const c of categories) categoryCounts[c.slug] = c._count.products;
-
-  const productTypes = await prisma.productType.findMany({
-    where: { isActive: true },
+  const navNodes = await prisma.productNavigation.findMany({
     select: {
+      id: true,
       name: true,
       slug: true,
-      icon: true,
-      subtypes: {
-        where: { isActive: true },
-        select: {
-          name: true,
-          slug: true,
-          _count: { select: { products: { where: { isActive: true } } } },
-        },
-        orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-      },
-      _count: { select: { products: { where: { isActive: true } } } },
+      kind: true,
+      parentId: true,
+      isActive: true,
+      sortOrder: true,
     },
-    orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
   });
 
-  const isValidType = productTypes.some((t) => t.slug === pt);
-  const isValidSubtype = isValidType
-    ? productTypes
-        .find((t) => t.slug === pt)
-        ?.subtypes.some((s) => s.slug === st)
-    : false;
+  // Resolve the navigation filter: a node filters the whole subtree below it.
+  // A "size" leaf filters its parent subtree by an exact sizeOptions label.
+  const navNode = navSlug ? navNodes.find((n) => n.slug === navSlug && n.isActive) : null;
+  let navName: string | null = navNode?.name ?? null;
+  let navFilter: { navigationId: { in: string[] } } | { id: { in: string[] } } | null = null;
+  if (navNode) {
+    if (navNode.kind === "size" && navNode.parentId) {
+      const parent = navNodes.find((n) => n.id === navNode.parentId);
+      if (parent) {
+        const subIds = [...navSubtreeIds(navNodes, parent.id)];
+        const candidates = await prisma.product.findMany({
+          where: { navigationId: { in: subIds }, isActive: true },
+          select: { id: true, sizeOptions: true },
+        });
+        const ids = candidates
+          .filter((p) =>
+            Array.isArray(p.sizeOptions) &&
+            (p.sizeOptions as { label?: string }[]).some((o) => o?.label === navNode.name)
+          )
+          .map((p) => p.id);
+        navFilter = { id: { in: ids } };
+      }
+    } else {
+      const subIds = [...navSubtreeIds(navNodes, navNode.id)];
+      navFilter = { navigationId: { in: subIds } };
+    }
+  }
 
   const isValidCategory = categories.some((c) => c.slug === categorySlug);
   const priceFilter =
@@ -121,9 +131,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const where = {
     isActive: true,
     ...(isValidCategory ? { category: { slug: categorySlug } } : {}),
-    ...(isValidType ? { productType: { slug: pt } } : {}),
-    ...(isValidSubtype ? { subtype: { slug: st } } : {}),
-    ...(q ? { OR: [{ name: { contains: q } }, { tags: { has: q } }] } : {}),
+    ...(navFilter ?? {}),
+    ...(q ? { OR: [{ name: { contains: q, mode: "insensitive" as const } }, { tags: { has: q } }] } : {}),
     ...priceFilter,
     ...(size ? { tags: { has: `${size}-carat` } } : {}),
     ...(tier ? { tags: { has: `tier-${tier}` } } : {}),
@@ -154,24 +163,35 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     category: p.category,
     isPopular: p.isPopular,
     isNewArrival: p.isNewArrival,
-rating: p.rating.toString(),
+    rating: p.rating.toString(),
     ratingCount: p.ratingCount,
     hasVariants: Array.isArray((p as unknown as { sizeOptions?: unknown }).sizeOptions),
   }));
 
   const activeCategory = categories.find((c) => c.slug === categorySlug) ?? null;
+  const title = navName ?? (activeCategory ? activeCategory.name.replace(/s$/, "") : "Products");
 
   return (
     <section className="scroll-mt-24 py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Divine Shop"
-          title={
-            activeCategory ? activeCategory.name.replace(/s$/, "") : "Products"
-          }
+          title={title}
           highlight="Catalogue"
           subtitle="Energised spiritual items, blessed gemstones, vastu corrections and yoga essentials. Every item available for home delivery."
         />
+
+        {navName ? (
+          <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Browsing:</span>
+            <Link href="/products" className="font-semibold text-[#B8860B] hover:underline">
+              All Products
+            </Link>
+            <span>→</span>
+            <span className="font-semibold text-foreground">{navName}</span>
+            <span className="ml-1 text-xs text-muted-foreground">({total} items)</span>
+          </div>
+        ) : null}
 
         {/* Premium filter bar */}
         <ProductFilters
@@ -179,17 +199,6 @@ rating: p.rating.toString(),
             name: c.name,
             slug: c.slug,
             count: c._count.products,
-          }))}
-          types={productTypes.map((t) => ({
-            name: t.name,
-            slug: t.slug,
-            icon: t.icon,
-            count: t._count.products,
-            subtypes: t.subtypes.map((s) => ({
-              name: s.name,
-              slug: s.slug,
-              count: s._count.products,
-            })),
           }))}
           total={total}
           initial={{
@@ -200,8 +209,7 @@ rating: p.rating.toString(),
             max,
             size,
             tier,
-            pt: isValidType ? pt : "",
-            st: isValidSubtype ? st : "",
+            nav: navNode ? navSlug : "",
           }}
         />
 

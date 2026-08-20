@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +26,7 @@ export interface ProductFormValues {
   name: string;
   slug: string;
   categoryId: string;
-  productTypeId: string;
-  subtypeId: string;
+  navigationId: string;
   subcategory: string;
   sku: string;
   price: string;
@@ -60,11 +59,11 @@ export interface ProductFormValues {
 
 export function ProductForm({
   categories,
-  productTypes,
+  navigation,
   product,
 }: {
   categories: { id: string; name: string }[];
-  productTypes?: { id: string; name: string; subtypes: { id: string; name: string }[] }[];
+  navigation?: { id: string; name: string; depth: number; isActive: boolean }[];
   product?: ProductFormValues;
 }) {
   const action = product?.id ? updateProductAction : createProductAction;
@@ -79,12 +78,7 @@ export function ProductForm({
   const [customDelivery, setCustomDelivery] = useState(
     isCustom && savedDelivery ? savedDelivery : ""
   );
-  const [typeId, setTypeId] = useState(product?.productTypeId ?? "");
-  const [subtypeId, setSubtypeId] = useState(product?.subtypeId ?? "");
-  const typeSubtypes = useMemo(
-    () => productTypes?.find((t) => t.id === typeId)?.subtypes ?? [],
-    [productTypes, typeId]
-  );
+  const [typeId, setTypeId] = useState(product?.navigationId ?? "");
 
   return (
     <form action={formAction} className="space-y-6">
@@ -128,48 +122,28 @@ export function ProductForm({
             ))}
           </select>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="productTypeId">Product Type</Label>
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="navigationId">Navigation Level</Label>
           <select
-            id="productTypeId"
-            name="productTypeId"
+            id="navigationId"
+            name="navigationId"
             value={typeId}
-            onChange={(e) => {
-              setTypeId(e.target.value);
-              setSubtypeId("");
-            }}
+            onChange={(e) => setTypeId(e.target.value)}
             className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
             <option value="">None</option>
-            {(productTypes ?? []).map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
+            {(navigation ?? []).map((n) => (
+              <option key={n.id} value={n.id}>
+                {"\u00A0\u00A0".repeat(n.depth)}
+                {n.isActive ? "" : "(hidden) "}
+                {n.name}
               </option>
             ))}
           </select>
           <p className="text-[11px] text-muted-foreground">
-            Groups this product under a shop filter (e.g. Yellow Sapphire).
-          </p>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="subtypeId">Subtype</Label>
-          <select
-            id="subtypeId"
-            name="subtypeId"
-            value={subtypeId}
-            onChange={(e) => setSubtypeId(e.target.value)}
-            disabled={!typeId || typeSubtypes.length === 0}
-            className="h-8 w-full rounded-lg border bg-background px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none disabled:opacity-50"
-          >
-            <option value="">None</option>
-            {typeSubtypes.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          <p className="text-[11px] text-muted-foreground">
-            Origin / mine / variety (e.g. Ceylon, Burmese).
+            Where this product sits in the menu hierarchy (e.g. Gemstones →
+            Maharatna → Yellow Sapphire → Ceylon). The menu filters the whole
+            subtree below a level.
           </p>
         </div>
         <div className="space-y-2">

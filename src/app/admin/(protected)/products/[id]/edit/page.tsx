@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ProductForm, type ProductFormValues } from "@/components/admin/products/product-form";
 import { prisma } from "@/lib/prisma";
+import { flattenNavigation } from "@/lib/product-navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -14,36 +15,34 @@ interface PageProps {
 
 export default async function EditProductPage({ params }: PageProps) {
   const { id } = await params;
-  const [product, categories, productTypes] = await Promise.all([
+  const [product, categories, navNodes] = await Promise.all([
     prisma.product.findUnique({ where: { id } }),
     prisma.productCategory.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
       orderBy: { sortOrder: "asc" },
     }),
-    prisma.productType.findMany({
-      where: { isActive: true },
+    prisma.productNavigation.findMany({
       select: {
         id: true,
         name: true,
-        subtypes: {
-          where: { isActive: true },
-          select: { id: true, name: true },
-          orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-        },
+        slug: true,
+        kind: true,
+        parentId: true,
+        isActive: true,
+        sortOrder: true,
       },
-      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
   ]);
   if (!product) notFound();
+  const navigation = flattenNavigation(navNodes);
 
   const values: ProductFormValues = {
     id: product.id,
     name: product.name,
     slug: product.slug,
     categoryId: product.categoryId,
-    productTypeId: product.productTypeId ?? "",
-    subtypeId: product.subtypeId ?? "",
+    navigationId: product.navigationId ?? "",
     subcategory: product.subcategory ?? "",
     sku: product.sku ?? "",
     price: product.price.toString(),
@@ -95,7 +94,7 @@ export default async function EditProductPage({ params }: PageProps) {
           <CardDescription>Update the product and save your changes.</CardDescription>
         </CardHeader>
         <CardContent>
-          <ProductForm categories={categories} productTypes={productTypes} product={values} />
+          <ProductForm categories={categories} navigation={navigation} product={values} />
         </CardContent>
       </Card>
     </div>

@@ -4,30 +4,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { ProductForm } from "@/components/admin/products/product-form";
 import { prisma } from "@/lib/prisma";
+import { flattenNavigation } from "@/lib/product-navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewProductPage() {
-  const [categories, productTypes] = await Promise.all([
+  const [categories, navNodes] = await Promise.all([
     prisma.productCategory.findMany({
       where: { isActive: true },
       select: { id: true, name: true },
       orderBy: { sortOrder: "asc" },
     }),
-    prisma.productType.findMany({
-      where: { isActive: true },
+    prisma.productNavigation.findMany({
       select: {
         id: true,
         name: true,
-        subtypes: {
-          where: { isActive: true },
-          select: { id: true, name: true },
-          orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
-        },
+        slug: true,
+        kind: true,
+        parentId: true,
+        isActive: true,
+        sortOrder: true,
       },
-      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     }),
   ]);
+  const navigation = flattenNavigation(navNodes);
 
   return (
     <div className="space-y-6">
@@ -50,7 +50,7 @@ export default async function NewProductPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ProductForm categories={categories} productTypes={productTypes} />
+          <ProductForm categories={categories} navigation={navigation} />
         </CardContent>
       </Card>
     </div>

@@ -14,6 +14,7 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   { label: "About", href: "/about" },
   { label: "Consultations", href: "/consultations" },
   { label: "Products", href: "/products" },
+  { label: "Product List", href: "/products" },
   { label: "Services", href: "/services" },
   { label: "Gallery", href: "/photo-gallery" },
   { label: "Articles", href: "/articles" },

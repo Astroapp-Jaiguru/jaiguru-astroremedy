@@ -16,7 +16,52 @@ import {
 import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
 import { SocialIconRow } from "@/components/layout/social-icons";
 import type { NavItem } from "@/components/layout/nav-items";
+import type { NavMenuItem } from "@/lib/product-navigation";
 import { cn } from "@/lib/utils";
+
+/** Recursive expandable tree for the Product List (unlimited depth). */
+function ProductTree({
+  items,
+  depth,
+  onNavigate,
+}: {
+  items: NavMenuItem[];
+  depth: number;
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState<string | null>(null);
+  return (
+    <div className={cn("flex flex-col", depth > 0 && "ml-3 border-l-2 border-golden/30 pl-2")}>
+      {items.map((item) => {
+        const hasKids = item.children.length > 0;
+        const isOpen = open === item.slug;
+        return (
+          <div key={item.slug}>
+            {hasKids ? (
+              <button
+                type="button"
+                onClick={() => setOpen(isOpen ? null : item.slug)}
+                className="flex min-h-[40px] w-full items-center justify-between rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground"
+              >
+                {item.name}
+                <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", isOpen && "rotate-180")} />
+              </button>
+            ) : (
+              <Link
+                href={item.href}
+                onClick={onNavigate}
+                className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground"
+              >
+                {item.name}
+              </Link>
+            )}
+            {hasKids && isOpen ? <ProductTree items={item.children} depth={depth + 1} onNavigate={onNavigate} /> : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export function MobileMenu({
   navItems,
@@ -27,6 +72,7 @@ export function MobileMenu({
   tagline,
   logo,
   logoAlt,
+  productNav = [],
 }: {
   navItems: NavItem[];
   socials: { platform: string; url: string }[];
@@ -36,6 +82,7 @@ export function MobileMenu({
   tagline: string;
   logo: string | null;
   logoAlt: string;
+  productNav?: NavMenuItem[];
 }) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -81,6 +128,40 @@ export function MobileMenu({
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <nav className="flex flex-col">
             {navItems.map((item) => {
+              if (item.label === "Product List") {
+                return (
+                  <div key={item.label} className="border-b border-border/50 py-1">
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(open ? null : "Product List")}
+                      className={cn(
+                        "flex min-h-[48px] w-full items-center justify-between rounded-xl px-4 text-[15px] font-semibold text-foreground transition-colors hover:bg-golden/10 hover:text-royal-purple",
+                        isActive("/products") && "bg-golden/10 text-royal-purple"
+                      )}
+                    >
+                      Product List
+                      <ChevronDown
+                        className={cn(
+                          "h-4 w-4 transition-transform duration-200",
+                          expanded === "Product List" && "rotate-180"
+                        )}
+                      />
+                    </button>
+                    {expanded === "Product List" ? (
+                      <div className="mb-2 ml-3 flex flex-col border-l-2 border-golden/30 pl-2">
+                        <Link
+                          href="/products"
+                          onClick={() => setOpen(false)}
+                          className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
+                        >
+                          Browse All Products →
+                        </Link>
+                        <ProductTree items={productNav} depth={0} onNavigate={() => setOpen(false)} />
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }
               if (item.children && item.children.length > 0) {
                 const openSection = expanded === item.label;
                 return (

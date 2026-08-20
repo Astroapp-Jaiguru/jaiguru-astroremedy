@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MAIN_NAV_ITEMS, type NavItem } from "@/components/layout/nav-items";
+import { ProductListMenu } from "@/components/layout/product-list-menu";
+import type { NavMenuItem } from "@/lib/product-navigation";
 
 export type { NavItem };
 
@@ -33,11 +35,13 @@ export function NavMenu({
   consultationTopics,
   galleryLinks,
   showArticles = true,
+  productNav = [],
 }: {
   className?: string;
   consultationTopics?: { label: string; href: string }[];
   galleryLinks?: { label: string; href: string }[];
   showArticles?: boolean;
+  productNav?: NavMenuItem[];
 }) {
   const pathname = usePathname();
   const navItems = MAIN_NAV_ITEMS.filter(
@@ -57,6 +61,10 @@ export function NavMenu({
           item.href === "/"
             ? pathname === "/"
             : pathname === item.href || pathname.startsWith(item.href + "/");
+
+        if (item.label === "Product List") {
+          return <ProductListMenu key={item.label} items={productNav} />;
+        }
 
         if (item.children) {
           return (

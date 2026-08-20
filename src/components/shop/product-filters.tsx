@@ -2,13 +2,13 @@
 
 /**
  * Premium glassmorphism filter bar for the /products catalogue.
- * Dual-thumb price slider, category / size / tier filters, search and sort.
- * Every change re-writes the URL query string so filtering stays
- * shareable and server-rendered (force-dynamic page).
+ * Dual-thumb price slider, category / size / tier filters, autocomplete
+ * search (products + navigation levels) and sort. Every change re-writes the
+ * URL query string so filtering stays shareable and server-rendered.
  */
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronDown, Search, SlidersHorizontal, Tags, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, Package, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface ProductFilterCategories {
@@ -17,17 +17,13 @@ export interface ProductFilterCategories {
   count: number;
 }
 
-export interface ProductFilterType {
-  name: string;
-  slug: string;
-  icon: string | null;
-  count: number;
-  subtypes: { name: string; slug: string; count: number }[];
+export interface SearchResult {
+  products: { id: string; name: string; slug: string; price: string }[];
+  nav: { id: string; name: string; slug: string }[];
 }
 
 export interface ProductFiltersProps {
   categories: ProductFilterCategories[];
-  types: ProductFilterType[];
   total: number;
   initial: {
     category: string;
@@ -37,8 +33,7 @@ export interface ProductFiltersProps {
     max: number | null;
     size: string;
     tier: string;
-    pt: string;
-    st: string;
+    nav: string;
   };
 }
 
@@ -91,7 +86,7 @@ const glassField =
 const glassLabel =
   "mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.15em] text-[#FACC15]/70";
 
-export function ProductFilters({ categories, types, total, initial }: ProductFiltersProps) {
+export function ProductFilters({ categories, total, initial }: ProductFiltersProps) {
   const router = useRouter();
   const [category, setCategory] = useState(initial.category);
   const [q, setQ] = useState(initial.q);
@@ -100,19 +95,23 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
   const [max, setMax] = useState(initial.max ?? PRICE_MAX);
   const [size, setSize] = useState(initial.size);
   const [tier, setTier] = useState(initial.tier);
-  const [pt, setPt] = useState(initial.pt);
-  const [st, setSt] = useState(initial.st);
-  const [expandedType, setExpandedType] = useState<string | null>(initial.pt || null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const searchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autocomplete state.
+  const [results, setResults] = useState<SearchResult | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => () => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (searchRef.current) clearTimeout(searchRef.current);
   }, []);
 
   const hasFilters =
-    category !== "" || q.trim() !== "" || min > PRICE_MIN || max < PRICE_MAX || size !== "" || tier !== "" || pt !== "" || st !== "";
+    category !== "" || q.trim() !== "" || min > PRICE_MIN || max < PRICE_MAX || size !== "" || tier !== "" || initial.nav !== "";
 
-  const apply = (patch?: Partial<{ category: string; q: string; sort: string; min: number; max: number; size: string; tier: string; pt: string; st: string }>) => {
+  const apply = (patch?: Partial<{ category: string; q: string; sort: string; min: number; max: number; size: string; tier: string }>) => {
     const p = new URLSearchParams();
     const merged = {
       category: category ?? "",
@@ -122,10 +121,9 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
       max,
       size: size ?? "",
       tier: tier ?? "",
-      pt: pt ?? "",
-      st: st ?? "",
       ...patch,
     };
+    if (initial.nav) p.set("nav", initial.nav);
     if (merged.category) p.set("category", merged.category);
     if (merged.q.trim()) p.set("q", merged.q.trim());
     if (merged.sort && merged.sort !== "featured") p.set("sort", merged.sort);
@@ -133,8 +131,6 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
     if (merged.max < PRICE_MAX) p.set("max", String(merged.max));
     if (merged.size) p.set("size", merged.size);
     if (merged.tier) p.set("tier", merged.tier);
-    if (merged.pt) p.set("pt", merged.pt);
-    if (merged.st) p.set("st", merged.st);
     const qs = p.toString();
     router.push(qs ? `/products?${qs}` : "/products", { scroll: false });
   };
@@ -152,28 +148,47 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
     setMax(PRICE_MAX);
     setSize("");
     setTier("");
-    setPt("");
-    setSt("");
-    setExpandedType(null);
+    setResults(null);
+    setShowResults(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     router.push("/products", { scroll: false });
   };
 
-  const selectType = (slug: string) => {
-    if (pt === slug) {
-      setExpandedType(expandedType === slug ? null : slug);
+  // Debounced autocomplete against the search API.
+  const runSearch = (value: string) => {
+    if (searchRef.current) clearTimeout(searchRef.current);
+    const v = value.trim();
+    if (v.length < 2) {
+      setResults(null);
+      setShowResults(false);
       return;
     }
-    setPt(slug);
-    setSt("");
-    setExpandedType(slug);
-    apply({ pt: slug, st: "" });
+    searchRef.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(`/api/products/search?q=${encodeURIComponent(v)}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as SearchResult;
+        setResults(data);
+        setShowResults(true);
+      } catch {
+        // ignore network errors
+      } finally {
+        setSearching(false);
+      }
+    }, 250);
   };
 
-  const selectSubtype = (typeSlug: string, subSlug: string) => {
-    setPt(typeSlug);
-    setSt(subSlug);
-    apply({ pt: typeSlug, st: subSlug });
+  const pickProduct = (name: string) => {
+    setQ(name);
+    setShowResults(false);
+    apply({ q: name });
+  };
+
+  const pickNav = (slug: string) => {
+    setQ("");
+    setShowResults(false);
+    router.push(`/products?nav=${slug}`, { scroll: false });
   };
 
   return (
@@ -202,14 +217,15 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Search */}
-        <div className="sm:col-span-2 lg:col-span-1">
+        {/* Search with autocomplete */}
+        <div className="sm:col-span-2 lg:col-span-1 relative">
           <label htmlFor="jf-q" className={glassLabel}>
             Search
           </label>
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              setShowResults(false);
               apply();
             }}
           >
@@ -219,12 +235,69 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
                 id="jf-q"
                 type="search"
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  runSearch(e.target.value);
+                }}
+                onFocus={() => {
+                  if (results && results.products.length + results.nav.length > 0) setShowResults(true);
+                }}
+                onBlur={() => setTimeout(() => setShowResults(false), 150)}
                 placeholder="Stone, mala, yantra…"
                 className={`${glassField} pl-9`}
               />
+              {searching ? (
+                <span className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin rounded-full border-2 border-[#FACC15]/40 border-t-[#FACC15]" />
+              ) : null}
             </div>
           </form>
+
+          {showResults && results && (
+            <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-xl border border-[#D4AF37]/30 bg-[#0B1120] shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+              {results.nav.length > 0 ? (
+                <div className="border-b border-white/10 py-1">
+                  <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FACC15]/70">
+                    Categories / Levels
+                  </p>
+                  {results.nav.map((n) => (
+                    <button
+                      key={n.id}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => pickNav(n.slug)}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                    >
+                      <GitBranch className="h-3.5 w-3.5 shrink-0 text-[#B8860B]" />
+                      {n.name}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {results.products.length > 0 ? (
+                <div className="py-1">
+                  <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#FACC15]/70">
+                    Products
+                  </p>
+                  {results.products.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => pickProduct(p.name)}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-white/10"
+                    >
+                      <Package className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+                      <span className="min-w-0 flex-1 truncate">{p.name}</span>
+                      <span className="shrink-0 text-xs text-[#FACC15]">{formatINR(Number(p.price))}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {results.products.length === 0 && results.nav.length === 0 ? (
+                <p className="px-3 py-4 text-center text-xs text-slate-500">No matches found.</p>
+              ) : null}
+            </div>
+          )}
         </div>
 
         {/* Category */}
@@ -349,7 +422,7 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
 
       {/* Quality tier pills */}
       <div className="mt-5 flex flex-wrap items-center gap-2">
-        <span className={glassLabel + " mb-0 mr-1 self-center"}>Quality: </span>
+        <span className={cn(glassLabel, "mb-0 mr-1 self-center")}>Quality: </span>
         {TIERS.map((t) => {
           const active = tier === t.value;
           return (
@@ -370,122 +443,6 @@ export function ProductFilters({ categories, types, total, initial }: ProductFil
             </button>
           );
         })}
-      </div>
-
-      {/* Product Type filter */}
-      <div className="mt-5 border-t border-white/10 pt-5">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#FACC15]/70">
-            <Tags className="h-3.5 w-3.5" />
-            Product Type
-          </span>
-          {pt ? (
-            <button
-              type="button"
-              onClick={() => {
-                setPt("");
-                setSt("");
-                setExpandedType(null);
-                apply({ pt: "", st: "" });
-              }}
-              className="rounded-full border border-white/15 px-3 py-1 text-[11px] font-semibold text-slate-300 transition hover:border-[#D4AF37]/50 hover:text-[#FACC15]"
-            >
-              All Types
-            </button>
-          ) : null}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {types.map((t) => {
-            const active = pt === t.slug;
-            const expanded = expandedType === t.slug;
-            return (
-              <button
-                key={t.slug}
-                type="button"
-                onClick={() => selectType(t.slug)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition",
-                  active
-                    ? "bg-gradient-to-r from-[#FACC15] to-[#F97316] text-slate-900 shadow-[0_6px_20px_rgba(250,204,21,0.35)]"
-                    : "border border-white/15 bg-white/5 text-slate-200 backdrop-blur hover:border-[#D4AF37]/50 hover:bg-white/10 hover:text-[#FACC15]"
-                )}
-              >
-                {t.icon ? <span aria-hidden>{t.icon}</span> : null}
-                {t.name}
-                <span
-                  className={cn(
-                    "rounded-full px-1.5 text-[10px] font-bold",
-                    active ? "bg-slate-900/15 text-slate-900" : "bg-white/10 text-slate-400"
-                  )}
-                >
-                  {t.count}
-                </span>
-                <ChevronDown
-                  className={cn("h-3.5 w-3.5 transition-transform duration-300", expanded && "rotate-180")}
-                />
-              </button>
-            );
-          })}
-        </div>
-
-        {expandedType ? (
-          <div className="mt-3 animate-in fade-in-0 slide-in-from-top-2 duration-300 rounded-2xl border border-[#D4AF37]/25 bg-white/[0.03] p-3.5">
-            {(() => {
-              const t = types.find((x) => x.slug === expandedType);
-              if (!t || t.subtypes.length === 0)
-                return (
-                  <p className="text-xs text-slate-500">
-                    No subtypes for this type yet.
-                  </p>
-                );
-              return (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSt("");
-                      apply({ pt: expandedType, st: "" });
-                    }}
-                    className={cn(
-                      "rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
-                      st === ""
-                        ? "bg-[#D4AF37]/25 text-[#FACC15] ring-1 ring-[#D4AF37]/60"
-                        : "border border-white/15 text-slate-400 hover:text-[#FACC15]"
-                    )}
-                  >
-                    All {t.name}
-                  </button>
-                  {t.subtypes.map((s) => {
-                    const active = st === s.slug;
-                    return (
-                      <button
-                        key={s.slug}
-                        type="button"
-                        onClick={() => selectSubtype(expandedType, s.slug)}
-                        className={cn(
-                          "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
-                          active
-                            ? "bg-gradient-to-r from-[#FACC15] to-[#F97316] text-slate-900 shadow-[0_5px_16px_rgba(250,204,21,0.3)]"
-                            : "border border-white/15 bg-white/5 text-slate-200 hover:border-[#D4AF37]/50 hover:bg-white/10 hover:text-[#FACC15]"
-                        )}
-                      >
-                        {s.name}
-                        <span
-                          className={cn(
-                            "rounded-full px-1.5 text-[10px] font-bold",
-                            active ? "bg-slate-900/15 text-slate-900" : "bg-white/10 text-slate-400"
-                          )}
-                        >
-                          {s.count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              );
-            })()}
-          </div>
-        ) : null}
       </div>
     </div>
   );
