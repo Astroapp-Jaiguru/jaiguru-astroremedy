@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ChevronDown, ChevronRight, LayoutGrid } from "lucide-react";
+import { ChevronDown, ChevronRight, LayoutGrid, X } from "lucide-react";
 import type { NavMenuItem } from "@/lib/product-navigation";
 import { cn } from "@/lib/utils";
 
@@ -10,14 +10,14 @@ import { cn } from "@/lib/utils";
  * In-page multi-level product navigation browser for the /products catalogue.
  * Desktop: hovering a category pill opens a cascading menu — every submenu
  * appears instantly to the right of the hovered row (or below / to the left
- * when near the viewport edge). Panels are fixed-positioned so submenus are
- * NEVER clipped or hidden behind a scrollbar — no horizontal dragging needed.
- * Very tall leaf lists scroll vertically only, capped to the viewport.
- * Mobile: a collapsible accordion tree.
+ * near the viewport edge) with a subtle fade+slide animation. Panels are
+ * fixed-positioned so submenus are never clipped; rows are compact enough
+ * that every level fits without any scrollbar. Mobile: a full-screen
+ * slide-out drawer with large touch targets.
  */
 
 const PANEL_WIDTH = 256;
-const ROW_H = 36;
+const ROW_H = 32;
 const GAP = 8;
 
 interface Panel {
@@ -28,7 +28,7 @@ interface Panel {
 }
 
 function estimateHeight(items: NavMenuItem[], withFooter: boolean): number {
-  return Math.min(items.length * ROW_H + 16 + (withFooter ? 45 : 0), window.innerHeight * 0.7);
+  return items.length * ROW_H + 12 + (withFooter ? 36 : 0);
 }
 
 /** Place a panel to the right of (x,y), flipping below/left near the edges. */
@@ -51,7 +51,7 @@ function AccordionTree({
 }) {
   const [open, setOpen] = useState<string | null>(null);
   return (
-    <div className={cn("flex flex-col", depth > 0 && "ml-3 border-l-2 border-golden/30 pl-2")}>
+    <div className={cn("flex flex-col", depth > 0 && "ml-3 border-l-2 border-golden/30 pl-3")}>
       {items.map((item) => {
         const hasKids = item.children.length > 0;
         const isOpen = open === item.slug;
@@ -61,7 +61,7 @@ function AccordionTree({
               <button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : item.slug)}
-                className="flex min-h-[40px] w-full items-center justify-between rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground"
+                className="flex min-h-12 w-full items-center justify-between rounded-xl px-3.5 text-[15px] font-medium text-slate-200 transition-colors hover:bg-golden/10 hover:text-[#FACC15]"
               >
                 {item.name}
                 <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", isOpen && "rotate-180")} />
@@ -70,7 +70,7 @@ function AccordionTree({
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-golden/10 hover:text-foreground"
+                className="flex min-h-12 items-center rounded-xl px-3.5 text-[15px] font-medium text-slate-200 transition-colors hover:bg-golden/10 hover:text-[#FACC15]"
               >
                 {item.name}
               </Link>
@@ -112,6 +112,16 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
     };
   }, [closeAll]);
 
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
+
   /** Open the first-level panel below the hovered category pill. */
   const openRoot = (item: NavMenuItem, pillEl: HTMLElement) => {
     if (item.children.length === 0) return;
@@ -149,6 +159,13 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
 
   return (
     <div className="mb-8">
+      <style>{`
+        .jf-nav-in { animation: jf-nav-in 0.16s ease-out both; transform-origin: top left; }
+        @keyframes jf-nav-in { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .jf-drawer-in { animation: jf-drawer-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes jf-drawer-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      `}</style>
+
       {/* Desktop: category pills + cascading fixed-position panels */}
       <div
         className="relative hidden md:block"
@@ -156,7 +173,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
         onMouseLeave={scheduleClose}
       >
         <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#FACC15]/70">
+          <span className="mr-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400">
             <LayoutGrid className="h-3.5 w-3.5" />
             Browse
           </span>
@@ -185,7 +202,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
           >
-            <div className="max-h-[70vh] w-64 overflow-y-auto rounded-2xl border border-golden/25 bg-white p-2 shadow-[0_20px_60px_rgba(15,23,42,0.2)]">
+            <div className="jf-nav-in w-64 rounded-2xl border border-white/25 bg-white/95 p-1.5 shadow-[0_24px_80px_rgba(15,23,42,0.35)] backdrop-blur-xl">
               {panel.items.map((child) => (
                 <div
                   key={child.slug}
@@ -194,7 +211,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
                   <Link
                     href={child.href}
                     onClick={closeAll}
-                    className="flex h-9 items-center justify-between gap-2 rounded-xl px-3 text-sm font-medium text-slate-700 transition-colors hover:bg-golden/10 hover:text-slate-900"
+                    className="flex h-8 items-center justify-between gap-2 rounded-xl px-2.5 text-[13px] font-medium text-slate-700 transition-colors hover:bg-golden/10 hover:text-slate-900"
                   >
                     {child.name}
                     {child.children.length > 0 ? (
@@ -208,7 +225,7 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
                   <Link
                     href={panel.footer.href}
                     onClick={closeAll}
-                    className="block h-9 rounded-xl px-3 py-1.5 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
+                    className="block h-8 rounded-xl px-2.5 py-1.5 text-[13px] font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
                   >
                     {panel.footer.label}
                   </Link>
@@ -219,29 +236,52 @@ export function ProductsNavBrowser({ items }: { items: NavMenuItem[] }) {
         ))}
       </div>
 
-      {/* Mobile: collapsible accordion */}
+      {/* Mobile: trigger + full-screen slide-out drawer */}
       <div className="md:hidden">
         <button
           type="button"
-          onClick={() => setMobileOpen((v) => !v)}
+          onClick={() => setMobileOpen(true)}
           className="flex w-full items-center justify-between rounded-xl border border-[#D4AF37]/40 bg-[#0B1120]/60 px-4 py-3 text-sm font-semibold text-[#FACC15] transition hover:bg-[#FACC15]/10"
         >
           <span className="flex items-center gap-2">
             <LayoutGrid className="h-4 w-4" />
             Browse by Category
           </span>
-          <ChevronDown className={cn("h-4 w-4 transition-transform duration-200", mobileOpen && "rotate-180")} />
+          <ChevronDown className="h-4 w-4" />
         </button>
+
         {mobileOpen ? (
-          <div className="mt-2 rounded-2xl border border-white/15 bg-white/[0.06] p-3 backdrop-blur-xl">
-            <Link
-              href="/products"
+          <div className="fixed inset-0 z-50 md:hidden">
+            <div
+              className="absolute inset-0 bg-black/70 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
-              className="flex min-h-[40px] items-center rounded-lg px-3 text-sm font-bold text-[#B8860B] transition-colors hover:bg-golden/10 hover:text-[#9A6B00]"
-            >
-              Browse All Products →
-            </Link>
-            <AccordionTree items={items} depth={0} onNavigate={() => setMobileOpen(false)} />
+            />
+            <div className="jf-drawer-in absolute right-0 top-0 flex h-full w-[85%] max-w-sm flex-col border-l border-golden/20 bg-[#0B1120]">
+              <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                <span className="flex items-center gap-2 text-sm font-semibold text-[#FACC15]">
+                  <LayoutGrid className="h-4 w-4" />
+                  Browse Categories
+                </span>
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white transition hover:bg-white/10"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-4 py-4">
+                <Link
+                  href="/products"
+                  onClick={() => setMobileOpen(false)}
+                  className="mb-2 flex min-h-12 items-center rounded-xl bg-gradient-to-r from-[#FACC15]/15 to-[#F97316]/15 px-3.5 text-[15px] font-bold text-[#FACC15] transition hover:brightness-110"
+                >
+                  Browse All Products →
+                </Link>
+                <AccordionTree items={items} depth={0} onNavigate={() => setMobileOpen(false)} />
+              </div>
+            </div>
           </div>
         ) : null}
       </div>
