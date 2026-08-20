@@ -24,6 +24,8 @@ export interface ProductsShopInitial {
   title: string;
 }
 
+const PRICE_MAX = 500000;
+
 export function ProductsShop({
   categories,
   initial,
@@ -38,7 +40,12 @@ export function ProductsShop({
   const [current, setCurrent] = useState(initial.current);
   const [navName, setNavName] = useState<string | null>(initial.navName);
   const [loading, setLoading] = useState(false);
+  const filtersRef = useRef<FiltersState>(initial.filters);
   const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
   const toQuery = useCallback((f: FiltersState, page: number) => {
     const p = new URLSearchParams();
@@ -47,7 +54,7 @@ export function ProductsShop({
     if (f.q.trim()) p.set("q", f.q.trim());
     if (f.sort && f.sort !== "featured") p.set("sort", f.sort);
     if (f.min > 0) p.set("min", String(f.min));
-    if (f.max < 500000) p.set("max", String(f.max));
+    if (f.max < PRICE_MAX) p.set("max", String(f.max));
     if (f.size) p.set("size", f.size);
     if (f.tier) p.set("tier", f.tier);
     if (page > 1) p.set("page", String(page));
@@ -55,16 +62,14 @@ export function ProductsShop({
   }, []);
 
   const load = useCallback(
-    async (next: FiltersState, page: number, replaceUrl: boolean) => {
+    async (next: FiltersState, page: number) => {
       if (abortRef.current) abortRef.current.abort();
       const controller = new AbortController();
       abortRef.current = controller;
       setLoading(true);
       const qs = toQuery(next, page).toString();
-      if (replaceUrl) {
-        const url = qs ? `/products?${qs}` : "/products";
-        window.history.replaceState(window.history.state, "", url);
-      }
+      const url = qs ? `/products?${qs}` : "/products";
+      window.history.replaceState(window.history.state, "", url);
       try {
         const res = await fetch(`/api/products/filter?${qs}`, { cache: "no-store", signal: controller.signal });
         if (!res.ok) return;
@@ -80,8 +85,8 @@ export function ProductsShop({
         setPages(data.pages);
         setCurrent(data.current);
         setNavName(data.navName);
-      } catch {
-        // aborted or network error - keep current grid
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") console.error("[ProductsShop] filter fetch failed:", err);
       } finally {
         setLoading(false);
       }
@@ -91,27 +96,30 @@ export function ProductsShop({
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  const commit = useCallback(
+    (next: FiltersState, page: number) => {
+      setFilters(next);
+      filtersRef.current = next;
+      void load(next, page);
+    },
+    [load]
+  );
+
   const stage = useCallback((patch: Partial<FiltersState>) => {
     setFilters((f) => ({ ...f, ...patch }));
   }, []);
 
   const instant = useCallback(
     (patch: Partial<FiltersState>) => {
-      setFilters((f) => {
-        const next = { ...f, ...patch, nav: patch.nav ?? f.nav };
-        void load(next, 1, true);
-        return next;
-      });
+      const next = { ...filtersRef.current, ...patch, nav: patch.nav ?? filtersRef.current.nav };
+      commit(next, 1);
     },
-    [load]
+    [commit]
   );
 
   const submit = useCallback(() => {
-    setFilters((f) => {
-      void load(f, 1, true);
-      return f;
-    });
-  }, [load]);
+    commit(filtersRef.current, 1);
+  }, [commit]);
 
   const clear = useCallback(() => {
     const empty: FiltersState = {
@@ -119,23 +127,19 @@ export function ProductsShop({
       q: "",
       sort: "featured",
       min: 0,
-      max: 500000,
+      max: PRICE_MAX,
       size: "",
       tier: "",
       nav: "",
     };
-    setFilters(empty);
-    void load(empty, 1, true);
-  }, [load]);
+    commit(empty, 1);
+  }, [commit]);
 
   const goPage = useCallback(
     (page: number) => {
-      setFilters((f) => {
-        void load(f, page, true);
-        return f;
-      });
+      commit(filtersRef.current, page);
     },
-    [load]
+    [commit]
   );
 
   const rangeStart = total === 0 ? 0 : (current - 1) * 12 + 1;
