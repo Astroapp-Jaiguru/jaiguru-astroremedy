@@ -1,5 +1,5 @@
-/* Jaiguru Astroremedy service worker — network-first caching. */
-const CACHE = "jaiguru-v1";
+/* Jaiguru Astroremedy service worker - network-first caching. */
+const CACHE = "jaiguru-v2";
 const CACHE_EXCLUDE = ["/api/", "/admin"];
 
 self.addEventListener("install", () => {
@@ -25,17 +25,27 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
   if (CACHE_EXCLUDE.some((prefix) => url.pathname.startsWith(prefix))) return;
 
+  // Next.js router RSC payloads must always hit the network - they are
+  // never storable (Cache-Control: no-store) and caching them breaks the
+  // router's client-side navigation.
+  if (url.searchParams.has("_rsc")) return;
+
   event.respondWith(
     fetch(request)
       .then((response) => {
         if (response.ok) {
           const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          caches
+            .open(CACHE)
+            .then((cache) => cache.put(request, copy).catch(() => {}))
+            .catch(() => {});
         }
         return response;
       })
       .catch(() =>
-        caches.match(request).then((cached) => cached || caches.match("/"))
+        caches
+          .match(request)
+          .then((cached) => cached || caches.match("/"))
       )
   );
 });
