@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard } from "@/components/shop/product-card";
 import { ProductFilters } from "@/components/shop/product-filters";
+import { Pagination } from "@/components/shop/pagination";
 import { ProductsNavBrowser } from "@/components/shop/products-nav-browser";
 import { type FeaturedProduct } from "@/lib/shop-data";
 import { buildNavMenu, navSubtreeIds } from "@/lib/product-navigation";
@@ -232,46 +233,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             </div>
 
             {/* Pagination */}
-            {pages > 1 ? (
-              <nav
-                aria-label="Pagination"
-                className="mt-12 flex flex-wrap items-center justify-center gap-2"
-              >
-                {current > 1 ? (
-                  <Link
-                    href={filterHref(sp, current - 1)}
-                    className="rounded-full border border-[#D4AF37]/40 px-4 py-2 text-sm text-[#FACC15] transition hover:bg-[#FACC15]/10"
-                  >
-                    Previous
-                  </Link>
-                ) : null}
-                {Array.from({ length: pages }).map((_, i) => {
-                  const n = i + 1;
-                  const isCurrent = n === current;
-                  return (
-                    <Link
-                      key={n}
-                      href={filterHref(sp, n)}
-                      className={`rounded-full px-4 py-2 text-sm transition ${
-                        isCurrent
-                          ? "bg-[#4C1D95] font-semibold text-white"
-                          : "border border-[#D4AF37]/40 text-[#FACC15] hover:bg-[#FACC15]/10"
-                      }`}
-                    >
-                      {n}
-                    </Link>
-                  );
-                })}
-                {current < pages ? (
-                  <Link
-                    href={filterHref(sp, current + 1)}
-                    className="rounded-full border border-[#D4AF37]/40 px-4 py-2 text-sm text-[#FACC15] transition hover:bg-[#FACC15]/10"
-                  >
-                    Next
-                  </Link>
-                ) : null}
-              </nav>
-            ) : null}
+            <Pagination base={filterHref(sp, 0)} current={current} pages={pages} />
           </>
         )}
 
