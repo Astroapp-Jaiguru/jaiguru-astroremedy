@@ -4,7 +4,6 @@ import { WhatsAppButton, CallButton } from "@/components/layout/cta-buttons";
 import { NavMenu } from "@/components/layout/nav-menu";
 import { MAIN_NAV_ITEMS } from "@/components/layout/nav-items";
 import { MobileMenu } from "@/components/layout/mobile-menu";
-import type { NavMenuItem } from "@/lib/product-navigation";
 
 /**
  * Main Header (scope UI spec §5.2).
@@ -19,7 +18,6 @@ export function SiteHeader({
   socials,
   consultationTopics,
   galleryLinks,
-  productNav,
   showArticles,
 }: {
   branding: {
@@ -35,7 +33,6 @@ export function SiteHeader({
   socials: { platform: string; url: string }[];
   consultationTopics: { label: string; href: string }[];
   galleryLinks: { label: string; href: string }[];
-  productNav: NavMenuItem[];
   showArticles: boolean;
 }) {
   return (
@@ -71,7 +68,6 @@ export function SiteHeader({
           <NavMenu
             consultationTopics={consultationTopics}
             galleryLinks={galleryLinks}
-            productNav={productNav}
             showArticles={showArticles}
             className="xl:ml-3 xl:gap-3.5 2xl:ml-8 2xl:gap-4"
           />
@@ -112,7 +108,6 @@ export function SiteHeader({
                     ? { ...item, children: galleryLinks }
                     : item
               )}
-              productNav={productNav}
               socials={socials}
               whatsappHref={whatsappHref}
               callNumber={contact.callNumber}

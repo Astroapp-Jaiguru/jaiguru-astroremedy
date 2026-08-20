@@ -3,12 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ProductCard } from "@/components/shop/product-card";
 import { ProductFilters } from "@/components/shop/product-filters";
+import { ProductsNavBrowser } from "@/components/shop/products-nav-browser";
 import { type FeaturedProduct } from "@/lib/shop-data";
-import { navSubtreeIds } from "@/lib/product-navigation";
+import { buildNavMenu, navSubtreeIds } from "@/lib/product-navigation";
 
 /**
  * Products catalogue (scope §7.6 / §15). All products with pagination,
- * category filters, navigation-level filters (from the header "Product List"
+ * category filters, navigation-level filters (from the in-page "Browse"
  * menu), search, price range, size/carat, quality tier and sorting. Every
  * filter lives in the URL so views are shareable and server-rendered.
  */
@@ -180,6 +181,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           highlight="Catalogue"
           subtitle="Energised spiritual items, blessed gemstones, vastu corrections and yoga essentials. Every item available for home delivery."
         />
+
+        <ProductsNavBrowser items={buildNavMenu(navNodes)} />
 
         {navName ? (
           <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">

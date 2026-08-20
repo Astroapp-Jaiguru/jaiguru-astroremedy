@@ -2,12 +2,16 @@
 
 /**
  * Premium glassmorphism filter bar for the /products catalogue.
- * Dual-thumb price slider, category / size / tier filters, autocomplete
- * search (products + navigation levels) and sort. Every change re-writes the
- * URL query string so filtering stays shareable and server-rendered.
+ * - Search field with autocomplete (products + navigation levels); clicking a
+ *   suggestion filters the grid immediately.
+ * - Mandatory "Search" button applies ANY single field or combination
+ *   (search text, category, sort, size, price range, quality).
+ * - Price slider and quality pills apply instantly (slider debounced).
+ * - Every applied filter lives in the URL so views are shareable and
+ *   server-rendered; the bar resyncs when the URL changes externally.
  */
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X, Package, GitBranch } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -76,6 +80,9 @@ const SORTS = [
   { value: "name", label: "Name" },
 ];
 
+type FilterField = "category" | "q" | "sort" | "min" | "max" | "size" | "tier";
+const ALL_FIELDS: FilterField[] = ["category", "q", "sort", "min", "max", "size", "tier"];
+
 function formatINR(n: number): string {
   return `₹${new Intl.NumberFormat("en-IN", { notation: "compact", maximumFractionDigits: 1 }).format(n)}`;
 }
@@ -88,6 +95,8 @@ const glassLabel =
 
 export function ProductFilters({ categories, total, initial }: ProductFiltersProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [category, setCategory] = useState(initial.category);
   const [q, setQ] = useState(initial.q);
   const [sort, setSort] = useState(initial.sort || "featured");
@@ -108,36 +117,69 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     if (searchRef.current) clearTimeout(searchRef.current);
   }, []);
 
-  const hasFilters =
-    category !== "" || q.trim() !== "" || min > PRICE_MIN || max < PRICE_MAX || size !== "" || tier !== "" || initial.nav !== "";
+  // Resync the bar whenever the URL changes externally (nav clicks, header
+  // navigation, pagination, back button).
+  const urlKey = searchParams.toString();
+  useEffect(() => {
+    const sp = searchParams;
+    setCategory(sp.get("category") ?? "");
+    setQ(sp.get("q") ?? "");
+    setSort(sp.get("sort") || "featured");
+    setMin(Number.parseInt(sp.get("min") ?? "", 10) || PRICE_MIN);
+    setMax(Number.parseInt(sp.get("max") ?? "", 10) || PRICE_MAX);
+    setSize(sp.get("size") ?? "");
+    setTier(sp.get("tier") ?? "");
+    setResults(null);
+    setShowResults(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlKey]);
 
-  const apply = (patch?: Partial<{ category: string; q: string; sort: string; min: number; max: number; size: string; tier: string }>) => {
-    const p = new URLSearchParams();
-    const merged = {
-      category: category ?? "",
-      q: q ?? "",
+  const hasFilters =
+    category !== "" ||
+    q.trim() !== "" ||
+    sort !== "featured" ||
+    min > PRICE_MIN ||
+    max < PRICE_MAX ||
+    size !== "" ||
+    tier !== "" ||
+    initial.nav !== "";
+
+  /** Rewrite the URL query string. Only `fields` are re-applied from state;
+   * everything already applied in the URL is preserved. */
+  const apply = (
+    patch: Partial<Record<FilterField, string | number | null>> = {},
+    fields: FilterField[] = ALL_FIELDS
+  ) => {
+    const merged: Record<FilterField, string | number | null> = {
+      category,
+      q,
       sort,
       min,
       max,
-      size: size ?? "",
-      tier: tier ?? "",
+      size,
+      tier,
       ...patch,
     };
-    if (initial.nav) p.set("nav", initial.nav);
-    if (merged.category) p.set("category", merged.category);
-    if (merged.q.trim()) p.set("q", merged.q.trim());
-    if (merged.sort && merged.sort !== "featured") p.set("sort", merged.sort);
-    if (merged.min > PRICE_MIN) p.set("min", String(merged.min));
-    if (merged.max < PRICE_MAX) p.set("max", String(merged.max));
-    if (merged.size) p.set("size", merged.size);
-    if (merged.tier) p.set("tier", merged.tier);
+    const p = new URLSearchParams(searchParams.toString());
+    for (const f of fields) {
+      const v = merged[f];
+      const empty =
+        v == null ||
+        v === "" ||
+        (f === "sort" && v === "featured") ||
+        (f === "min" && v === PRICE_MIN) ||
+        (f === "max" && v === PRICE_MAX);
+      if (empty) p.delete(f);
+      else p.set(f, String(v));
+    }
+    p.delete("page");
     const qs = p.toString();
     router.push(qs ? `/products?${qs}` : "/products", { scroll: false });
   };
 
   const scheduleSlider = (patch: Partial<{ min: number; max: number }>) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => apply(patch), 350);
+    debounceRef.current = setTimeout(() => apply(patch, ["min", "max"]), 350);
   };
 
   const clearAll = () => {
@@ -151,6 +193,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
     setResults(null);
     setShowResults(false);
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (searchRef.current) clearTimeout(searchRef.current);
     router.push("/products", { scroll: false });
   };
 
@@ -182,7 +225,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
   const pickProduct = (name: string) => {
     setQ(name);
     setShowResults(false);
-    apply({ q: name });
+    apply({ q: name }, ["q"]);
   };
 
   const pickNav = (slug: string) => {
@@ -217,7 +260,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Search with autocomplete */}
+        {/* Search with autocomplete + Search button */}
         <div className="sm:col-span-2 lg:col-span-1 relative">
           <label htmlFor="jf-q" className={glassLabel}>
             Search
@@ -228,8 +271,9 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
               setShowResults(false);
               apply();
             }}
+            className="flex gap-2"
           >
-            <div className="relative">
+            <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
               <input
                 id="jf-q"
@@ -250,6 +294,13 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
                 <span className="absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin rounded-full border-2 border-[#FACC15]/40 border-t-[#FACC15]" />
               ) : null}
             </div>
+            <button
+              type="submit"
+              className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#FACC15] to-[#F97316] px-4 text-sm font-bold text-slate-900 shadow-[0_6px_20px_rgba(250,204,21,0.35)] transition hover:brightness-110 active:scale-[0.98]"
+            >
+              <Search className="h-4 w-4" />
+              Search
+            </button>
           </form>
 
           {showResults && results && (
@@ -308,11 +359,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
           <select
             id="jf-cat"
             value={category}
-            onChange={(e) => {
-              const v = e.target.value;
-              setCategory(v);
-              apply({ category: v });
-            }}
+            onChange={(e) => setCategory(e.target.value)}
             className={glassField}
           >
             <option value="">All Categories ({total})</option>
@@ -332,11 +379,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
           <select
             id="jf-sort"
             value={sort}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSort(v);
-              apply({ sort: v });
-            }}
+            onChange={(e) => setSort(e.target.value)}
             className={glassField}
           >
             {SORTS.map((o) => (
@@ -355,11 +398,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
           <select
             id="jf-size"
             value={size}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSize(v);
-              apply({ size: v });
-            }}
+            onChange={(e) => setSize(e.target.value)}
             className={glassField}
           >
             <option value="">Any Size</option>
@@ -372,7 +411,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
         </div>
       </div>
 
-      {/* Price range */}
+      {/* Price range (instant, debounced) */}
       <div className="mt-5">
         <div className="mb-2 flex items-center justify-between">
           <span className={glassLabel}>Price Range</span>
@@ -420,7 +459,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
         </div>
       </div>
 
-      {/* Quality tier pills */}
+      {/* Quality tier pills (instant) */}
       <div className="mt-5 flex flex-wrap items-center gap-2">
         <span className={cn(glassLabel, "mb-0 mr-1 self-center")}>Quality: </span>
         {TIERS.map((t) => {
@@ -431,7 +470,7 @@ export function ProductFilters({ categories, total, initial }: ProductFiltersPro
               type="button"
               onClick={() => {
                 setTier(t.value);
-                apply({ tier: t.value });
+                apply({ tier: t.value }, ["tier"]);
               }}
               className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
                 active
