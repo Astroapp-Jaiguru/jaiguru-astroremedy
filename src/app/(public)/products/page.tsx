@@ -6,13 +6,12 @@ import { buildNavMenu } from "@/lib/product-navigation";
 import { fetchNavNodes, fetchProductsPage, parseProductsQuery } from "@/lib/products-filter";
 
 /**
- * Products catalogue (scope §7.6 / §15). All products with pagination,
- * category filters, navigation-level filters (from the in-page "Browse"
- * menu), search, and size/carat + sorting. Every filter lives in the URL
- * so views are shareable and server-rendered. The server renders the
- * initial filtered grid; ProductsShop then drives instant client-side
- * updates (autocomplete suggestions, Search button, pagination) against
- * /api/products/filter while keeping the URL in sync.
+ * Products catalogue (scope §7.6 / §15). Below the title sits only the
+ * horizontal "Browse" menu (ProductsNavBrowser); the grid is server-
+ * rendered from the URL query (?nav, ?category, ?q, ?sort, ?size, ...)
+ * so views are shareable and page refreshes stay consistent. ProductsShop
+ * adds client-side pagination against /api/products/filter while keeping
+ * the URL in sync.
  */
 
 export const dynamic = "force-dynamic";
@@ -66,11 +65,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         <ProductsNavBrowser items={buildNavMenu(navNodes)} />
 
         <ProductsShop
-          categories={categories.map((c) => ({
-            name: c.name,
-            slug: c.slug,
-            count: c._count.products,
-          }))}
           initial={{
             products: result.products,
             total: result.total,

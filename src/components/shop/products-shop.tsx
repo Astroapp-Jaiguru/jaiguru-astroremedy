@@ -1,18 +1,28 @@
 "use client";
 
 /**
- * Client-side shop: owns the filter state, fetches the filtered grid from
- * GET /api/products/filter, keeps the URL query string in sync via
- * history.replaceState, and renders the filter bar, breadcrumb, grid and
- * pagination. Initial SSR data comes from the server page so the first
- * paint is identical to a full page load.
+ * Client-side shop: renders the filtered product grid and pagination.
+ * The initial grid comes from server-rendered data; pagination fetches
+ * GET /api/products/filter and keeps the URL query string in sync via
+ * history.replaceState so deep links and page refreshes stay consistent.
+ * The Browse menu (ProductsNavBrowser) is rendered by the server page and
+ * navigates with full page loads via ?nav=... links.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { ProductFilters, type FiltersState, type ProductFilterCategories } from "@/components/shop/product-filters";
 import { ProductCardClient } from "@/components/shop/product-card-client";
 import { Pagination } from "@/components/shop/pagination";
 import type { ProductCardPayload } from "@/lib/products-filter";
+
+export interface FiltersState {
+  category: string;
+  q: string;
+  sort: string;
+  min: number;
+  max: number;
+  size: string;
+  tier: string;
+  nav: string;
+}
 
 export interface ProductsShopInitial {
   products: ProductCardPayload[];
@@ -26,13 +36,7 @@ export interface ProductsShopInitial {
 
 const PRICE_MAX = 500000;
 
-export function ProductsShop({
-  categories,
-  initial,
-}: {
-  categories: ProductFilterCategories[];
-  initial: ProductsShopInitial;
-}) {
+export function ProductsShop({ initial }: { initial: ProductsShopInitial }) {
   const [filters, setFilters] = useState<FiltersState>(initial.filters);
   const [products, setProducts] = useState<ProductCardPayload[]>(initial.products);
   const [total, setTotal] = useState(initial.total);
@@ -105,22 +109,6 @@ export function ProductsShop({
     [load]
   );
 
-  const stage = useCallback((patch: Partial<FiltersState>) => {
-    setFilters((f) => ({ ...f, ...patch }));
-  }, []);
-
-  const instant = useCallback(
-    (patch: Partial<FiltersState>) => {
-      const next = { ...filtersRef.current, ...patch, nav: patch.nav ?? filtersRef.current.nav };
-      commit(next, 1);
-    },
-    [commit]
-  );
-
-  const submit = useCallback(() => {
-    commit(filtersRef.current, 1);
-  }, [commit]);
-
   const goPage = useCallback(
     (page: number) => {
       commit(filtersRef.current, page);
@@ -133,27 +121,6 @@ export function ProductsShop({
 
   return (
     <div>
-      {navName ? (
-        <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Browsing:</span>
-          <Link href="/products" className="font-semibold text-[#B8860B] hover:underline">
-            All Products
-          </Link>
-          <span>→</span>
-          <span className="font-semibold text-foreground">{navName}</span>
-          <span className="ml-1 text-xs text-muted-foreground">({total} items)</span>
-        </div>
-      ) : null}
-
-      <ProductFilters
-        categories={categories}
-        total={total}
-        filters={filters}
-        onStage={stage}
-        onInstant={instant}
-        onSubmit={submit}
-      />
-
       {products.length === 0 ? (
         <div className="rounded-[var(--jaiguru-card-radius)] border border-dashed border-premium-gold/30 bg-deep-navy/40 p-16 text-center">
           <p className="text-lg font-semibold text-[var(--jaiguru-page-text)]">No products found</p>
