@@ -148,7 +148,8 @@ model ProductCategory {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   products    Product[]
-
+  vendors     Vendor[]
+  
   @@index([parentId])
 }
 
@@ -681,25 +682,32 @@ model Organization {
   @@index([type, isActive])
 }
 
-model Vendor {
+  model Vendor {
   id             String            @id @default(uuid()) @db.Uuid
   organizationId String            @db.Uuid
   organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   businessName   String
   contactPerson  String
   phone          String
+  email          String
+  categoryId     String?
+  category       ProductCategory?  @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  businessType   String?
   gstNumber      String?
   panNumber      String?
   status         MarketplaceStatus @default(PENDING)
   commissionRate Float             @default(10)
-  paymentMode    PaymentMode
+  paymentMode    PaymentMode       @default(A)
   kycCompletedAt DateTime?
+  rejectionReason String?
+  adminNotes     String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
   @@index([organizationId])
   @@index([status])
-}
+  @@index([categoryId])
+  }
 
 model SupplierProfile {
   id             String            @id @default(uuid()) @db.Uuid

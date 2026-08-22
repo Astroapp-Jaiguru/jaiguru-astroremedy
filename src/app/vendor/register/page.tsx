@@ -1,0 +1,17 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+export default function VendorRegisterPage() {
+  const router = useRouter(); const [step, setStep] = useState(1); const [submitted, setSubmitted] = useState(false); const [error, setError] = useState("");
+  const [form, setForm] = useState<Record<string, string>>({});
+  const set = (key: string, value: string) => setForm((current) => ({ ...current, [key]: value }));
+  async function submit() { setError(""); const response = await fetch("/api/vendor/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) }); const data = await response.json(); if (!response.ok) return setError(data.error); setSubmitted(true); setTimeout(() => router.push("/vendor/dashboard"), 1800); }
+  if (submitted) return <main className="mx-auto flex min-h-screen max-w-2xl items-center px-6"><Card className="w-full"><CardContent className="flex flex-col gap-3 p-10 text-center"><p className="text-sm font-semibold uppercase tracking-widest text-primary">Application received</p><h1 className="text-3xl font-semibold">Your vendor application is under review.</h1><p className="text-muted-foreground">We&apos;ll notify you when your KYC review is complete.</p></CardContent></Card></main>;
+  const fields = step === 1 ? [["businessName","Business Name"],["contactPerson","Contact Person"],["phone","Phone"],["email","Email"],["gstNumber","GST Number"],["panNumber","PAN Number"],["categoryId","Category ID"],["businessType","Business Type"]] : [["accountHolderName","Account Holder Name"],["accountNumber","Account Number"],["ifscCode","IFSC Code"],["bankName","Bank Name"]];
+  return <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-6 px-6 py-12"><div><p className="text-sm font-semibold uppercase tracking-widest text-primary">Jaiguru marketplace</p><h1 className="mt-2 text-4xl font-semibold tracking-tight">Become a trusted vendor</h1><p className="mt-2 text-muted-foreground">Complete your business profile and KYC details to apply.</p></div><Card><CardHeader><CardTitle>Step {step} of 2 · {step === 1 ? "Business details" : "Bank details"}</CardTitle></CardHeader><CardContent className="flex flex-col gap-5"><div className="grid gap-5 sm:grid-cols-2">{fields.map(([key,label]) => <div className="flex flex-col gap-2" key={key}><Label htmlFor={key}>{label}{!["gstNumber","panNumber","bankName"].includes(key) && " *"}</Label><Input id={key} type={key === "email" ? "email" : "text"} value={form[key] || ""} onChange={(event) => set(key,event.target.value)} required={!['gstNumber','panNumber','bankName'].includes(key)} /></div>)}</div>{step === 2 && <p className="text-sm text-muted-foreground">Documents can be uploaded after submitting, from your KYC workspace.</p>}{error && <p className="text-sm text-destructive">{error}</p>}<div className="flex justify-between gap-3"><Button variant="outline" disabled={step === 1} onClick={() => setStep(1)}>Back</Button>{step === 1 ? <Button onClick={() => setStep(2)}>Continue</Button> : <Button onClick={submit}>Submit application</Button>}</div></CardContent></Card></main>;
+}
