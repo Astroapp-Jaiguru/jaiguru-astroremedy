@@ -1,0 +1,5 @@
+import { requireSupplier } from "@/lib/dal";
+import { listOpenTenders } from "@/lib/tenders/service";
+import { Badge } from "@/components/ui/badge";
+
+export default async function SupplierTendersPage() { await requireSupplier(); const tenders = await listOpenTenders(); return <main className="mx-auto max-w-5xl p-6"><h1 className="text-2xl font-semibold">Open tenders</h1><div className="mt-6 grid gap-4 md:grid-cols-2">{tenders.map((tender) => <article key={tender.id} className="rounded-xl border bg-card p-5"><div className="flex items-center justify-between gap-3"><h2 className="font-semibold">{tender.title}</h2><Badge variant="secondary">{tender.category}</Badge></div><p className="mt-2 text-sm text-muted-foreground">{tender.description}</p><p className="mt-4 text-sm">Closes {tender.closingAt.toLocaleString()} · {tender._count.bids} bids</p><a className="mt-4 inline-block font-medium text-primary underline" href={`/supplier/tenders/${tender.id}`}>View and bid</a></article>)}</div></main>; }
