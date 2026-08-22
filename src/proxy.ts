@@ -27,11 +27,20 @@ export function proxy(request: NextRequest) {
     !pathname.startsWith("/admin/signup") &&
     !pathname.startsWith("/admin/forgot-password") &&
     !pathname.startsWith("/admin/reset-password");
+  const protectedFamily = pathname.startsWith("/vendor")
+    ? { prefix: "/vendor", signin: "/vendor/signin", publicPaths: ["/vendor/register", "/vendor/signin"] }
+    : pathname.startsWith("/buyer")
+      ? { prefix: "/buyer", signin: "/buyer/signin", publicPaths: ["/buyer/signin"] }
+      : pathname.startsWith("/supplier")
+        ? { prefix: "/supplier", signin: "/supplier/signin", publicPaths: ["/supplier/register", "/supplier/signin"] }
+        : null;
+  const isProtectedFamilyRoute = protectedFamily && !protectedFamily.publicPaths.some((path) => pathname.startsWith(path));
 
   const hasSession = request.cookies.has(SESSION_COOKIE);
 
-  if (isAdminRoute && !hasSession) {
-    const signinUrl = new URL("/admin/signin", request.url);
+  if ((isAdminRoute || isProtectedFamilyRoute) && !hasSession) {
+    const signinPath = isAdminRoute ? "/admin/signin" : protectedFamily!.signin;
+    const signinUrl = new URL(signinPath, request.url);
     signinUrl.searchParams.set("callbackUrl", pathname);
     const res = NextResponse.redirect(signinUrl);
     for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
@@ -59,7 +68,7 @@ export function proxy(request: NextRequest) {
     request.headers.get("x-vercel-ip-country") ?? request.headers.get("cf-ipcountry");
   if (country) res.headers.set("x-viewer-country", country.toUpperCase().slice(0, 2));
 
-  if (pathname.startsWith("/admin")) {
+  if (pathname.startsWith("/admin") || isProtectedFamilyRoute) {
     for (const [k, v] of Object.entries(NO_STORE_HEADERS)) res.headers.set(k, v);
   }
   return res;
@@ -68,6 +77,9 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
+    "/vendor/:path*",
+    "/buyer/:path*",
+    "/supplier/:path*",
     "/((?!_next/static|_next/image|favicon.ico|api/site-images|robots.txt|sitemap.xml).*)",
   ],
 };

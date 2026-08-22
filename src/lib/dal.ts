@@ -51,6 +51,25 @@ export async function requireAdmin(): Promise<AuthUser> {
   return user;
 }
 
+async function requireRole(role: "VENDOR" | "BUYER" | "SUPPLIER"): Promise<AuthUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect(`/admin/signin?callbackUrl=/${role.toLowerCase()}`);
+  if (user.role !== role) redirect("/admin/unauthorized");
+  return user;
+}
+
+export function requireVendor(): Promise<AuthUser> {
+  return requireRole("VENDOR");
+}
+
+export function requireBuyer(): Promise<AuthUser> {
+  return requireRole("BUYER");
+}
+
+export function requireSupplier(): Promise<AuthUser> {
+  return requireRole("SUPPLIER");
+}
+
 /** Optimistic check used by the proxy for pre-filtering /admin routes. */
 export async function hasSessionCookie(): Promise<boolean> {
   const session = await getSessionPayload();

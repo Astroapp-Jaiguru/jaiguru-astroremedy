@@ -55,7 +55,7 @@ export async function signinAction(
     return { error: "Invalid email or password." };
   }
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+  const valid = user.passwordHash ? await bcrypt.compare(password, user.passwordHash) : false;
   if (!valid) {
     return { error: "Invalid email or password." };
   }
@@ -140,7 +140,7 @@ export async function changePasswordAction(
   const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
   if (!dbUser) return { error: "User not found." };
 
-  const valid = await bcrypt.compare(currentPassword, dbUser.passwordHash);
+  const valid = dbUser.passwordHash ? await bcrypt.compare(currentPassword, dbUser.passwordHash) : false;
   if (!valid) return { error: "Current password is incorrect." };
 
   const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);

@@ -36,6 +36,13 @@ async function main() {
     console.log(`INFO  Admin user already exists: ${SEED_ADMIN_EMAIL}`);
   }
 
+  await prisma.marketplaceSettings.upsert({
+    where: { id: 1 },
+    update: {},
+    create: { id: 1 },
+  });
+  console.log("OK Marketplace settings initialized");
+
   // -------------------------------------------------------------------------
   // 2. Product categories (scope §8)
   // -------------------------------------------------------------------------

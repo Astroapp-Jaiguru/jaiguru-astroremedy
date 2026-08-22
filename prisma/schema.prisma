@@ -17,6 +17,63 @@ datasource db {
 enum Role {
   ADMIN
   EDITOR
+  VENDOR
+  BUYER
+  SUPPLIER
+  CUSTOMER
+}
+
+enum OrganizationType {
+  VENDOR
+  BUYER
+  SUPPLIER
+}
+
+enum MarketplaceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  HOLD
+}
+
+enum PaymentMode {
+  A
+  B
+}
+
+enum KYCStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  HOLD
+}
+
+enum DocumentType {
+  PAN
+  GST_CERTIFICATE
+  ADDRESS_PROOF
+  BANK_PROOF
+  BUSINESS_REGISTRATION
+  AUTHORIZATION_LETTER
+  OTHER
+}
+
+enum DocumentVerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum BankAccountType {
+  SAVINGS
+  CURRENT
+}
+
+enum PayoutMode {
+  MANUAL
+  AUTO
 }
 
 enum ServiceMode {
@@ -56,19 +113,20 @@ enum OrderItemType {
 // ---------------------------------------------------------------------------
 
 model User {
-  id                  String    @id @default(cuid())
-  name                String
-  email               String    @unique
-  passwordHash        String
-  role                Role      @default(ADMIN)
-  phone               String?
-  avatarUrl           String?
-  isActive            Boolean   @default(true)
-  lastLoginAt         DateTime?
-  passwordResetToken  String?   @unique
+  id                   String         @id @default(cuid())
+  name                 String
+  email                String         @unique
+  passwordHash         String?
+  role                 Role           @default(ADMIN)
+  organizations        Organization[]
+  phone                String?
+  avatarUrl            String?
+  isActive             Boolean        @default(true)
+  lastLoginAt          DateTime?
+  passwordResetToken   String?        @unique
   passwordResetExpires DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
 }
 
 // ---------------------------------------------------------------------------
@@ -76,79 +134,79 @@ model User {
 // ---------------------------------------------------------------------------
 
 model ProductCategory {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
-  slug        String           @unique
+  slug        String            @unique
   description String?
   icon        String?
   imageUrl    String?
   parentId    String?
-  parent      ProductCategory? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  parent      ProductCategory?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children    ProductCategory[] @relation("CategoryTree")
-  sortOrder   Int              @default(0)
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   products    Product[]
 
   @@index([parentId])
 }
 
 model Product {
-  id               String         @id @default(cuid())
-  name             String
-  slug             String         @unique
-  categoryId       String
-  category         ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  navigationId     String?
-  navigation       ProductNavigation? @relation(fields: [navigationId], references: [id], onDelete: SetNull)
-  subcategory      String?
-  sku              String?
-  mainImage        String?
-  gallery          ProductImage[]
-  price            Decimal        @db.Decimal(12, 2)
-  discountPrice    Decimal?       @db.Decimal(12, 2)
+  id                    String             @id @default(cuid())
+  name                  String
+  slug                  String             @unique
+  categoryId            String
+  category              ProductCategory    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  navigationId          String?
+  navigation            ProductNavigation? @relation(fields: [navigationId], references: [id], onDelete: SetNull)
+  subcategory           String?
+  sku                   String?
+  mainImage             String?
+  gallery               ProductImage[]
+  price                 Decimal            @db.Decimal(12, 2)
+  discountPrice         Decimal?           @db.Decimal(12, 2)
   // Dynamic pricing engine (safe version): competitor reference price, the
   // cost price used to derive the minimum floor (cost * 1.15), and an
   // explicit floor override. priceSource tracks provenance for the audit log.
-  costPrice        Decimal?       @db.Decimal(12, 2)
-  competitorPrice  Decimal?       @db.Decimal(12, 2)
-  priceFloor       Decimal?       @db.Decimal(12, 2)
-  priceSource      String         @default("manual") // manual | competitor
-  priceReviewedAt  DateTime?
+  costPrice             Decimal?           @db.Decimal(12, 2)
+  competitorPrice       Decimal?           @db.Decimal(12, 2)
+  priceFloor            Decimal?           @db.Decimal(12, 2)
+  priceSource           String             @default("manual") // manual | competitor
+  priceReviewedAt       DateTime?
   // Image pipeline provenance (manual | unsplash | ai) + optional credit.
-  imageSource      String         @default("manual")
-  imageCredit      String?
-  stockStatus      StockStatus    @default(IN_STOCK)
-  quantity         Int            @default(0)
-  shortDescription String?
-  longDescription  String?
-  returnPolicy     String?
-  benefits         String[]       @default([])
-  usageMethod      String?
-  material         String?
-  size             String?
-  sizeOptions      Json? // [{ label, price }] — size selector options (grouped products)
-  weight           String?
-  color            String?
-  tags             String[]       @default([])
+  imageSource           String             @default("manual")
+  imageCredit           String?
+  stockStatus           StockStatus        @default(IN_STOCK)
+  quantity              Int                @default(0)
+  shortDescription      String?
+  longDescription       String?
+  returnPolicy          String?
+  benefits              String[]           @default([])
+  usageMethod           String?
+  material              String?
+  size                  String?
+  sizeOptions           Json? // [{ label, price }] — size selector options (grouped products)
+  weight                String?
+  color                 String?
+  tags                  String[]           @default([])
   estimatedDeliveryTime String?
-  hasCertificate   Boolean        @default(false)
-  certificateLabel String?
-  isFeatured       Boolean        @default(false)
-  isPopular        Boolean        @default(false)
-  isNewArrival     Boolean        @default(false)
-  rating           Decimal        @default(4.5) @db.Decimal(3, 2)
-  ratingCount      Int            @default(0)
-  seoTitle         String?
-  seoDescription   String?
-  seoKeywords      String?
-  whatsappMessage  String?
-  isActive         Boolean        @default(true)
-  sortOrder        Int            @default(0)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  priceChanges     PriceChange[]
+  hasCertificate        Boolean            @default(false)
+  certificateLabel      String?
+  isFeatured            Boolean            @default(false)
+  isPopular             Boolean            @default(false)
+  isNewArrival          Boolean            @default(false)
+  rating                Decimal            @default(4.5) @db.Decimal(3, 2)
+  ratingCount           Int                @default(0)
+  seoTitle              String?
+  seoDescription        String?
+  seoKeywords           String?
+  whatsappMessage       String?
+  isActive              Boolean            @default(true)
+  sortOrder             Int                @default(0)
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  priceChanges          PriceChange[]
 
   @@index([categoryId])
   @@index([navigationId])
@@ -158,17 +216,17 @@ model Product {
 }
 
 model ProductNavigation {
-  id        String               @id @default(cuid())
+  id        String              @id @default(cuid())
   name      String
-  slug      String               @unique
+  slug      String              @unique
   kind      String? // "size" for leaf size nodes; null for structural levels
   parentId  String?
-  parent    ProductNavigation?   @relation("ProductNavigationTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children  ProductNavigation[]  @relation("ProductNavigationTree")
-  sortOrder Int                  @default(0)
-  isActive  Boolean              @default(true)
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  parent    ProductNavigation?  @relation("ProductNavigationTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  ProductNavigation[] @relation("ProductNavigationTree")
+  sortOrder Int                 @default(0)
+  isActive  Boolean             @default(true)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
   products  Product[]
 
   @@index([parentId])
@@ -214,57 +272,57 @@ model PriceChange {
 // ---------------------------------------------------------------------------
 
 model ServiceCategory {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
-  slug        String           @unique
+  slug        String            @unique
   description String?
   icon        String?
   imageUrl    String?
   parentId    String?
-  parent      ServiceCategory? @relation("ServiceCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  parent      ServiceCategory?  @relation("ServiceCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children    ServiceCategory[] @relation("ServiceCategoryTree")
-  sortOrder   Int              @default(0)
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   services    Service[]
 
   @@index([parentId])
 }
 
 model Service {
-  id               String        @id @default(cuid())
+  id               String          @id @default(cuid())
   name             String
-  slug             String        @unique
+  slug             String          @unique
   categoryId       String
   category         ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  mode             ServiceMode   @default(ONLINE)
+  mode             ServiceMode     @default(ONLINE)
   duration         String?
-  price            Decimal?      @db.Decimal(12, 2)
+  price            Decimal?        @db.Decimal(12, 2)
   priceLabel       String?
   // Dynamic pricing engine: competitor reference + explicit floor for digital
   // services (consultations / courses). Digital formula: competitor * 1.05.
-  competitorPrice  Decimal?      @db.Decimal(12, 2)
-  priceFloor       Decimal?      @db.Decimal(12, 2)
-  priceSource      String        @default("manual") // manual | competitor
+  competitorPrice  Decimal?        @db.Decimal(12, 2)
+  priceFloor       Decimal?        @db.Decimal(12, 2)
+  priceSource      String          @default("manual") // manual | competitor
   priceReviewedAt  DateTime?
   imageUrl         String?
   shortDescription String?
   longDescription  String?
-  benefits         String[]      @default([])
-  syllabus         String[]      @default([])
+  benefits         String[]        @default([])
+  syllabus         String[]        @default([])
   serviceArea      String?
   slotDuration     Int?
   faqs             Json?
   whatsappMessage  String?
-  isFeatured       Boolean       @default(false)
+  isFeatured       Boolean         @default(false)
   seoTitle         String?
   seoDescription   String?
   seoKeywords      String?
-  isActive         Boolean       @default(true)
-  sortOrder        Int           @default(0)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  isActive         Boolean         @default(true)
+  sortOrder        Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   priceChanges     PriceChange[]
 
   @@index([categoryId])
@@ -343,39 +401,39 @@ model BookingBlock {
 // ---------------------------------------------------------------------------
 
 model Order {
-  id              String        @id @default(cuid())
-  customerName    String
-  phone           String
-  whatsappNumber  String?
-  email           String?
-  itemName        String
-  itemType        OrderItemType @default(SERVICE)
-  amount          Decimal?      @db.Decimal(12, 2)
-  amountLabel     String?
-  preferredDate   String?
-  preferredTime   String?
-  preferredMode   String?
-  birthDate       String?
-  birthTime       String?
-  birthPlace      String?
-  note            String?
-  deliveryAddress String?
-  city            String?
-  state           String?
-  pincode         String?
-  paymentMethod   String? // UPI | RAZORPAY | WHATSAPP | CASH
-  paymentStatus   String? // PENDING | PAID | FAILED
-  razorpayOrderId    String?
-  razorpayPaymentId  String?
-  razorpaySignature  String?
-  courierName     String?
-  trackingNumber  String?
-  trackingUrl     String?
-  trackingSentAt  DateTime?
-  status          OrderStatus   @default(PENDING)
-  source          String        @default("website")
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                String        @id @default(cuid())
+  customerName      String
+  phone             String
+  whatsappNumber    String?
+  email             String?
+  itemName          String
+  itemType          OrderItemType @default(SERVICE)
+  amount            Decimal?      @db.Decimal(12, 2)
+  amountLabel       String?
+  preferredDate     String?
+  preferredTime     String?
+  preferredMode     String?
+  birthDate         String?
+  birthTime         String?
+  birthPlace        String?
+  note              String?
+  deliveryAddress   String?
+  city              String?
+  state             String?
+  pincode           String?
+  paymentMethod     String? // UPI | RAZORPAY | WHATSAPP | CASH
+  paymentStatus     String? // PENDING | PAID | FAILED
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  courierName       String?
+  trackingNumber    String?
+  trackingUrl       String?
+  trackingSentAt    DateTime?
+  status            OrderStatus   @default(PENDING)
+  source            String        @default("website")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@index([status])
   @@index([createdAt])
@@ -537,16 +595,16 @@ model Subscriber {
 }
 
 model LegalPage {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  title         String
-  content       String
-  seoTitle      String?
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  content        String
+  seoTitle       String?
   seoDescription String?
-  isActive      Boolean  @default(true)
-  sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  isActive       Boolean  @default(true)
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 // ---------------------------------------------------------------------------
@@ -598,4 +656,134 @@ model ContactMessage {
   status          RequestStatus @default(NEW)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Marketplace foundation
+// ---------------------------------------------------------------------------
+
+model Organization {
+  id           String            @id @default(uuid()) @db.Uuid
+  name         String
+  type         OrganizationType
+  ownerId      String?
+  owner        User?             @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  isActive     Boolean           @default(true)
+  sortOrder    Int               @default(0)
+  vendors      Vendor[]
+  suppliers    SupplierProfile[]
+  kycCases     KYCCase[]
+  bankAccounts BankAccount[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([ownerId])
+  @@index([type, isActive])
+}
+
+model Vendor {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @db.Uuid
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  businessName   String
+  contactPerson  String
+  phone          String
+  gstNumber      String?
+  panNumber      String?
+  status         MarketplaceStatus @default(PENDING)
+  commissionRate Float             @default(10)
+  paymentMode    PaymentMode
+  kycCompletedAt DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+model SupplierProfile {
+  id             String            @id @default(uuid()) @db.Uuid
+  organizationId String            @db.Uuid
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  businessName   String
+  gstNumber      String?
+  panNumber      String?
+  status         MarketplaceStatus @default(PENDING)
+  commissionRate Float             @default(10)
+  paymentMode    PaymentMode
+  kycCompletedAt DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+}
+
+model KYCCase {
+  id             String        @id @default(uuid()) @db.Uuid
+  organizationId String        @db.Uuid
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  provider       String
+  providerCaseId String
+  status         KYCStatus     @default(PENDING)
+  riskScore      Float?
+  decision       String?
+  reasonCodes    Json?
+  submittedAt    DateTime      @default(now())
+  verifiedAt     DateTime?
+  nextReviewAt   DateTime?
+  documents      KYCDocument[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([provider, providerCaseId])
+  @@index([organizationId, status])
+}
+
+model KYCDocument {
+  id                 String                     @id @default(uuid()) @db.Uuid
+  kycCaseId          String                     @db.Uuid
+  kycCase            KYCCase                    @relation(fields: [kycCaseId], references: [id], onDelete: Cascade)
+  documentType       DocumentType
+  storageKey         String
+  sha256             String
+  mimetype           String
+  verificationStatus DocumentVerificationStatus @default(PENDING)
+  expiresAt          DateTime?
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  @@index([kycCaseId])
+  @@index([sha256])
+}
+
+model BankAccount {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @db.Uuid
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  accountType    BankAccountType
+  bankName       String
+  encryptedBlob  String
+  iv             String
+  authTag        String
+  isPrimary      Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([organizationId])
+  @@index([organizationId, isPrimary])
+}
+
+model MarketplaceSettings {
+  id                          Int         @id @default(1)
+  enabled                     Boolean     @default(false)
+  fulfillmentMode             PaymentMode @default(A)
+  globalCommissionRate        Float       @default(10)
+  registrationOpen            Boolean     @default(true)
+  vendorProductUploadsEnabled Boolean     @default(true)
+  vendorAnalyticsEnabled      Boolean     @default(true)
+  payoutMode                  PayoutMode  @default(MANUAL)
+  settlementHoldDays          Int         @default(7)
+  createdAt                   DateTime    @default(now())
+  updatedAt                   DateTime    @updatedAt
 }
