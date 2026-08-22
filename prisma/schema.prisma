@@ -36,6 +36,12 @@ enum MarketplaceStatus {
   HOLD
 }
 
+enum ProductApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum PaymentMode {
   A
   B
@@ -159,6 +165,9 @@ model Product {
   slug                  String             @unique
   categoryId            String
   category              ProductCategory    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  vendorId              String?
+  vendor                Vendor?            @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  approvalStatus        ProductApprovalStatus @default(PENDING)
   navigationId          String?
   navigation            ProductNavigation? @relation(fields: [navigationId], references: [id], onDelete: SetNull)
   subcategory           String?
@@ -701,6 +710,7 @@ model Organization {
   kycCompletedAt DateTime?
   rejectionReason String?
   adminNotes     String?
+  products       Product[]
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
