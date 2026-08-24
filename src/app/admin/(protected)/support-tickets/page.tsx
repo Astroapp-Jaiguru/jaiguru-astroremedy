@@ -1,0 +1,1 @@
+import { requireAdmin } from "@/lib/dal"; import { OperationsPage } from "@/components/marketplace/operations-page"; export const dynamic="force-dynamic"; export default async function Page(){await requireAdmin();return <OperationsPage eyebrow="Customer care" title="Support tickets" description="Assign, reply to, and resolve customer support requests."/>}

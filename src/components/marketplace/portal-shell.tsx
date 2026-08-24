@@ -1,0 +1,2 @@
+import type { ReactNode } from "react";
+export function PortalShell({ title, eyebrow, children }: { title: string; eyebrow: string; children: ReactNode }) { return <main className="min-h-screen bg-background px-4 py-12"><div className="mx-auto max-w-6xl space-y-8"><div><p className="font-mono text-xs uppercase tracking-widest text-primary">{eyebrow}</p><h1 className="mt-2 font-heading text-4xl font-semibold">{title}</h1></div>{children}</div></main>; }

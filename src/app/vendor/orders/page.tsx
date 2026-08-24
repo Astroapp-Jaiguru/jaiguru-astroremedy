@@ -1,0 +1,1 @@
+import { requireVendor } from "@/lib/dal"; import { OperationsPage } from "@/components/marketplace/operations-page"; export const dynamic="force-dynamic"; export default async function Page(){await requireVendor();return <OperationsPage eyebrow="Vendor workspace" title="Orders" description="Track fulfillment, shipping, and delivery status for your marketplace orders."/>}

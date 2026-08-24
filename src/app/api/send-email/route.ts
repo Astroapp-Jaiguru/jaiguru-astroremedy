@@ -1,0 +1,2 @@
+import { NextResponse } from "next/server";
+export async function POST(request: Request) { const body = await request.json().catch(() => null); if (!body?.to || !body?.subject || !body?.text) return NextResponse.json({ error: "to, subject, and text are required" }, { status: 400 }); return NextResponse.json({ queued: false, message: "Email provider is not configured. The notification was validated but not sent." }, { status: 202 }); }

@@ -1,0 +1,5 @@
+import { requireSupplier } from "@/lib/dal";
+import { PortalShell } from "@/components/marketplace/portal-shell";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+export const dynamic = "force-dynamic";
+export default async function SupplierDashboardPage() { const user = await requireSupplier(); return <PortalShell eyebrow="Supplier workspace" title={`Welcome, ${user.name}`}><div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5"><p className="font-medium text-amber-200">Verification pending</p><p className="mt-1 text-sm text-muted-foreground">Admin approval is required before your supplier account becomes active.</p></div><div className="grid gap-4 sm:grid-cols-3">{[["Products supplied", "0"], ["Total orders", "0"], ["Total revenue", "₹0"]].map(([label, value]) => <Card key={label}><CardHeader><CardTitle className="text-sm font-normal text-muted-foreground">{label}</CardTitle></CardHeader><CardContent><p className="font-heading text-3xl">{value}</p></CardContent></Card>)}</div></PortalShell>; }

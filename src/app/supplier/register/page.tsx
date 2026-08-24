@@ -1,0 +1,2 @@
+import { VendorRegistrationForm } from "@/components/vendor/vendor-registration-form";
+export default function SupplierRegisterPage() { return <main className="min-h-screen bg-background px-4 py-16"><div className="mx-auto max-w-3xl space-y-6"><p className="font-mono text-xs uppercase tracking-widest text-primary">Supplier registration</p><h1 className="font-heading text-4xl font-semibold">Supply with Jaiguru</h1><p className="leading-6 text-muted-foreground">Submit your business details for review by our marketplace team.</p><VendorRegistrationForm /></div></main>; }

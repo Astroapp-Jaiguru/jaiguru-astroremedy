@@ -1,0 +1,1 @@
+import { requireAdmin } from "@/lib/dal"; import { OperationsPage } from "@/components/marketplace/operations-page"; export const dynamic="force-dynamic"; export default async function Page(){await requireAdmin();return <OperationsPage eyebrow="Communications" title="Notifications" description="Review email, WhatsApp, SMS, and in-app notification delivery."/>}

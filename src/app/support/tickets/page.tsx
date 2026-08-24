@@ -1,0 +1,4 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+export default function SupportTicketsPage() { return <main className="min-h-screen bg-background px-4 py-12"><div className="mx-auto max-w-3xl space-y-6"><p className="font-mono text-xs uppercase tracking-widest text-primary">Jaiguru support</p><h1 className="font-heading text-4xl font-semibold">How can we help?</h1><Card><CardHeader><CardTitle>Open a support ticket</CardTitle></CardHeader><CardContent className="space-y-4"><Input placeholder="Subject" /><textarea className="min-h-32 w-full rounded-lg border border-border bg-background p-3 text-sm" placeholder="Describe your question" /><Button>Submit ticket</Button></CardContent></Card></div></main>; }
