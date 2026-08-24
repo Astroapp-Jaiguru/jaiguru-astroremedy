@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { getSeoDefaults } from "@/lib/seo-data";
@@ -24,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export const dynamic = "force-dynamic";
 
-export default function PublicLayout({ children }: LayoutProps<"/">) {
+export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <ThemeStyles />

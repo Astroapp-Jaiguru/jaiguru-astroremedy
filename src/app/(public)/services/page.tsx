@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
@@ -45,7 +46,9 @@ function ModeBadge({ mode }: { mode: ServiceMode }) {
 
 export default async function ServicesPage({
  searchParams,
-}: PageProps<"/services">) {
+}: {
+ searchParams: { [key: string]: string | string[] | undefined };
+}) {
  const sp = await searchParams;
  const modeKey = typeof sp?.mode === "string" ? sp.mode : "all";
  const mode = modeKey === "all" ? null : SERVICE_MODE_SLUGS[modeKey] ?? null;
