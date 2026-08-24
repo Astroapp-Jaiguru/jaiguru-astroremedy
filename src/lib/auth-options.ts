@@ -1,4 +1,4 @@
-import type { NextAuthConfig } from "next-auth";
+﻿import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 
@@ -14,44 +14,32 @@ export const authOptions: NextAuthConfig = {
     async signIn({ user, account }) {
       if (account?.provider !== "google" || !user.email) return true;
 
-      const existing = await prisma.user.findUnique({
-        where: { email: user.email },
-        select: { id: true },
-      });
+      const existing = await prisma.$queryRaw`
+        SELECT id FROM "User" WHERE email = ${user.email} LIMIT 1
+      `;
 
-      if (!existing) {
-        const created = await prisma.user.create({
-          data: {
-            name: user.name ?? user.email.split("@")[0],
-            email: user.email,
-            passwordHash: "oauth-google",
-            role: "CUSTOMER",
-            avatarUrl: user.image,
-            organizations: {
-              create: {
-                name: `${user.name ?? "Customer"}'s Organization`,
-                type: "BUYER",
-              },
-            },
-          },
-        });
-        user.id = created.id;
+      if ((existing as any[]).length === 0) {
+        const created = await prisma.$queryRaw`
+          INSERT INTO "User" (name, email, passwordhash, role, avatarurl, isactive, createdat, updatedat)
+          VALUES (${user.name ?? user.email.split("@")[0]}, ${user.email}, 'oauth-google', 'CUSTOMER', ${user.image}, true, NOW(), NOW())
+          RETURNING id
+        `;
+        user.id = (created as any)[0].id;
       } else {
-        user.id = existing.id;
+        user.id = (existing as any)[0].id;
       }
       return true;
     },
     async jwt({ token, user }) {
       if (user) token.id = user.id;
       if (token.id) {
-        const record = await prisma.user.findUnique({
-          where: { id: String(token.id) },
-          select: { role: true, name: true, email: true },
-        });
-        if (record) {
-          token.role = record.role;
-          token.name = record.name;
-          token.email = record.email;
+        const record = await prisma.$queryRaw`
+          SELECT role, name, email FROM "User" WHERE id = ${String(token.id)} LIMIT 1
+        `;
+        if ((record as any[]).length > 0) {
+          token.role = (record as any)[0].role;
+          token.name = (record as any)[0].name;
+          token.email = (record as any)[0].email;
         }
       }
       return token;

@@ -1,6 +1,3 @@
-// JAIGURU ASTROREMEDY - Prisma Schema
-// Premium Astrology, Spiritual Remedy, Vastu, Numerology, Gemstone, Yoga & Product CMS Website
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,321 +7,203 @@ datasource db {
   provider = "postgresql"
 }
 
-// ---------------------------------------------------------------------------
-// Enums
-// ---------------------------------------------------------------------------
-
-enum Role {
-  ADMIN
-  EDITOR
-  VENDOR
-  BUYER
-  SUPPLIER
-  CUSTOMER
-}
-
-enum OrganizationType {
-  VENDOR
-  BUYER
-  SUPPLIER
-  INTERNAL
-}
-
-enum PartnerStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  HOLD
-  SUSPENDED
-}
-
-enum PaymentMode {
-  MANUAL
-  BANK_TRANSFER
-  UPI
-  RAZORPAY
-}
-
-enum KYCStatus {
-  NOT_STARTED
-  PENDING
-  APPROVED
-  REJECTED
-  HOLD
-}
-
-enum FulfillmentMode {
-  SELF
-  VENDOR
-  HYBRID
-}
-
-enum PayoutMode {
-  MANUAL
-  AUTO
-}
-
-enum ServiceMode {
-  ONLINE
-  OFFLINE
-  HOME_SERVICE
-}
-
-enum StockStatus {
-  IN_STOCK
-  OUT_OF_STOCK
-  PRE_ORDER
-}
-
-enum RequestStatus {
-  NEW
-  IN_PROGRESS
-  RESOLVED
-  CLOSED
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  SHIPPED
-  COMPLETED
-  CANCELLED
-}
-
-enum OrderItemType {
-  SERVICE
-  PRODUCT
-}
-
-// ---------------------------------------------------------------------------
-// Users & Authentication
-// ---------------------------------------------------------------------------
-
 model User {
-  id                  String    @id @default(cuid())
-  name                String
-  email               String    @unique
-  passwordHash        String
-  role                Role      @default(ADMIN)
-  phone               String?
-  avatarUrl           String?
-  isActive            Boolean   @default(true)
-  lastLoginAt         DateTime?
-  passwordResetToken  String?   @unique
-  passwordResetExpires DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  organizations       Organization[]
-  vendorProfile       Vendor?
-  supplierProfile      SupplierProfile?
+  id                   String    @id @default(cuid())
+  name                 String
+  email                String    @unique
+  passwordHash         String @map("passwordhash")
+  role                 Role      @default(ADMIN)
+  phone                String?
+  avatarUrl            String?
+  isActive             Boolean   @default(true) @map("isactive")
+  lastLoginAt          DateTime? @map("lastloginat")
+  passwordResetToken   String?   @unique @map("passwordresettoken")
+  passwordResetExpires DateTime? @map("passwordresetexpires")
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
-
-// ---------------------------------------------------------------------------
-// Marketplace foundation
-// ---------------------------------------------------------------------------
 
 model Organization {
-  id          String           @id @default(cuid())
-  name        String
-  type        OrganizationType
-  isActive    Boolean          @default(true)
-  sortOrder   Int              @default(0)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  users       User[]
-  vendors     Vendor[]
-  suppliers   SupplierProfile[]
-  kycCases    KYCCase[]
-  bankAccounts BankAccount[]
-
-  @@index([type, isActive])
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  type            Role              @default(CUSTOMER)
+  isactive        Boolean?          @default(true)
+  sortorder       Int?              @default(0)
+  createdat       DateTime?         @default(now()) @db.Timestamp(6)
+  updatedat       DateTime?         @default(now()) @db.Timestamp(6)
+  BankAccount     BankAccount[]
+  KYCCase         KYCCase[]
+  SupplierProfile SupplierProfile[]
+  Vendor          Vendor[]
 }
 
 model Vendor {
-  id              String        @id @default(cuid())
-  organizationId  String
-  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId          String?       @unique
-  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  businessName    String
-  contactPerson   String
-  phone           String
-  gstNumber       String?
-  panNumber       String?
-  status          PartnerStatus @default(PENDING)
-  commissionRate  Decimal       @default(0) @db.Decimal(5, 2)
-  paymentMode     PaymentMode   @default(BANK_TRANSFER)
-  kycCompletedAt  DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([organizationId, status])
+  id             Int            @id @default(autoincrement())
+  organizationid Int?
+  businessname   String         @db.VarChar(255)
+  contactperson  String         @db.VarChar(255)
+  phone          String?        @db.VarChar(50)
+  gstnumber      String?        @db.VarChar(50)
+  pannumber      String?        @db.VarChar(50)
+  status         String?        @default("PENDING") @db.VarChar(20)
+  commissionrate Decimal?       @db.Decimal(5, 2)
+  paymentmode    String?        @default("MANUAL") @db.VarChar(20)
+  kyccompletedat DateTime?      @db.Timestamp(6)
+  createdat      DateTime?      @default(now()) @db.Timestamp(6)
+  updatedat      DateTime?      @default(now()) @db.Timestamp(6)
+  Organization   Organization?  @relation(fields: [organizationid], references: [id], onUpdate: NoAction)
+  VendorOrder    VendorOrder[]
+  VendorPayout   VendorPayout[]
 }
 
 model SupplierProfile {
-  id              String        @id @default(cuid())
-  organizationId  String
-  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId          String?       @unique
-  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  businessName    String
-  gstNumber       String?
-  panNumber       String?
-  status          PartnerStatus @default(PENDING)
-  commissionRate  Decimal       @default(0) @db.Decimal(5, 2)
-  paymentMode     PaymentMode   @default(BANK_TRANSFER)
-  kycCompletedAt  DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([organizationId, status])
+  id             Int           @id @default(autoincrement())
+  organizationid Int?
+  businessname   String        @db.VarChar(255)
+  gstnumber      String?       @db.VarChar(50)
+  pannumber      String?       @db.VarChar(50)
+  status         String?       @default("PENDING") @db.VarChar(20)
+  commissionrate Decimal?      @db.Decimal(5, 2)
+  paymentmode    String?       @default("MANUAL") @db.VarChar(20)
+  kyccompletedat DateTime?     @db.Timestamp(6)
+  createdat      DateTime?     @default(now()) @db.Timestamp(6)
+  updatedat      DateTime?     @default(now()) @db.Timestamp(6)
+  Organization   Organization? @relation(fields: [organizationid], references: [id], onUpdate: NoAction)
 }
 
 model KYCCase {
-  id             String      @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  provider       String
-  providerCaseId String?
-  status         KYCStatus   @default(NOT_STARTED)
-  riskScore      Decimal?    @db.Decimal(5, 2)
-  decision       String?
-  reasonCodes    String[]    @default([])
-  submittedAt    DateTime?
-  verifiedAt     DateTime?
-  nextReviewAt   DateTime?
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  documents      KYCDocument[]
-
-  @@unique([provider, providerCaseId])
-  @@index([organizationId, status])
+  id             Int           @id @default(autoincrement())
+  organizationid Int?
+  provider       String?       @db.VarChar(50)
+  providercaseid String?       @db.VarChar(255)
+  status         String?       @default("PENDING") @db.VarChar(20)
+  riskscore      Int?
+  decision       String?       @db.VarChar(20)
+  reasoncodes    Json?         @default("[]")
+  submittedat    DateTime?     @default(now()) @db.Timestamp(6)
+  verifiedat     DateTime?     @db.Timestamp(6)
+  nextreviewat   DateTime?     @db.Timestamp(6)
+  createdat      DateTime?     @default(now()) @db.Timestamp(6)
+  updatedat      DateTime?     @default(now()) @db.Timestamp(6)
+  Organization   Organization? @relation(fields: [organizationid], references: [id], onUpdate: NoAction)
+  KYCDocument    KYCDocument[]
 }
 
 model KYCDocument {
-  id                 String    @id @default(cuid())
-  kycCaseId          String
-  kycCase            KYCCase   @relation(fields: [kycCaseId], references: [id], onDelete: Cascade)
-  documentType       String
-  storageKey         String
-  sha256             String
-  mimetype           String
-  verificationStatus KYCStatus @default(PENDING)
-  expiresAt          DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  @@index([kycCaseId, verificationStatus])
+  id                 Int       @id @default(autoincrement())
+  kyccaseid          Int?
+  documenttype       String    @db.VarChar(50)
+  storagekey         String    @db.VarChar(500)
+  sha256             String    @db.VarChar(64)
+  mimetype           String    @db.VarChar(100)
+  verificationstatus String?   @default("pending") @db.VarChar(20)
+  expiresat          DateTime? @db.Timestamp(6)
+  createdat          DateTime? @default(now()) @db.Timestamp(6)
+  updatedat          DateTime? @default(now()) @db.Timestamp(6)
+  KYCCase            KYCCase?  @relation(fields: [kyccaseid], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model BankAccount {
-  id             String       @id @default(cuid())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  accountType    String
-  bankName       String
-  encryptedBlob  String
-  iv             String
-  authTag        String
-  isPrimary      Boolean      @default(false)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-
-  @@index([organizationId, isPrimary])
+  id             Int           @id @default(autoincrement())
+  organizationid Int?
+  accounttype    String        @db.VarChar(20)
+  bankname       String        @db.VarChar(255)
+  encryptedblob  Bytes
+  iv             Bytes
+  authtag        Bytes
+  isprimary      Boolean?      @default(false)
+  createdat      DateTime?     @default(now()) @db.Timestamp(6)
+  updatedat      DateTime?     @default(now()) @db.Timestamp(6)
+  Organization   Organization? @relation(fields: [organizationid], references: [id], onUpdate: NoAction)
 }
 
 model MarketplaceSettings {
-  id                         String         @id @default(cuid())
-  enabled                    Boolean        @default(false)
-  fulfillmentMode            FulfillmentMode @default(HYBRID)
-  globalCommissionRate       Decimal        @default(0) @db.Decimal(5, 2)
-  registrationOpen           Boolean        @default(true)
-  vendorProductUploadsEnabled Boolean       @default(false)
-  vendorAnalyticsEnabled     Boolean        @default(false)
-  payoutMode                 PayoutMode     @default(MANUAL)
-  settlementHoldDays         Int            @default(7)
-  createdAt                  DateTime       @default(now())
-  updatedAt                  DateTime       @updatedAt
+  id                          Int       @id @default(1)
+  enabled                     Boolean?  @default(false)
+  fulfillmentmode             String?   @default("A") @db.VarChar(1)
+  globalcommissionrate        Int?      @default(10)
+  registrationopen            Boolean?  @default(true)
+  vendorproductuploadsenabled Boolean?  @default(true)
+  vendoranalyticsenabled      Boolean?  @default(true)
+  payoutmode                  String?   @default("MANUAL") @db.VarChar(20)
+  settlementholddays          Int?      @default(7)
+  createdat                   DateTime? @default(now()) @db.Timestamp(6)
+  updatedat                   DateTime? @default(now()) @db.Timestamp(6)
+  updatedAt                   DateTime  @default(now()) @updatedAt
 }
 
-// ---------------------------------------------------------------------------
-// Products
-// ---------------------------------------------------------------------------
-
 model ProductCategory {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
-  slug        String           @unique
+  slug        String            @unique
   description String?
   icon        String?
   imageUrl    String?
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   parentId    String?
-  parent      ProductCategory? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children    ProductCategory[] @relation("CategoryTree")
-  sortOrder   Int              @default(0)
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
   products    Product[]
+  parent      ProductCategory?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    ProductCategory[] @relation("CategoryTree")
 
   @@index([parentId])
 }
 
 model Product {
-  id               String         @id @default(cuid())
-  name             String
-  slug             String         @unique
-  categoryId       String
-  category         ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  navigationId     String?
-  navigation       ProductNavigation? @relation(fields: [navigationId], references: [id], onDelete: SetNull)
-  subcategory      String?
-  sku              String?
-  mainImage        String?
-  gallery          ProductImage[]
-  price            Decimal        @db.Decimal(12, 2)
-  discountPrice    Decimal?       @db.Decimal(12, 2)
-  // Dynamic pricing engine (safe version): competitor reference price, the
-  // cost price used to derive the minimum floor (cost * 1.15), and an
-  // explicit floor override. priceSource tracks provenance for the audit log.
-  costPrice        Decimal?       @db.Decimal(12, 2)
-  competitorPrice  Decimal?       @db.Decimal(12, 2)
-  priceFloor       Decimal?       @db.Decimal(12, 2)
-  priceSource      String         @default("manual") // manual | competitor
-  priceReviewedAt  DateTime?
-  // Image pipeline provenance (manual | unsplash | ai) + optional credit.
-  imageSource      String         @default("manual")
-  imageCredit      String?
-  stockStatus      StockStatus    @default(IN_STOCK)
-  quantity         Int            @default(0)
-  shortDescription String?
-  longDescription  String?
-  returnPolicy     String?
-  benefits         String[]       @default([])
-  usageMethod      String?
-  material         String?
-  size             String?
-  sizeOptions      Json? // [{ label, price }] — size selector options (grouped products)
-  weight           String?
-  color            String?
-  tags             String[]       @default([])
-  estimatedDeliveryTime String?
-  hasCertificate   Boolean        @default(false)
-  certificateLabel String?
-  isFeatured       Boolean        @default(false)
-  isPopular        Boolean        @default(false)
-  isNewArrival     Boolean        @default(false)
-  rating           Decimal        @default(4.5) @db.Decimal(3, 2)
-  ratingCount      Int            @default(0)
-  seoTitle         String?
-  seoDescription   String?
-  seoKeywords      String?
-  whatsappMessage  String?
-  isActive         Boolean        @default(true)
-  sortOrder        Int            @default(0)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  priceChanges     PriceChange[]
+  id                    String             @id @default(cuid())
+  name                  String
+  slug                  String             @unique
+  categoryId            String @map("categoryid")
+  subcategory           String?
+  sku                   String?
+  mainImage             String? @map("mainimage")
+  price                 Decimal            @db.Decimal(12, 2)
+  discountPrice         Decimal?           @db.Decimal(12, 2) @map("discountprice")
+  stockStatus           StockStatus        @default(IN_STOCK) @map("stockstatus")
+  quantity              Int                @default(0)
+  shortDescription      String? @map("shortdescription")
+  longDescription       String? @map("longdescription")
+  benefits              String[]           @default([])
+  usageMethod           String? @map("usagemethod")
+  material              String?
+  size                  String?
+  weight                String?
+  color                 String?
+  tags                  String[]           @default([])
+  isFeatured            Boolean            @default(false) @map("isfeatured")
+  isPopular             Boolean            @default(false) @map("ispopular")
+  isNewArrival          Boolean            @default(false) @map("isnewarrival")
+  rating                Decimal            @default(4.5) @db.Decimal(3, 2) @map("rating")
+  ratingCount           Int                @default(0) @map("ratingcount")
+  seoTitle              String? @map("seotitle")
+  seoDescription        String? @map("seodescription")
+  seoKeywords           String? @map("seokeywords")
+  whatsappMessage       String? @map("whatsappmessage")
+  isActive              Boolean            @default(true) @map("isactive")
+  sortOrder             Int                @default(0) @map("sortorder")
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  hasCertificate        Boolean            @default(false) @map("hascertificate")
+  estimatedDeliveryTime String? @map("estimateddeliverytime")
+  returnPolicy          String? @map("returnpolicy")
+  competitorPrice       Decimal?           @db.Decimal(12, 2) @map("competitorprice")
+  costPrice             Decimal?           @db.Decimal(12, 2) @map("costprice")
+  imageCredit           String? @map("imagecredit")
+  imageSource           String             @default("manual") @map("imagesource")
+  priceFloor            Decimal?           @db.Decimal(12, 2) @map("pricefloor")
+  priceReviewedAt       DateTime? @map("pricereviewedat")
+  priceSource           String             @default("manual") @map("pricesource")
+  certificateLabel      String? @map("certificatelabel")
+  sizeOptions           Json? @map("sizeoptions")
+  navigationId          String? @map("navigationid")
+  vendorId              String?            @db.VarChar(191) @map("vendorid")
+  approvalStatus        String?            @default("PENDING") @db.VarChar(20) @map("approvalstatus")
+  priceChanges          PriceChange[]
+  category              ProductCategory    @relation(fields: [categoryId], references: [id])
+  navigation            ProductNavigation? @relation(fields: [navigationId], references: [id])
+  gallery               ProductImage[]
 
   @@index([categoryId])
   @@index([navigationId])
@@ -334,18 +213,18 @@ model Product {
 }
 
 model ProductNavigation {
-  id        String               @id @default(cuid())
+  id        String              @id @default(cuid())
   name      String
-  slug      String               @unique
-  kind      String? // "size" for leaf size nodes; null for structural levels
-  parentId  String?
-  parent    ProductNavigation?   @relation("ProductNavigationTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children  ProductNavigation[]  @relation("ProductNavigationTree")
-  sortOrder Int                  @default(0)
-  isActive  Boolean              @default(true)
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  slug      String              @unique
+  kind      String?
+  parentId  String? @map("parentid")
+  sortOrder Int                 @default(0) @map("sortorder")
+  isActive  Boolean             @default(true) @map("isactive")
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
   products  Product[]
+  parent    ProductNavigation?  @relation("ProductNavigationTree", fields: [parentId], references: [id])
+  children  ProductNavigation[] @relation("ProductNavigationTree")
 
   @@index([parentId])
   @@index([isActive])
@@ -353,95 +232,84 @@ model ProductNavigation {
 
 model ProductImage {
   id        String  @id @default(cuid())
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String @map("productid")
   url       String
-  altText   String?
-  sortOrder Int     @default(0)
+  altText   String? @map("alttext")
+  sortOrder Int     @default(0) @map("sortorder")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
 }
 
-// ---------------------------------------------------------------------------
-// Price audit trail (dynamic pricing engine). Every automatic or manual
-// price change is recorded so pricing stays transparent and reversible.
-// ---------------------------------------------------------------------------
-
 model PriceChange {
   id        String   @id @default(cuid())
   productId String?
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
   serviceId String?
-  service   Service? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-  field     String   @default("price") // price | discountPrice
+  field     String   @default("price")
   oldValue  Decimal? @db.Decimal(12, 2)
   newValue  Decimal? @db.Decimal(12, 2)
   reason    String?
-  source    String   @default("manual") // cron | admin | manual
+  source    String   @default("manual")
   createdAt DateTime @default(now())
+  product   Product? @relation(fields: [productId], references: [id])
+  service   Service? @relation(fields: [serviceId], references: [id])
 
   @@index([productId])
   @@index([serviceId])
   @@index([createdAt])
 }
 
-// ---------------------------------------------------------------------------
-// Services
-// ---------------------------------------------------------------------------
-
 model ServiceCategory {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
-  slug        String           @unique
+  slug        String            @unique
   description String?
   icon        String?
   imageUrl    String?
+  sortOrder   Int               @default(0)
+  isActive    Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
   parentId    String?
-  parent      ServiceCategory? @relation("ServiceCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
-  children    ServiceCategory[] @relation("ServiceCategoryTree")
-  sortOrder   Int              @default(0)
-  isActive    Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
   services    Service[]
+  parent      ServiceCategory?  @relation("ServiceCategoryTree", fields: [parentId], references: [id])
+  children    ServiceCategory[] @relation("ServiceCategoryTree")
 
   @@index([parentId])
 }
 
 model Service {
-  id               String        @id @default(cuid())
+  id               String          @id @default(cuid())
   name             String
-  slug             String        @unique
-  categoryId       String
-  category         ServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  mode             ServiceMode   @default(ONLINE)
+  slug             String          @unique
+  categoryId       String @map("categoryid")
+  mode             ServiceMode     @default(ONLINE)
   duration         String?
-  price            Decimal?      @db.Decimal(12, 2)
-  priceLabel       String?
-  // Dynamic pricing engine: competitor reference + explicit floor for digital
-  // services (consultations / courses). Digital formula: competitor * 1.05.
-  competitorPrice  Decimal?      @db.Decimal(12, 2)
-  priceFloor       Decimal?      @db.Decimal(12, 2)
-  priceSource      String        @default("manual") // manual | competitor
-  priceReviewedAt  DateTime?
-  imageUrl         String?
-  shortDescription String?
-  longDescription  String?
-  benefits         String[]      @default([])
-  syllabus         String[]      @default([])
-  serviceArea      String?
-  slotDuration     Int?
+  price            Decimal?        @db.Decimal(12, 2)
+  priceLabel       String? @map("pricelabel")
+  imageUrl         String? @map("imageurl")
+  shortDescription String? @map("shortdescription")
+  longDescription  String? @map("longdescription")
+  benefits         String[]        @default([])
+  syllabus         String[]        @default([])
+  serviceArea      String? @map("servicearea")
   faqs             Json?
-  whatsappMessage  String?
-  isFeatured       Boolean       @default(false)
-  seoTitle         String?
-  seoDescription   String?
-  seoKeywords      String?
-  isActive         Boolean       @default(true)
-  sortOrder        Int           @default(0)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  whatsappMessage  String? @map("whatsappmessage")
+  isFeatured       Boolean         @default(false) @map("isfeatured")
+  seoTitle         String? @map("seotitle")
+  seoDescription   String? @map("seodescription")
+  seoKeywords      String? @map("seokeywords")
+  isActive         Boolean         @default(true) @map("isactive")
+  sortOrder        Int             @default(0) @map("sortorder")
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  slotDuration     Int? @map("slotduration")
+  competitorPrice  Decimal?        @db.Decimal(12, 2) @map("competitorprice")
+  priceFloor       Decimal?        @db.Decimal(12, 2) @map("pricefloor")
+  priceReviewedAt  DateTime? @map("pricereviewedat")
+  priceSource      String          @default("manual") @map("pricesource")
   priceChanges     PriceChange[]
+  category         ServiceCategory @relation(fields: [categoryId], references: [id])
 
   @@index([categoryId])
   @@index([isActive, isFeatured])
@@ -453,53 +321,40 @@ model ConsultationTopic {
   slug            String   @unique
   title           String
   description     String
-  longDescription String
-  // Lucide icon key rendered on cards & dedicated pages (see TOPIC_ICONS map).
-  iconKey         String   @default("star")
+  longDescription String @map("longdescription")
+  iconKey         String   @default("star") @map("iconkey")
   fee             String   @default("₹700")
-  homeFee         String   @default("₹1,500")
-  durationMinutes Int      @default(30)
+  homeFee         String   @default("₹1,500") @map("homefee")
+  durationMinutes Int      @default(30) @map("durationminutes")
   keywords        String[] @default([])
   benefits        String[] @default([])
-  isActive        Boolean  @default(true)
-  sortOrder       Int      @default(0)
+  isActive        Boolean  @default(true) @map("isactive")
+  sortOrder       Int      @default(0) @map("sortorder")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@index([isActive, sortOrder])
 }
 
-// ---------------------------------------------------------------------------
-// Articles (blog / knowledge base: admin publishes articles via the rich text
-// editor; public listing at /articles and detail pages at /articles/[slug])
-// ---------------------------------------------------------------------------
-
 model Article {
   id              String   @id @default(cuid())
   slug            String   @unique
   title           String
-  // Featured image URL (admin pastes the image URL in the article form).
-  featuredImage   String?
-  // Rich text editor HTML output.
+  featuredImage   String? @map("featuredimage")
   content         String
   category        String
   tags            String[] @default([])
-  metaTitle       String?
-  metaDescription String?
-  authorName      String
-  publishDate     DateTime @db.Date
-  isActive        Boolean  @default(true)
-  isFeatured      Boolean  @default(false)
+  metaTitle       String? @map("metatitle")
+  metaDescription String? @map("metadescription")
+  authorName      String @map("authorname")
+  publishDate     DateTime @db.Date @map("publishdate")
+  isActive        Boolean  @default(true) @map("isactive")
+  isFeatured      Boolean  @default(false) @map("isfeatured")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@index([isActive, isFeatured, publishDate])
 }
-
-// ---------------------------------------------------------------------------
-// Booking availability (admin blocks days/time slots for the public booking
-// calendar; users cannot select blocked slots)
-// ---------------------------------------------------------------------------
 
 model BookingBlock {
   id        String   @id @default(cuid())
@@ -512,66 +367,65 @@ model BookingBlock {
   @@index([date])
 }
 
-// ---------------------------------------------------------------------------
-// Orders / consultation bookings (created from the public booking modal and
-// the product payment popup; every WhatsApp order intent is recorded here so
-// admins can track, confirm and complete it from the dashboard)
-// ---------------------------------------------------------------------------
-
 model Order {
-  id              String        @id @default(cuid())
-  customerName    String
-  phone           String
-  whatsappNumber  String?
-  email           String?
-  itemName        String
-  itemType        OrderItemType @default(SERVICE)
-  amount          Decimal?      @db.Decimal(12, 2)
-  amountLabel     String?
-  preferredDate   String?
-  preferredTime   String?
-  preferredMode   String?
-  birthDate       String?
-  birthTime       String?
-  birthPlace      String?
-  note            String?
-  deliveryAddress String?
-  city            String?
-  state           String?
-  pincode         String?
-  paymentMethod   String? // UPI | RAZORPAY | WHATSAPP | CASH
-  paymentStatus   String? // PENDING | PAID | FAILED
-  razorpayOrderId    String?
-  razorpayPaymentId  String?
-  razorpaySignature  String?
-  courierName     String?
-  trackingNumber  String?
-  trackingUrl     String?
-  trackingSentAt  DateTime?
-  status          OrderStatus   @default(PENDING)
-  source          String        @default("website")
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                    String        @id @default(cuid())
+  customerName          String @map("customername")
+  phone                 String
+  whatsappNumber        String? @map("whatsappnumber")
+  itemName              String @map("itemname")
+  itemType              OrderItemType @default(SERVICE) @map("itemtype")
+  amount                Decimal?      @db.Decimal(12, 2)
+  amountLabel           String? @map("amountlabel")
+  preferredDate         String? @map("preferreddate")
+  preferredTime         String? @map("preferredtime")
+  note                  String?
+  status                OrderStatus   @default(PENDING)
+  source                String        @default("website")
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  deliveryAddress       String? @map("deliveryaddress")
+  city                  String?
+  state                 String?
+  pincode               String?
+  paymentMethod         String? @map("paymentmethod")
+  paymentStatus         String? @map("paymentstatus")
+  razorpayOrderId       String? @map("razorpayorderid")
+  razorpayPaymentId     String? @map("razorpaypaymentid")
+  razorpaySignature     String? @map("razorpaysignature")
+  courierName           String? @map("couriername")
+  trackingNumber        String? @map("trackingnumber")
+  trackingUrl           String? @map("trackingurl")
+  trackingSentAt        DateTime? @map("trackingsentat")
+  email                 String?
+  preferredMode         String? @map("preferredmode")
+  birthDate             String? @map("birthdate")
+  birthTime             String? @map("birthtime")
+  birthPlace            String? @map("birthplace")
+  vendorId              String?       @db.VarChar(191)
+  fulfillmentmode       String?       @default("A") @db.VarChar(1)
+  commissionamount      Decimal?      @default(0) @db.Decimal(12, 2)
+  taxamount             Decimal?      @default(0) @db.Decimal(12, 2)
+  netamount             Decimal?      @default(0) @db.Decimal(12, 2)
+  vendorpayoutstatus    String?       @default("PENDING") @db.VarChar(20)
+  vendorpayoutmethod    String?       @default("MANUAL") @db.VarChar(20)
+  vendorpayoutreference String?       @db.VarChar(255)
+  VendorOrder           VendorOrder[]
 
   @@index([status])
   @@index([createdAt])
   @@index([razorpayOrderId])
 }
 
-// ---------------------------------------------------------------------------
-// Galleries
-// ---------------------------------------------------------------------------
-
 model GalleryImage {
   id          String   @id @default(cuid())
   title       String?
   description String?
-  imageUrl    String
-  altText     String?
+  imageUrl    String @map("imageurl")
+  altText     String? @map("alttext")
   category    String?
-  isFeatured  Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
+  isFeatured  Boolean  @default(false) @map("isfeatured")
+  isActive    Boolean  @default(true) @map("isactive")
+  sortOrder   Int      @default(0) @map("sortorder")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -580,12 +434,12 @@ model Video {
   id           String   @id @default(cuid())
   title        String
   description  String?
-  videoUrl     String
-  thumbnailUrl String?
+  videoUrl     String @map("videourl")
+  thumbnailUrl String? @map("thumbnailurl")
   category     String?
-  isFeatured   Boolean  @default(false)
-  isActive     Boolean  @default(true)
-  sortOrder    Int      @default(0)
+  isFeatured   Boolean  @default(false) @map("isfeatured")
+  isActive     Boolean  @default(true) @map("isactive")
+  sortOrder    Int      @default(0) @map("sortorder")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -594,69 +448,57 @@ model YoutubeVideo {
   id           String   @id @default(cuid())
   title        String
   description  String?
-  youtubeId    String
-  youtubeUrl   String
-  thumbnailUrl String?
+  youtubeId    String @map("youtubeid")
+  youtubeUrl   String @map("youtubeurl")
+  thumbnailUrl String? @map("thumbnailurl")
   category     String?
-  isFeatured   Boolean  @default(false)
-  isActive     Boolean  @default(true)
-  sortOrder    Int      @default(0)
+  isFeatured   Boolean  @default(false) @map("isfeatured")
+  isActive     Boolean  @default(true) @map("isactive")
+  sortOrder    Int      @default(0) @map("sortorder")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-
-// ---------------------------------------------------------------------------
-// Testimonials
-// ---------------------------------------------------------------------------
 
 model Testimonial {
   id           String   @id @default(cuid())
-  customerName String
-  photoUrl     String?
+  customerName String @map("customername")
+  photoUrl     String? @map("photourl")
   rating       Int      @default(5)
   text         String
-  serviceRef   String?
+  serviceRef   String? @map("serviceref")
   location     String?
-  isApproved   Boolean  @default(false)
-  isFeatured   Boolean  @default(false)
-  sortOrder    Int      @default(0)
+  isApproved   Boolean  @default(false) @map("isapproved")
+  isFeatured   Boolean  @default(false) @map("isfeatured")
+  sortOrder    Int      @default(0) @map("sortorder")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-
-// ---------------------------------------------------------------------------
-// Announcements (two scrolling bars)
-// ---------------------------------------------------------------------------
 
 model Announcement {
   id              String   @id @default(cuid())
   title           String?
   text            String
-  textColor       String   @default("#FFFFFF")
+  textColor       String   @default("#FFFFFF") @map("textcolor")
   gradientColor   String?
-  backgroundColor String   @default("#4C1D95")
-  fontSize        Int      @default(16)
-  fontStyle       String?
+  backgroundColor String   @default("#4C1D95") @map("backgroundcolor")
+  fontSize        Int      @default(16) @map("fontsize")
+  fontStyle       String? @map("fontstyle")
   speed           Int      @default(30)
-  isActive        Boolean  @default(true)
-  sortOrder       Int      @default(0)
+  isActive        Boolean  @default(true) @map("isactive")
+  sortOrder       Int      @default(0) @map("sortorder")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
 
-// ---------------------------------------------------------------------------
-// Homepage sections & CMS
-// ---------------------------------------------------------------------------
-
 model HomepageSection {
   id         String   @id @default(cuid())
-  sectionKey String   @unique
+  sectionKey String   @unique @map("sectionkey")
   title      String?
   subtitle   String?
   content    Json?
   settings   Json?
-  isVisible  Boolean  @default(true)
-  sortOrder  Int      @default(0)
+  isVisible  Boolean  @default(true) @map("isvisible")
+  sortOrder  Int      @default(0) @map("sortorder")
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
@@ -690,22 +532,18 @@ model SocialLink {
   platform  String   @unique
   url       String
   icon      String?
-  isActive  Boolean  @default(true)
-  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true) @map("isactive")
+  sortOrder Int      @default(0) @map("sortorder")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-// ---------------------------------------------------------------------------
-// Newsletter subscribers
-// ---------------------------------------------------------------------------
 
 model Subscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String?
   source    String   @default("footer")
-  isActive  Boolean  @default(true)
+  isActive  Boolean  @default(true) @map("isactive")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -713,44 +551,35 @@ model Subscriber {
 }
 
 model LegalPage {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  title         String
-  content       String
-  seoTitle      String?
-  seoDescription String?
-  isActive      Boolean  @default(true)
-  sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  title          String
+  content        String
+  seoTitle       String? @map("seotitle")
+  seoDescription String? @map("seodescription")
+  isActive       Boolean  @default(true) @map("isactive")
+  sortOrder      Int      @default(0) @map("sortorder")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
-
-// ---------------------------------------------------------------------------
-// FAQ (admin-managed accordion on the homepage)
-// ---------------------------------------------------------------------------
 
 model Faq {
   id        String   @id @default(cuid())
   question  String
   answer    String
   category  String?
-  sortOrder Int      @default(0)
-  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0) @map("sortorder")
+  isActive  Boolean  @default(true) @map("isactive")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([isActive, sortOrder])
 }
 
-// ---------------------------------------------------------------------------
-// Uploaded images (served from the database; used by the admin image uploader
-// for logos, favicon, hero and astrologer photos - no manual URLs required)
-// ---------------------------------------------------------------------------
-
 model SiteImage {
   id        String   @id @default(cuid())
   filename  String
-  mimeType  String
+  mimeType  String @map("mimetype")
   size      Int
   data      Bytes
   createdAt DateTime @default(now())
@@ -758,20 +587,189 @@ model SiteImage {
   @@index([createdAt])
 }
 
-// ---------------------------------------------------------------------------
-// Contact / Enquiries
-// ---------------------------------------------------------------------------
-
 model ContactMessage {
   id              String        @id @default(cuid())
   name            String
   phone           String
-  whatsappNumber  String?
-  serviceInterest String?
+  whatsappNumber  String? @map("whatsappnumber")
+  serviceInterest String? @map("serviceinterest")
   message         String?
-  preferredDate   String?
-  preferredTime   String?
+  preferredDate   String? @map("preferreddate")
+  preferredTime   String? @map("preferredtime")
   status          RequestStatus @default(NEW)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+model Shipment {
+  id                  Int          @id @default(autoincrement())
+  vendor_order_id     Int?
+  carrier             String?      @db.VarChar(100)
+  awb_number          String?      @db.VarChar(50)
+  tracking_number     String?      @db.VarChar(50)
+  status              String?      @default("PENDING") @db.VarChar(20)
+  shipped_at          DateTime?    @db.Timestamp(6)
+  delivered_at        DateTime?    @db.Timestamp(6)
+  pickup_scheduled_at DateTime?    @db.Timestamp(6)
+  carrier_url         String?      @db.VarChar(500)
+  created_at          DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?    @default(now()) @db.Timestamp(6)
+  VendorOrder         VendorOrder? @relation(fields: [vendor_order_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model ShippingConfig {
+  id                       Int       @id @default(autoincrement())
+  carrier                  String    @db.VarChar(100)
+  min_order_value          Decimal?  @default(0) @db.Decimal(12, 2)
+  max_order_value          Decimal?  @default(0) @db.Decimal(12, 2)
+  base_shipping_fee        Decimal?  @default(0) @db.Decimal(12, 2)
+  per_kg_fee               Decimal?  @default(0) @db.Decimal(12, 2)
+  estimated_delivery_range String?   @db.VarChar(50)
+  is_active                Boolean?  @default(true)
+  created_at               DateTime? @default(now()) @db.Timestamp(6)
+  updated_at               DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model VendorOrder {
+  id                Int            @id @default(autoincrement())
+  parent_order_id   String?        @db.VarChar(191)
+  vendor_id         Int?
+  status            String?        @default("PENDING") @db.VarChar(20)
+  gross_amount      Decimal?       @default(0) @db.Decimal(12, 2)
+  commission_amount Decimal?       @default(0) @db.Decimal(12, 2)
+  shipping_amount   Decimal?       @default(0) @db.Decimal(12, 2)
+  tax_amount        Decimal?       @default(0) @db.Decimal(12, 2)
+  net_amount        Decimal?       @default(0) @db.Decimal(12, 2)
+  payout_status     String?        @default("PENDING") @db.VarChar(20)
+  payout_method     String?        @default("MANUAL") @db.VarChar(20)
+  payout_reference  String?        @db.VarChar(255)
+  created_at        DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?      @default(now()) @db.Timestamp(6)
+  Shipment          Shipment[]
+  Order             Order?         @relation(fields: [parent_order_id], references: [id], onUpdate: NoAction)
+  Vendor            Vendor?        @relation(fields: [vendor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  VendorPayout      VendorPayout[]
+}
+
+model VendorPayout {
+  id                  Int          @id @default(autoincrement())
+  vendor_order_id     Int?
+  vendor_id           Int?
+  amount              Decimal?     @default(0) @db.Decimal(12, 2)
+  commission_amount   Decimal?     @default(0) @db.Decimal(12, 2)
+  tax_amount          Decimal?     @default(0) @db.Decimal(12, 2)
+  net_amount          Decimal?     @default(0) @db.Decimal(12, 2)
+  payout_status       String?      @default("PENDING") @db.VarChar(20)
+  payout_method       String?      @default("MANUAL") @db.VarChar(20)
+  payout_reference    String?      @db.VarChar(255)
+  payout_initiated_at DateTime?    @db.Timestamp(6)
+  payout_completed_at DateTime?    @db.Timestamp(6)
+  created_at          DateTime?    @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?    @default(now()) @db.Timestamp(6)
+  Vendor              Vendor?      @relation(fields: [vendor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  VendorOrder         VendorOrder? @relation(fields: [vendor_order_id], references: [id], onUpdate: NoAction)
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  VENDOR
+  BUYER
+  SUPPLIER
+  CUSTOMER
+}
+
+enum ServiceMode {
+  ONLINE
+  OFFLINE
+  HOME_SERVICE
+}
+
+enum StockStatus {
+  IN_STOCK
+  OUT_OF_STOCK
+  PRE_ORDER
+}
+
+enum RequestStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  SHIPPED
+}
+
+enum OrderItemType {
+  SERVICE
+  PRODUCT
+}
+
+enum award_mode {
+  AUTO_AWARD
+  ADMIN_APPROVAL
+}
+
+enum bid_status {
+  SUBMITTED
+  WITHDRAWN
+  UNDER_EVALUATION
+  AWARDED
+  REJECTED
+}
+
+enum bid_type {
+  FIXED_PRICE
+  COST_PLUS
+  RATE_CARD
+}
+
+enum debit_credit {
+  DEBIT
+  CREDIT
+}
+
+enum evaluation_method {
+  LOWEST_LANDED_COST
+  BEST_EVALUATED
+  HIGHEST_QUALITY
+}
+
+enum role {
+  ADMIN
+  EDITOR
+  VENDOR
+  BUYER
+  SUPPLIER
+  CUSTOMER
+}
+
+enum tender_document_type {
+  PDF
+  IMAGE
+  SCAN
+  OTHER
+}
+
+enum tender_status {
+  DRAFT
+  DISABLED
+  DRAFT_SUBMITTED
+  OPEN
+  CLOSED
+  EVALUATING
+  AWARDED
+  CANCELLED
+}
+
+enum tie_break_rule {
+  EARLIEST_SUBMISSION
+  HIGHEST_CAPACITY
+  BEST_PAST_PERFORMANCE
 }
